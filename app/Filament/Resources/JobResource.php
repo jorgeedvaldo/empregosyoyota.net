@@ -20,7 +20,8 @@ class JobResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-briefcase';
     
     protected static ?string $navigationLabel = 'Jobs';
-    
+
+    protected static ?string $navigationGroup = 'JOBS';
 
     public static function form(Form $form): Form
     {
