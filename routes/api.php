@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\api\JobController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,3 +18,11 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::post('/category_job/create', [JobController::class, 'setCategories']);
+
+Route::post('/job/create', [JobController::class, 'store']);
+
+Route::get('/jobs', [JobController::class, 'get']);
+Route::get('/jobs/all', [JobController::class, 'index']);
+Route::get('/jobs/{id}', [JobController::class, 'getById']);
