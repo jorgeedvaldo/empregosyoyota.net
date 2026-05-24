@@ -128,7 +128,18 @@
                             </div>
                         </div>
                         
-                        <div class="col-lg-3 col-md-6 mb-4">
+                        <div class="col-lg-2 col-md-6 mb-4">
+                            <div class="footer-section">
+                                <h5>Vagas por País</h5>
+                                <ul class="footer-links">
+                                    <li><a href="{{ url('/ao/empregos') }}">&#127462;&#127476; Angola</a></li>
+                                    <li><a href="{{ url('/br/empregos') }}">&#127463;&#127479; Brasil</a></li>
+                                    <li><a href="{{ url('/mz/empregos') }}">&#127474;&#127487; Moçambique</a></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-2 col-md-6 mb-4">
                             <div class="footer-section">
                                 <h5>Para Candidatos</h5>
                                 <ul class="footer-links">
@@ -140,8 +151,8 @@
                                 </ul>
                             </div>
                         </div>
-                        
-                        <div class="col-lg-3 col-md-6 mb-4">
+
+                        <div class="col-lg-2 col-md-6 mb-4">
                             <div class="footer-section">
                                 <h5>Para Empresas</h5>
                                 <ul class="footer-links">

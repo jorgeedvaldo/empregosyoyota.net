@@ -37,8 +37,15 @@ Route::get('/terms', [TermController::class, 'index'])->name('terms');
 Route::get('/categories/{id}', [JobController::class, 'getByCategoryId'])
     ->where('id', '[0-9]+');
 
-Route::get('/empregos', [JobController::class, 'index']);
-Route::get('/empregos/{slug}', [JobController::class, 'getBySlug']);
+Route::get('/empregos', [JobController::class, 'index'])->name('jobs.index');
+Route::get('/empregos/{slug}', [JobController::class, 'getBySlug'])->name('jobs.show');
+
+Route::get('/{country}/empregos', [JobController::class, 'getByCountry'])
+    ->whereIn('country', ['ao', 'br', 'mz'])
+    ->name('jobs.country');
+Route::get('/{country}/empregos/{slug}', [JobController::class, 'getByCountryAndSlug'])
+    ->whereIn('country', ['ao', 'br', 'mz'])
+    ->name('jobs.country.show');
 
 
 Route::get('/jobs', [JobController::class, 'index']);
