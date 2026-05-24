@@ -80,7 +80,7 @@ class JobController extends Controller
     public function getBySlug($slug)
     {
         try {
-            $job = Job::with('categories')->where('country_id', 1)->where('slug', $slug)->firstOrFail();
+            $job = Job::with('categories')->where('slug', $slug)->firstOrFail();
 
             $LastArticles = Article::orderByRaw('id DESC')->get();
             $LastJobs = Job::with('categories')->where('country_id', 1)->where('slug', '<>', $slug)->orderByRaw('id DESC')->get();
