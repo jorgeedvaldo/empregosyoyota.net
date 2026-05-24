@@ -7,12 +7,22 @@
     $countryISO      = ['ao' => 'AO',     'br' => 'BR',     'mz' => 'MZ'];
     $countryName     = $countryNames[$countryCode];
 
-    $jobUrl  = url("/empregos/{$job['slug']}");
-    $jobsUrl = url("/empregos");
+    $jobUrl  = isset($country)
+        ? url("/{$country}/empregos/{$job['slug']}")
+        : url("/empregos/{$job['slug']}");
+
+    $jobsUrl = isset($country)
+        ? url("/{$country}/empregos")
+        : url('/empregos');
+
     $siteUrl = url('/');
 
     $previousJob    = $LastJobs->where('id', '<', $job['id'])->first();
-    $previousJobUrl = $previousJob ? url("/empregos/{$previousJob->slug}") : null;
+    $previousJobUrl = $previousJob
+        ? (isset($country)
+            ? url("/{$country}/empregos/{$previousJob->slug}")
+            : url("/empregos/{$previousJob->slug}"))
+        : null;
 @endphp
 
 @section('title', $job['title'])

@@ -83,11 +83,7 @@ class JobController extends Controller
             $job = Job::with('categories')->where('slug', $slug)->firstOrFail();
 
             $LastArticles = Article::orderByRaw('id DESC')->get();
-            $LastJobs = Job::with('categories')
-                ->where('country_id', $job->country_id)
-                ->where('slug', '<>', $slug)
-                ->orderByRaw('id DESC')
-                ->get();
+            $LastJobs = Job::with('categories')->where('country_id', 1)->where('slug', '<>', $slug)->orderByRaw('id DESC')->get();
 
             $categories = Category::orderBy('name')->get();
 
