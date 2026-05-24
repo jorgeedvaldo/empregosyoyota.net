@@ -12,35 +12,41 @@
 
     <channel>
         <title>Empregos Yoyota</title>
-        <atom:link href="https://ao.empregosyoyota.net/feed/" rel="self" type="application/rss+xml" />
-        <link>https://ao.empregosyoyota.net/</link>
+        <atom:link href="{{ url('/feed') }}" rel="self" type="application/rss+xml" />
+        <link>{{ url('/') }}</link>
         <description>Vagas de emprego, estágio e bolsas de estudo</description>
         <lastBuildDate>{{ date_format(new DateTime($jobs[0]['created_at']), DATE_ATOM) }}</lastBuildDate>
         <language>pt-PT</language>
         <sy:updatePeriod>hourly</sy:updatePeriod>
         <sy:updateFrequency>1</sy:updateFrequency>
-        <generator>https://wordpress.org/?v=6.4.2</generator>
+        <generator>Empregos Yoyota</generator>
 
         <image>
-            <url>https://ao.empregosyoyota.net/storage/images/logo-full.jpg</url>
+            <url>{{ asset('storage/images/logo-full.jpg') }}</url>
             <title>Empregos Yoyota</title>
-            <link>https://ao.empregosyoyota.net/</link>
+            <link>{{ url('/') }}</link>
             <width>32</width>
             <height>32</height>
         </image>
 
-        <site xmlns="com-wordpress:feed-additions:1">227777157</site>
-
         @foreach($jobs as $job)
+            @php
+                $countryIdToCode = [1 => 'ao', 2 => 'br', 3 => 'mz'];
+                $countryCode = $countryIdToCode[$job->country_id] ?? 'ao';
+
+                $jobUrl = ($countryCode === 'ao')
+                    ? url('/empregos/' . $job->slug)
+                    : url('/' . $countryCode . '/empregos/' . $job->slug);
+            @endphp
             <item>
                 <title>{{$job->title}}</title>
-                <link>https://ao.empregosyoyota.net/empregos/{{$job->slug}}</link>
+                <link>{{ $jobUrl }}</link>
                 <dc:creator><![CDATA[Edivaldo Jorge]]></dc:creator>
                 <pubDate>{{ date_format(new DateTime($job['created_at']), DATE_ATOM) }}</pubDate>
                 <category><![CDATA[Emprego]]></category>
                 <category><![CDATA[Estágio]]></category>
-                <guid isPermaLink="false">https://ao.empregosyoyota.net/empregos/{{$job->slug}}</guid>
-                <description><![CDATA[<p>{!! \Illuminate\Support\Str::limit(strip_tags($job->description), 402, $end='...') !!}</p><p>O conteúdo <a href="https://ao.empregosyoyota.net/empregos/{{$job->slug}}">{{$job->title}}</a> aparece primeiro em <a href="https://ao.empregosyoyota.net">Empregos Yoyota</a>.</p>
+                <guid isPermaLink="false">{{ $jobUrl }}</guid>
+                <description><![CDATA[<p>{!! \Illuminate\Support\Str::limit(strip_tags($job->description), 402, $end='...') !!}</p><p>O conteúdo <a href="{{ $jobUrl }}">{{$job->title}}</a> aparece primeiro em <a href="{{ url('/') }}">Empregos Yoyota</a>.</p>
                 ]]></description>
                 <content:encoded><![CDATA[{{$job->description}}]]></content:encoded>
                 <post-id xmlns="com-wordpress:feed-additions:1">{{$job->id}}</post-id>
