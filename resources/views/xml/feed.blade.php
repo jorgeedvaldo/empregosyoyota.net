@@ -30,23 +30,15 @@
         </image>
 
         @foreach($jobs as $job)
-            @php
-                $countryIdToCode = [1 => 'ao', 2 => 'br', 3 => 'mz'];
-                $countryCode = $countryIdToCode[$job->country_id] ?? 'ao';
-
-                $jobUrl = ($countryCode === 'ao')
-                    ? url('/empregos/' . $job->slug)
-                    : url('/' . $countryCode . '/empregos/' . $job->slug);
-            @endphp
             <item>
                 <title>{{$job->title}}</title>
-                <link>{{ $jobUrl }}</link>
+                <link>{{ url('/empregos/' . $job->slug) }}</link>
                 <dc:creator><![CDATA[Edivaldo Jorge]]></dc:creator>
                 <pubDate>{{ date_format(new DateTime($job['created_at']), DATE_ATOM) }}</pubDate>
                 <category><![CDATA[Emprego]]></category>
                 <category><![CDATA[Estágio]]></category>
-                <guid isPermaLink="false">{{ $jobUrl }}</guid>
-                <description><![CDATA[<p>{!! \Illuminate\Support\Str::limit(strip_tags($job->description), 402, $end='...') !!}</p><p>O conteúdo <a href="{{ $jobUrl }}">{{$job->title}}</a> aparece primeiro em <a href="{{ url('/') }}">Empregos Yoyota</a>.</p>
+                <guid isPermaLink="false">{{ url('/empregos/' . $job->slug) }}</guid>
+                <description><![CDATA[<p>{!! \Illuminate\Support\Str::limit(strip_tags($job->description), 402, $end='...') !!}</p><p>O conteúdo <a href="{{ url('/empregos/' . $job->slug) }}">{{$job->title}}</a> aparece primeiro em <a href="{{ url('/') }}">Empregos Yoyota</a>.</p>
                 ]]></description>
                 <content:encoded><![CDATA[{{$job->description}}]]></content:encoded>
                 <post-id xmlns="com-wordpress:feed-additions:1">{{$job->id}}</post-id>

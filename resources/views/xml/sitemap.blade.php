@@ -46,16 +46,8 @@
 
 	<!-- Vagas individuais -->
 	@foreach ($jobs as $job)
-		@php
-			$countryIdToCode = [1 => 'ao', 2 => 'br', 3 => 'mz'];
-			$countryCode = $countryIdToCode[$job->country_id] ?? 'ao';
-
-			$jobUrl = ($countryCode === 'ao')
-				? url('/empregos/' . $job->slug)
-				: url('/' . $countryCode . '/empregos/' . $job->slug);
-		@endphp
 		<url>
-			<loc>{{ $jobUrl }}</loc>
+			<loc>{{ url('/empregos/' . $job->slug) }}</loc>
 			<lastmod>{{ date_format(new DateTime($job['updated_at']), DATE_ATOM) }}</lastmod>
 			<image:image>
 				<image:loc>{{ asset('storage/' . $job['photo']) }}</image:loc>

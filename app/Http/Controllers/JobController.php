@@ -83,41 +83,15 @@ class JobController extends Controller
             $job = Job::with('categories')->where('slug', $slug)->firstOrFail();
 
             $LastArticles = Article::orderByRaw('id DESC')->get();
-            $LastJobs = Job::with('categories')->where('country_id', 1)->where('slug', '<>', $slug)->orderByRaw('id DESC')->get();
-
-            $categories = Category::orderBy('name')->get();
-
-            return view('job', compact('job', 'categories', 'LastArticles', 'LastJobs'));
-        } catch (Exception $ex) {
-            abort(404);
-        }
-    }
-
-    public function getByCountryAndSlug($country, $slug)
-    {
-        try {
-            $countryId = $this->getCountryIdFromCode($country);
-
-            if (!$countryId) {
-                abort(404);
-            }
-
-            $job = Job::with('categories')
-                ->where('country_id', $countryId)
-                ->where('slug', $slug)
-                ->firstOrFail();
-
-            $LastArticles = Article::orderByRaw('id DESC')->get();
-
             $LastJobs = Job::with('categories')
-                ->where('country_id', $countryId)
+                ->where('country_id', $job->country_id)
                 ->where('slug', '<>', $slug)
                 ->orderByRaw('id DESC')
                 ->get();
 
             $categories = Category::orderBy('name')->get();
 
-            return view('job', compact('job', 'categories', 'LastArticles', 'LastJobs', 'country'));
+            return view('job', compact('job', 'categories', 'LastArticles', 'LastJobs'));
         } catch (Exception $ex) {
             abort(404);
         }
