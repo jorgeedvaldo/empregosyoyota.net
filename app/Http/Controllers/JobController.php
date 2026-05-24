@@ -93,36 +93,6 @@ class JobController extends Controller
         }
     }
 
-    public function getByCountryAndSlug($country, $slug)
-    {
-        try {
-            $countryId = $this->getCountryIdFromCode($country);
-
-            if (!$countryId) {
-                abort(404);
-            }
-
-            $job = Job::with('categories')
-                ->where('country_id', $countryId)
-                ->where('slug', $slug)
-                ->firstOrFail();
-
-            $LastArticles = Article::orderByRaw('id DESC')->get();
-
-            $LastJobs = Job::with('categories')
-                ->where('country_id', $countryId)
-                ->where('slug', '<>', $slug)
-                ->orderByRaw('id DESC')
-                ->get();
-
-            $categories = Category::orderBy('name')->get();
-
-            return view('job', compact('job', 'categories', 'LastArticles', 'LastJobs', 'country'));
-        } catch (Exception $ex) {
-            abort(404);
-        }
-    }
-
     public function getBySlugAMP($slug)
     {
         try {

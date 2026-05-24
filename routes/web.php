@@ -43,9 +43,6 @@ Route::get('/empregos/{slug}', [JobController::class, 'getBySlug'])->name('jobs.
 Route::get('/{country}/empregos', [JobController::class, 'getByCountry'])
     ->whereIn('country', ['ao', 'br', 'mz'])
     ->name('jobs.country');
-Route::get('/{country}/empregos/{slug}', [JobController::class, 'getByCountryAndSlug'])
-    ->whereIn('country', ['ao', 'br', 'mz'])
-    ->name('jobs.country.show');
 
 
 Route::get('/jobs', [JobController::class, 'index']);
