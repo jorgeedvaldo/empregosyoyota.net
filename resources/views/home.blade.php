@@ -247,6 +247,57 @@
         </div>
     </section>
         
+    <!-- Vagas por País -->
+    <section class="mt-5 mb-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <h1 class="section-heading text-uppercase">. . .</h1>
+                    <h2 class="section-heading text-uppercase">Vagas por País</h2>
+                    <p class="section-subheading text-muted">Encontre oportunidades de emprego no seu país</p>
+                </div>
+            </div>
+            <div class="row justify-content-center mt-4">
+                <div class="col-md-4 col-sm-6 mb-4">
+                    <a href="{{ url('/ao/empregos') }}" class="text-decoration-none">
+                        <div class="card h-100 text-center shadow-sm border-0" style="border-radius: 12px; transition: transform .2s;">
+                            <div class="card-body py-4">
+                                <div class="mb-3" style="font-size: 3rem; line-height: 1;">&#127462;&#127476;</div>
+                                <h5 class="card-title fw-bold mb-1">Angola</h5>
+                                <p class="card-text text-muted small">Vagas de emprego em Angola</p>
+                                <span class="btn btn-dark btn-sm mt-2">Ver vagas</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-4 col-sm-6 mb-4">
+                    <a href="{{ url('/br/empregos') }}" class="text-decoration-none">
+                        <div class="card h-100 text-center shadow-sm border-0" style="border-radius: 12px; transition: transform .2s;">
+                            <div class="card-body py-4">
+                                <div class="mb-3" style="font-size: 3rem; line-height: 1;">&#127463;&#127479;</div>
+                                <h5 class="card-title fw-bold mb-1">Brasil</h5>
+                                <p class="card-text text-muted small">Vagas de emprego no Brasil</p>
+                                <span class="btn btn-dark btn-sm mt-2">Ver vagas</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-4 col-sm-6 mb-4">
+                    <a href="{{ url('/mz/empregos') }}" class="text-decoration-none">
+                        <div class="card h-100 text-center shadow-sm border-0" style="border-radius: 12px; transition: transform .2s;">
+                            <div class="card-body py-4">
+                                <div class="mb-3" style="font-size: 3rem; line-height: 1;">&#127474;&#127487;</div>
+                                <h5 class="card-title fw-bold mb-1">Moçambique</h5>
+                                <p class="card-text text-muted small">Vagas de emprego em Moçambique</p>
+                                <span class="btn btn-dark btn-sm mt-2">Ver vagas</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!--Lei Geral do Trabalho-->
     <section class="labor-law-section mb-5" style="background-color: #f8f8f8; padding: 40px 20px; text-align: center;">
         <div class="container">
