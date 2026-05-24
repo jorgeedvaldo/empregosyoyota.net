@@ -41,7 +41,7 @@
             "@type": "WebPage",
             "@id": "{{ $jobUrl }}",
             "url": "{{ $jobUrl }}",
-            "name": "{{ $job['title'] }} - Empregos Yoyota {{ $countryName }}",
+            "name": "{{ $job['title'] }} - Empregos Yoyota",
             "isPartOf": {"@id": "{{ $siteUrl }}/#website"},
             "primaryImageOfPage": {"@id": "{{ $jobUrl }}/#primaryimage"},
             "image": {"@id": "{{ $jobUrl }}/#primaryimage"},
@@ -73,7 +73,7 @@
             "@type": "WebSite",
             "@id": "{{ $siteUrl }}/#website",
             "url": "{{ $siteUrl }}/",
-            "name": "Empregos Yoyota {{ $countryName }}",
+            "name": "Empregos Yoyota",
             "description": "Vagas de emprego, estágio e bolsas de estudo",
             "publisher": {"@id": "{{ $siteUrl }}/#organization"},
             "potentialAction": [{
