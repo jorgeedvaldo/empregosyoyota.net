@@ -66,7 +66,7 @@
             "itemListElement": [
                 {"@type": "ListItem", "position": 1, "name": "Início", "item": "{{ $siteUrl }}"},
                 {"@type": "ListItem", "position": 2, "name": "Empregos {{ $countryName }}", "item": "{{ $jobsUrl }}"},
-                {"@type": "ListItem", "position": 3, "name": {{ json_encode($job['title']) }}}
+                {"@type": "ListItem", "position": 3, "name": "{{ json_encode($job['title']) }}"}
             ]
         },
         {
