@@ -23,18 +23,6 @@
             ? url("/{$country}/empregos/{$previousJob->slug}")
             : url("/empregos/{$previousJob->slug}"))
         : null;
-
-    // Valores escapados para uso seguro dentro de strings JSON ("{!! $var !!}")
-    $esc = fn($s) => addslashes(str_replace(["\r\n", "\n", "\r", "\t"], ' ', (string) $s));
-    $jsonTitle       = $esc($job['title']);
-    $jsonCompany     = $esc($job['company']);
-    $jsonProvince    = $esc($job['province']);
-    $jsonDescription = $esc(strip_tags($job['description']));
-    $jsonPhoto       = $esc(asset('storage/' . $job['photo']));
-    $jsonLogo        = $esc(asset('storage/images/logo-full.jpg'));
-    $jsonDatePosted  = date_format(new DateTime($job['created_at']), DATE_ATOM);
-    $jsonDateMod     = date_format(new DateTime($job['updated_at']), DATE_ATOM);
-    $jsonValidThru   = date('Y-m-d\TH:i', strtotime($job->created_at . ' +45 days'));
 @endphp
 
 @section('title', $job['title'])
@@ -51,91 +39,91 @@
     "@graph": [
         {
             "@type": "WebPage",
-            "@id": "{!! $jobUrl !!}",
-            "url": "{!! $jobUrl !!}",
-            "name": "{!! $jsonTitle !!} - Empregos Yoyota",
-            "isPartOf": {"@id": "{!! $siteUrl !!}/#website"},
-            "primaryImageOfPage": {"@id": "{!! $jobUrl !!}/#primaryimage"},
-            "image": {"@id": "{!! $jobUrl !!}/#primaryimage"},
-            "thumbnailUrl": "{!! $jsonPhoto !!}",
-            "datePublished": "{!! $jsonDatePosted !!}",
-            "dateModified": "{!! $jsonDateMod !!}",
+            "@id": "{{ $jobUrl }}",
+            "url": "{{ $jobUrl }}",
+            "name": "{{ $job['title'] }} - Empregos Yoyota",
+            "isPartOf": {"@id": "{{ $siteUrl }}/#website"},
+            "primaryImageOfPage": {"@id": "{{ $jobUrl }}/#primaryimage"},
+            "image": {"@id": "{{ $jobUrl }}/#primaryimage"},
+            "thumbnailUrl": "{{ asset('storage/' . $job['photo']) }}",
+            "datePublished": "{{ date_format(new DateTime($job['created_at']), DATE_ATOM) }}",
+            "dateModified": "{{ date_format(new DateTime($job['updated_at']), DATE_ATOM) }}",
             "inLanguage": "pt-PT",
-            "potentialAction": [{"@type": "ReadAction", "target": ["{!! $jobUrl !!}"]}]
+            "potentialAction": [{"@type": "ReadAction", "target": ["{{ $jobUrl }}"]}]
         },
         {
             "@type": "ImageObject",
             "inLanguage": "pt-PT",
-            "@id": "{!! $jobUrl !!}/#primaryimage",
-            "url": "{!! $jsonPhoto !!}",
-            "contentUrl": "{!! $jsonPhoto !!}",
+            "@id": "{{ $jobUrl }}/#primaryimage",
+            "url": "{{ asset('storage/' . $job['photo']) }}",
+            "contentUrl": "{{ asset('storage/' . $job['photo']) }}",
             "width": 918,
             "height": 612
         },
         {
             "@type": "BreadcrumbList",
-            "@id": "{!! $jobUrl !!}/#breadcrumb",
+            "@id": "{{ $jobUrl }}/#breadcrumb",
             "itemListElement": [
-                {"@type": "ListItem", "position": 1, "name": "Início", "item": "{!! $siteUrl !!}"},
-                {"@type": "ListItem", "position": 2, "name": "Empregos {!! $countryName !!}", "item": "{!! $jobsUrl !!}"},
-                {"@type": "ListItem", "position": 3, "name": "{!! $jsonTitle !!}"}
+                {"@type": "ListItem", "position": 1, "name": "Início", "item": "{{ $siteUrl }}"},
+                {"@type": "ListItem", "position": 2, "name": "Empregos {{ $countryName }}", "item": "{{ $jobsUrl }}"},
+                {"@type": "ListItem", "position": 3, "name": "{{ json_encode($job['title']) }}"}
             ]
         },
         {
             "@type": "WebSite",
-            "@id": "{!! $siteUrl !!}/#website",
-            "url": "{!! $siteUrl !!}/",
+            "@id": "{{ $siteUrl }}/#website",
+            "url": "{{ $siteUrl }}/",
             "name": "Empregos Yoyota",
             "description": "Vagas de emprego, estágio e bolsas de estudo",
-            "publisher": {"@id": "{!! $siteUrl !!}/#organization"},
+            "publisher": {"@id": "{{ $siteUrl }}/#organization"},
             "potentialAction": [{
                 "@type": "SearchAction",
-                "target": {"@type": "EntryPoint", "urlTemplate": "{!! url('/pesquisar') !!}?query={search_term_string}"},
+                "target": {"@type": "EntryPoint", "urlTemplate": "{{ url('/pesquisar') }}?query={search_term_string}"},
                 "query-input": "required name=search_term_string"
             }],
             "inLanguage": "pt-PT"
         },
         {
             "@type": "Organization",
-            "@id": "{!! $siteUrl !!}/#organization",
+            "@id": "{{ $siteUrl }}/#organization",
             "name": "Empregos Yoyota",
-            "url": "{!! $siteUrl !!}/",
+            "url": "{{ $siteUrl }}/",
             "logo": {
                 "@type": "ImageObject",
                 "inLanguage": "pt-PT",
-                "@id": "{!! $siteUrl !!}/#/schema/logo/image/",
-                "url": "{!! $jsonLogo !!}",
-                "contentUrl": "{!! $jsonLogo !!}",
+                "@id": "{{ $siteUrl }}/#/schema/logo/image/",
+                "url": "{{ asset('storage/images/logo-full.jpg') }}",
+                "contentUrl": "{{ asset('storage/images/logo-full.jpg') }}",
                 "width": 512,
                 "height": 512,
                 "caption": "Empregos Yoyota"
             },
-            "image": {"@id": "{!! $siteUrl !!}/#/schema/logo/image/"},
+            "image": {"@id": "{{ $siteUrl }}/#/schema/logo/image/"},
             "sameAs": ["https://web.facebook.com/empregosyoyota"]
         },
         {
             "@type": "JobPosting",
-            "datePosted": "{!! $jsonDatePosted !!}",
-            "validThrough": "{!! $jsonValidThru !!}",
-            "title": "{!! $jsonTitle !!}",
-            "description": "{!! $jsonDescription !!}",
+            "datePosted": "{{ date_format(new DateTime($job['created_at']), DATE_ATOM) }}",
+            "validThrough": "{{ date('Y-m-d\TH:i', strtotime($job->created_at . ' +45 days')) }}",
+            "title": {{ json_encode($job['title']) }},
+            "description": {{ json_encode(strip_tags($job['description'])) }},
             "employmentType": ["FULL_TIME"],
             "hiringOrganization": {
                 "@type": "Organization",
-                "name": "{!! $jsonCompany !!}",
-                "logo": "{!! $jsonPhoto !!}"
+                "name": {{ json_encode($job['company']) }},
+                "logo": "{{ asset('storage/' . $job['photo']) }}"
             },
             "identifier": {
                 "@type": "PropertyValue",
-                "name": "{!! $jsonCompany !!}",
-                "value": "{!! $jobUrl !!}"
+                "name": {{ json_encode($job['company']) }},
+                "value": "{{ $jobUrl }}"
             },
             "jobLocation": {
                 "@type": "Place",
                 "address": {
                     "@type": "PostalAddress",
-                    "addressLocality": "{!! $jsonProvince !!}",
-                    "addressCountry": "{!! $countryISO[$countryCode] !!}"
+                    "addressLocality": {{ json_encode($job['province']) }},
+                    "addressCountry": "{{ $countryISO[$countryCode] }}"
                 }
             }
         }
