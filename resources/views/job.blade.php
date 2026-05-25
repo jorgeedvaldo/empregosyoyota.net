@@ -65,8 +65,8 @@
             "@id": "{{ $jobUrl }}/#breadcrumb",
             "itemListElement": [
                 {"@type": "ListItem", "position": 1, "name": "Início", "item": "{{ $siteUrl }}"},
-                {"@type": "ListItem", "position": 2, "name": "Empregos {{ $countryName }}", "item": "{{ $jobsUrl }}"},
-                {"@type": "ListItem", "position": 3, "name": "{{ json_encode($job['title']) }}"}
+                {"@type": "ListItem", "position": 2, "name": "Vagas de Empregos", "item": "{{ $jobsUrl }}"},
+                {"@type": "ListItem", "position": 3, "name": {!! json_encode($job['title']) !!}}
             ]
         },
         {
@@ -105,24 +105,24 @@
             "@type": "JobPosting",
             "datePosted": "{{ date_format(new DateTime($job['created_at']), DATE_ATOM) }}",
             "validThrough": "{{ date('Y-m-d\TH:i', strtotime($job->created_at . ' +45 days')) }}",
-            "title": {{ json_encode($job['title']) }},
-            "description": {{ json_encode(strip_tags($job['description'])) }},
+            "title": {!! json_encode($job['title']) !!},
+            "description": {!! json_encode(strip_tags($job['description'])) !!},
             "employmentType": ["FULL_TIME"],
             "hiringOrganization": {
                 "@type": "Organization",
-                "name": {{ json_encode($job['company']) }},
+                "name": {!! json_encode($job['company']) !!},
                 "logo": "{{ asset('storage/' . $job['photo']) }}"
             },
             "identifier": {
                 "@type": "PropertyValue",
-                "name": {{ json_encode($job['company']) }},
+                "name": {!! json_encode($job['company']) !!},
                 "value": "{{ $jobUrl }}"
             },
             "jobLocation": {
                 "@type": "Place",
                 "address": {
                     "@type": "PostalAddress",
-                    "addressLocality": {{ json_encode($job['province']) }},
+                    "addressLocality": {!! json_encode($job['province']) !!},
                     "addressCountry": "{{ $countryISO[$countryCode] }}"
                 }
             }
