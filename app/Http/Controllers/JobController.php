@@ -28,6 +28,17 @@ class JobController extends Controller
         return view('jobs', compact('jobs', 'categories'));
     }
 
+    private function getCountryName($country)
+    {
+        $names = [
+            'ao' => 'Angola',
+            'br' => 'Brasil',
+            'mz' => 'Moçambique',
+        ];
+
+        return $names[$country] ?? null;
+    }
+
     public function getByCountry($country)
     {
         $countryId = $this->getCountryIdFromCode($country);
@@ -42,7 +53,9 @@ class JobController extends Controller
 
         $categories = Category::orderBy('name')->get();
 
-        return view('jobs', compact('jobs', 'categories', 'country'));
+        $title = 'Vagas de Emprego ' . $this->getCountryName($country);
+
+        return view('jobs', compact('jobs', 'categories', 'country', 'title'));
     }
 
     public function getById($id)
