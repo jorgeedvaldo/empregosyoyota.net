@@ -1,5 +1,5 @@
 @extends('template.app')
-@section('title', 'Vagas de Emprego')
+@section('title', $title ?? 'Vagas de Emprego')
 @section('description', 'É uma plataforma que reúne vagas de emprego em Angola, tendo como fonte principal o "Jornal de Angola", criada aos 5 de Dezembro de 2018, a Empregos Yoyota tem ajudado muita gente a encontrar empregos no solo angolano')
 @section('canonical_link', url('/empregos'))
 @section('head-scripts')
