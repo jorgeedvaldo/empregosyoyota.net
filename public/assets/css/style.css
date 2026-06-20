@@ -510,6 +510,77 @@ a, a:hover {
     color: black;
 }
 
+/* Bootstrap fallbacks (render correctly before async Bootstrap loads) */
+.btn {
+    display: inline-block;
+    font-weight: 400;
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer;
+    border: 1px solid transparent;
+    padding: .375rem .75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    border-radius: .375rem;
+    text-decoration: none;
+    transition: color .15s,background-color .15s,border-color .15s;
+}
+
+.btn-dark {
+    color: #fff;
+    background-color: #212529;
+    border-color: #212529;
+}
+
+.btn-dark:hover {
+    color: #fff;
+    background-color: #1c1f23;
+    border-color: #1a1e21;
+}
+
+.btn-primary {
+    color: #fff;
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.btn-primary:hover {
+    color: #fff;
+    background-color: #0b5ed7;
+    border-color: #0a58ca;
+}
+
+.btn-lg {
+    padding: .5rem 1rem;
+    font-size: 1.25rem;
+    border-radius: .5rem;
+}
+
+.btn-sm {
+    padding: .25rem .5rem;
+    font-size: .875rem;
+    border-radius: .25rem;
+}
+
+.btn.search-btn,
+button.search-btn {
+    background: #000000;
+    border: none;
+    padding: 14px 28px;
+    border-radius: 8px;
+    font-weight: 600;
+    color: #ffffff;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.btn.search-btn:hover,
+button.search-btn:hover {
+    background: #333333;
+    color: #ffffff;
+    transform: translateY(-1px);
+}
+
 /* Legacy layout support */
 .btn-big {
     padding: 0.5rem 2.5rem;
