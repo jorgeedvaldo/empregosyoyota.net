@@ -116,8 +116,11 @@
 
         .hero-search-form {
             display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;
             align-items: center;
             gap: 0;
+            margin: 0;
         }
 
         .search-field {

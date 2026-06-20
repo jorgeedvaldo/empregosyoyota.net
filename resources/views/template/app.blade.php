@@ -60,7 +60,7 @@
         <!-- Styles -->
         <link href="{{ asset('assets/css/bootstrap.min.css') }}" rel="stylesheet" />
         <link href="{{ asset('assets/css/font-awesome.min.css') }}" rel="stylesheet" />
-        <link href="{{ asset('assets/css/style.css') }}" rel="stylesheet" />
+        <link href="{{ asset('assets/css/style.css') }}?v={{ @filemtime(public_path('assets/css/style.css')) ?: '2' }}" rel="stylesheet" />
 		
 		 @yield('head-scripts')
     </head>
