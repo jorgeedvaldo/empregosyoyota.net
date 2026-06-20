@@ -53,9 +53,46 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 
-        <!-- Styles (critical) -->
-        <link href="{{ asset('assets/css/bootstrap.min.css') }}" rel="stylesheet" />
-        <link href="{{ asset('assets/css/style.css') }}?v={{ @filemtime(public_path('assets/css/style.css')) ?: '2' }}" rel="stylesheet" />
+        <!-- Critical above-the-fold CSS (inlined to avoid render-blocking) -->
+        <style>
+        *,*::before,*::after{box-sizing:border-box}
+        body{margin:0;font-family:'Montserrat',system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;background:#fff;color:#000;line-height:1.5}
+        img,svg{max-width:100%;height:auto}
+        .container{width:100%;padding-right:12px;padding-left:12px;margin-right:auto;margin-left:auto}
+        @media(min-width:576px){.container{max-width:540px}}
+        @media(min-width:768px){.container{max-width:720px}}
+        @media(min-width:992px){.container{max-width:960px}}
+        @media(min-width:1200px){.container{max-width:1140px}}
+        .row{display:flex;flex-wrap:wrap;margin-right:-12px;margin-left:-12px}
+        .row>*{padding-right:12px;padding-left:12px}
+        .justify-content-center{justify-content:center}
+        .text-center{text-align:center}
+        .col-lg-8{flex:0 0 auto;width:100%}
+        @media(min-width:992px){.col-lg-8{width:66.6667%}}
+        .navbar{display:flex;flex-wrap:wrap;align-items:center;background:#fff;border-bottom:1px solid #e9ecef;padding:1rem 0}
+        .navbar>.container{display:flex;flex-wrap:inherit;align-items:center;justify-content:space-between}
+        .navbar-brand{font-size:1.5rem;color:#000;text-decoration:none}
+        .navbar-brand .empregos{font-weight:600}.navbar-brand .yoyota{font-weight:300}
+        .navbar-nav{display:flex;flex-direction:column;list-style:none;margin:0;padding:0}
+        .nav-link{color:#555;font-weight:500;text-decoration:none;display:block;padding:.5rem 1rem}
+        .nav-link.active{background:#000;color:#fff;border-radius:25px}
+        .navbar-toggler{padding:.25rem .75rem;background:transparent;border:1px solid rgba(0,0,0,.1);border-radius:.375rem;line-height:1}
+        .navbar-toggler-icon{display:inline-block;width:1.5em;height:1.5em;vertical-align:middle;background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%2833,37,41,.75%29' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");background-repeat:no-repeat;background-position:center;background-size:100%}
+        .collapse:not(.show){display:none}
+        @media(min-width:992px){.navbar-expand-lg .navbar-nav{flex-direction:row}.navbar-expand-lg .navbar-toggler{display:none}.navbar-expand-lg .navbar-collapse{display:flex!important;flex-basis:auto}.collapse:not(.show){display:flex}.justify-content-end{justify-content:flex-end}.ms-auto{margin-left:auto}}
+        .hero-section{background:#f8f9fa;padding:80px 0 60px}
+        .hero-title{font-size:3.5rem;font-weight:900;color:#000;line-height:1.15;margin:0 0 1.25rem}
+        .hero-title .highlight{position:relative;display:inline-block}
+        .hero-subtitle{font-size:1.2rem;color:#555;margin:0 0 2.5rem;line-height:1.6}
+        @media(max-width:768px){.hero-title{font-size:2.2rem}.hero-section{padding:50px 0 40px}}
+        </style>
+
+        <!-- Site CSS (inlined: small custom stylesheet, avoids extra render-blocking request) -->
+        <style>{!! @file_get_contents(public_path('assets/css/style.css')) !!}</style>
+
+        <!-- Bootstrap CSS (async to avoid render-blocking; critical subset inlined above) -->
+        <link rel="preload" as="style" href="{{ asset('assets/css/bootstrap.min.css') }}" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link href="{{ asset('assets/css/bootstrap.min.css') }}" rel="stylesheet"></noscript>
 
         <!-- Non-critical CSS (deferred) -->
         <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;900&display=swap" onload="this.onload=null;this.rel='stylesheet'">
@@ -67,7 +104,7 @@
         <link rel="preload" as="style" href="{{ asset('assets/css/font-awesome.min.css') }}" onload="this.onload=null;this.rel='stylesheet'">
         <noscript><link href="{{ asset('assets/css/font-awesome.min.css') }}" rel="stylesheet"></noscript>
 
-		@yield('head-scripts')
+			@yield('head-scripts')
     </head>
 
     <body>
