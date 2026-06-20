@@ -64,8 +64,8 @@
         <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;900&display=swap" onload="this.onload=null;this.rel='stylesheet'">
         <noscript><link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;900&display=swap" rel="stylesheet"></noscript>
 
-        <link rel="preload" as="style" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" onload="this.onload=null;this.rel='stylesheet'">
-        <noscript><link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet"></noscript>
+        <link rel="preload" as="style" href="{{ asset('assets/css/icons.css') }}?v={{ @filemtime(public_path('assets/css/icons.css')) ?: '1' }}" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link href="{{ asset('assets/css/icons.css') }}" rel="stylesheet"></noscript>
 
         <link rel="preload" as="style" href="{{ asset('assets/css/font-awesome.min.css') }}" onload="this.onload=null;this.rel='stylesheet'">
         <noscript><link href="{{ asset('assets/css/font-awesome.min.css') }}" rel="stylesheet"></noscript>
