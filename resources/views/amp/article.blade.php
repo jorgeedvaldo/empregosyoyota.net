@@ -1866,7 +1866,7 @@
         ☰
       </div>
       <amp-img
-    src="https://ao.empregosyoyota.net/storage/images/logo.png"
+    src="https://empregosyoyota.net/storage/images/logo.png"
     width="200"
     height="15.3"
     layout="fixed"

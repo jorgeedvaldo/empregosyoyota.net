@@ -32,7 +32,7 @@
 		<meta property="og:description" content="@yield('description')" />
 		<meta property="article:published_time" content="@yield('created_at')" />
 		<meta property="article:modified_time" content="@yield('updated_at')" />
-		<meta property="og:site_name" content="Empregos Yoyota Angola" />
+		<meta property="og:site_name" content="Empregos Yoyota" />
 		<meta property="og:image" content="@yield('url')" />
 		<meta property="og:image:width" content="1200" />
 		<meta property="og:image:height" content="700" />

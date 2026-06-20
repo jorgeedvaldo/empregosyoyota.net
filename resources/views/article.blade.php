@@ -12,13 +12,13 @@
                 "@type": "Article",
                 "@id": "{{url('/articles/'. $article['slug'])}}/#article",
                 "isPartOf": {"@id": "{{url('/articles/'. $article['slug'])}}"},
-                "author": {"name": "Edivaldo", "@id": "https://ao.empregosyoyota.net/#/schema/person/4e746ddb32c25bcf75f5e4fa3c48a443"},
+                "author": {"name": "Edivaldo", "@id": "https://empregosyoyota.net/#/schema/person/4e746ddb32c25bcf75f5e4fa3c48a443"},
                 "headline": "{{$article['title']}}",
                 "datePublished": "{{ date_format(new DateTime($article['created_at']), DATE_ATOM) }}",
                 "dateModified": "{{ date_format(new DateTime($article['updated_at']), DATE_ATOM) }}",
                 "mainEntityOfPage": {"@id": "{{url('/articles/'. $article['slug'])}}"},
                 "wordCount": 1162,
-                "publisher": {"@id": "https://ao.empregosyoyota.net/#organization"},
+                "publisher": {"@id": "https://empregosyoyota.net/#organization"},
                 "image": {"@id": "{{url('/articles/'. $article['slug'])}}/#primaryimage"},
                 "thumbnailUrl": "{{asset('storage/' . $article['photo'])}}",
                 "keywords": ["{{$article['title']}}"],
@@ -30,7 +30,7 @@
                 "@id": "{{url('/articles/'. $article['slug'])}}",
                 "url": "{{url('/articles/'. $article['slug'])}}",
                 "name": "{{$article['title']}}",
-                "isPartOf": {"@id": "https://ao.empregosyoyota.net/#website"},
+                "isPartOf": {"@id": "https://empregosyoyota.net/#website"},
                 "primaryImageOfPage": {"@id": "{{url('/articles/'. $article['slug'])}}/#primaryimage"},
                 "image": {"@id": "{{url('/articles/'. $article['slug'])}}/#primaryimage"},
                 "thumbnailUrl": "{{asset('storage/' . $article['photo'])}}",
@@ -53,21 +53,21 @@
                 "@type": "BreadcrumbList",
                 "@id": "{{url('/articles/'. $article['slug'])}}/#breadcrumb",
                 "itemListElement": [
-                    {"@type": "ListItem", "position": 1, "name": "Início", "item": "https://ao.empregosyoyota.net/"},
+                    {"@type": "ListItem", "position": 1, "name": "Início", "item": "https://empregosyoyota.net/"},
                     {"@type": "ListItem", "position": 2, "name": "{{$article['title']}}"}
                 ]
             },
             {
                 "@type": "WebSite",
-                "@id": "https://ao.empregosyoyota.net/#website",
-                "url": "https://ao.empregosyoyota.net/",
+                "@id": "https://empregosyoyota.net/#website",
+                "url": "https://empregosyoyota.net/",
                 "name": "Empregos Yoyota",
                 "description": "Vagas de emprego estagio e bolsas de estudo",
-                "publisher": {"@id": "https://ao.empregosyoyota.net/#organization"},
+                "publisher": {"@id": "https://empregosyoyota.net/#organization"},
                 "potentialAction": [
                     {
                         "@type": "SearchAction",
-                        "target": {"@type": "EntryPoint", "urlTemplate": "https://ao.empregosyoyota.net/pesquisar?query={search_term_string}"},
+                        "target": {"@type": "EntryPoint", "urlTemplate": "https://empregosyoyota.net/pesquisar?query={search_term_string}"},
                         "query-input": "required name=search_term_string"
                     }
                 ],
@@ -75,35 +75,35 @@
             },
             {
                 "@type": "Organization",
-                "@id": "https://ao.empregosyoyota.net/#organization",
+                "@id": "https://empregosyoyota.net/#organization",
                 "name": "Empregos Yoyota",
-                "url": "https://ao.empregosyoyota.net/",
+                "url": "https://empregosyoyota.net/",
                 "logo": {
                     "@type": "ImageObject",
                     "inLanguage": "pt-PT",
-                    "@id": "https://ao.empregosyoyota.net/#/schema/logo/image/",
-                    "url": "https://ao.empregosyoyota.net/storage/images/logo-full.jpg",
-                    "contentUrl": "https://ao.empregosyoyota.net/storage/images/logo-full.jpg",
+                    "@id": "https://empregosyoyota.net/#/schema/logo/image/",
+                    "url": "https://empregosyoyota.net/storage/images/logo-full.jpg",
+                    "contentUrl": "https://empregosyoyota.net/storage/images/logo-full.jpg",
                     "width": 512,
                     "height": 512,
                     "caption": "Empregos Yoyota"
                 },
-                "image": {"@id": "https://ao.empregosyoyota.net/#/schema/logo/image/"},
+                "image": {"@id": "https://empregosyoyota.net/#/schema/logo/image/"},
                 "sameAs": ["https://web.facebook.com/empregosyoyota"]
             },
             {
                 "@type": "Person",
-                "@id": "https://ao.empregosyoyota.net/#/schema/person/4e746ddb32c25bcf75f5e4fa3c48a443",
+                "@id": "https://empregosyoyota.net/#/schema/person/4e746ddb32c25bcf75f5e4fa3c48a443",
                 "name": "Edivaldo",
                 "image": {
                     "@type": "ImageObject",
                     "inLanguage": "pt-PT",
-                    "@id": "https://ao.empregosyoyota.net/#/schema/person/image/",
+                    "@id": "https://empregosyoyota.net/#/schema/person/image/",
                     "url": "https://secure.gravatar.com/avatar/b568c8a12f1d1c77b0199f05f04c00a1?s=96&d=mm&r=g",
                     "contentUrl": "https://secure.gravatar.com/avatar/b568c8a12f1d1c77b0199f05f04c00a1?s=96&d=mm&r=g",
                     "caption": "Edivaldo"
                 },
-                "sameAs": ["https://ao.empregosyoyota.net"]
+                "sameAs": ["https://empregosyoyota.net"]
             }
         ]
     }

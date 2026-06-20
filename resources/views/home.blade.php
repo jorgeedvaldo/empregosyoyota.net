@@ -9,34 +9,34 @@
             "@graph": [
                 {
                 "@type": "WebPage",
-                "@id": "https://ao.empregosyoyota.net/",
-                "url": "https://ao.empregosyoyota.net/",
+                "@id": "https://empregosyoyota.net/",
+                "url": "https://empregosyoyota.net/",
                 "name": "Empregos Yoyota",
                 "isPartOf": {
-                    "@id": "https://ao.empregosyoyota.net/#website"
+                    "@id": "https://empregosyoyota.net/#website"
                 },
                 "about": {
-                    "@id": "https://ao.empregosyoyota.net/#organization"
+                    "@id": "https://empregosyoyota.net/#organization"
                 },
                 "primaryImageOfPage": {
-                    "@id": "https://ao.empregosyoyota.net/#primaryimage"
+                    "@id": "https://empregosyoyota.net/#primaryimage"
                 },
                 "image": {
-                    "@id": "https://ao.empregosyoyota.net/#primaryimage"
+                    "@id": "https://empregosyoyota.net/#primaryimage"
                 },
-                "thumbnailUrl": "https://ao.empregosyoyota.net/storage/images/logo-full.jpg",
+                "thumbnailUrl": "https://empregosyoyota.net/storage/images/logo-full.jpg",
                 "datePublished": "2021-06-05T18:42:05+00:00",
                 "dateModified": "2023-03-18T05:03:34+00:00",
                 "description": "Empregos Yoyota é um site Angolano de vagas que promove o contato direto entre quem está a procura de uma vaga de emprego, estágio ou bolsa de estudo, e quem está a contratar.",
                 "breadcrumb": {
-                    "@id": "https://ao.empregosyoyota.net/#breadcrumb"
+                    "@id": "https://empregosyoyota.net/#breadcrumb"
                 },
                 "inLanguage": "pt-PT",
                 "potentialAction": [
                     {
                     "@type": "ReadAction",
                     "target": [
-                        "https://ao.empregosyoyota.net/"
+                        "https://empregosyoyota.net/"
                     ]
                     }
                 ]
@@ -44,15 +44,15 @@
                 {
                 "@type": "ImageObject",
                 "inLanguage": "pt-PT",
-                "@id": "https://ao.empregosyoyota.net/#primaryimage",
-                "url": "https://ao.empregosyoyota.net/storage/images/logo-full.jpg",
-                "contentUrl": "https://ao.empregosyoyota.net/storage/images/logo-full.jpg",
+                "@id": "https://empregosyoyota.net/#primaryimage",
+                "url": "https://empregosyoyota.net/storage/images/logo-full.jpg",
+                "contentUrl": "https://empregosyoyota.net/storage/images/logo-full.jpg",
                 "width": 290,
                 "height": 290
                 },
                 {
                 "@type": "BreadcrumbList",
-                "@id": "https://ao.empregosyoyota.net/#breadcrumb",
+                "@id": "https://empregosyoyota.net/#breadcrumb",
                 "itemListElement": [
                     {
                     "@type": "ListItem",
@@ -63,19 +63,19 @@
                 },
                 {
                 "@type": "WebSite",
-                "@id": "https://ao.empregosyoyota.net/#website",
-                "url": "https://ao.empregosyoyota.net/",
+                "@id": "https://empregosyoyota.net/#website",
+                "url": "https://empregosyoyota.net/",
                 "name": "Empregos Yoyota",
                 "description": "Vagas de emprego estagio e bolsas de estudo",
                 "publisher": {
-                    "@id": "https://ao.empregosyoyota.net/#organization"
+                    "@id": "https://empregosyoyota.net/#organization"
                 },
                 "potentialAction": [
                     {
                     "@type": "SearchAction",
                     "target": {
                         "@type": "EntryPoint",
-                        "urlTemplate": "https://ao.empregosyoyota.net/pesquisar?query={search_term_string}"
+                        "urlTemplate": "https://empregosyoyota.net/pesquisar?query={search_term_string}"
                     },
                     "query-input": "required name=search_term_string"
                     }
@@ -84,21 +84,21 @@
                 },
                 {
                 "@type": "Organization",
-                "@id": "https://ao.empregosyoyota.net/#organization",
+                "@id": "https://empregosyoyota.net/#organization",
                 "name": "Empregos Yoyota",
-                "url": "https://ao.empregosyoyota.net/",
+                "url": "https://empregosyoyota.net/",
                 "logo": {
                     "@type": "ImageObject",
                     "inLanguage": "pt-PT",
-                    "@id": "https://ao.empregosyoyota.net/#/schema/logo/image/",
-                    "url": "https://ao.empregosyoyota.net/storage/images/logo-full.jpg",
-                    "contentUrl": "https://ao.empregosyoyota.net/storage/images/logo-full.jpg",
+                    "@id": "https://empregosyoyota.net/#/schema/logo/image/",
+                    "url": "https://empregosyoyota.net/storage/images/logo-full.jpg",
+                    "contentUrl": "https://empregosyoyota.net/storage/images/logo-full.jpg",
                     "width": 512,
                     "height": 512,
                     "caption": "Empregos Yoyota"
                 },
                 "image": {
-                    "@id": "https://ao.empregosyoyota.net/#/schema/logo/image/"
+                    "@id": "https://empregosyoyota.net/#/schema/logo/image/"
                 },
                 "sameAs": [
                     "https://web.facebook.com/empregosyoyota"
@@ -252,7 +252,7 @@
             <p style="font-size: 16px; color: #555; max-width: 600px; margin: 0 auto 30px;">
                 Informe-se sobre os seus direitos e deveres como trabalhador em Angola. A Lei Geral do Trabalho regula as relações laborais, garantindo proteção e equilíbrio no mercado de trabalho. Esteja preparado para a sua carreira!
             </p>
-            <a href="https://www.ao.empregosyoyota.net/articles/lei-geral-do-trabalho-lei-no-1223-de-27-de-dezembro" target="_blank" class="btn btn-lg btn-primary">
+            <a href="https://empregosyoyota.net/articles/lei-geral-do-trabalho-lei-no-1223-de-27-de-dezembro" target="_blank" class="btn btn-lg btn-primary">
                 Consulte a Lei Geral do Trabalho
             </a>
         </div>
