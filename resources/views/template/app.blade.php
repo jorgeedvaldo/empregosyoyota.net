@@ -53,11 +53,12 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 
-        <!-- Bootstrap CSS (framework base, loaded first) -->
-        <link href="{{ asset('assets/css/bootstrap.min.css') }}" rel="stylesheet" />
-
-        <!-- Site CSS (inlined after Bootstrap so custom overrides apply) -->
+        <!-- Site CSS (inlined: includes Bootstrap fallbacks for instant render) -->
         <style>{!! @file_get_contents(public_path('assets/css/style.css')) !!}</style>
+
+        <!-- Bootstrap CSS (async: fallbacks above cover initial render) -->
+        <link rel="preload" as="style" href="{{ asset('assets/css/bootstrap.min.css') }}" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link href="{{ asset('assets/css/bootstrap.min.css') }}" rel="stylesheet"></noscript>
 
         <!-- Non-critical CSS (deferred: fonts and decorative icons) -->
         <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;900&display=swap" onload="this.onload=null;this.rel='stylesheet'">
