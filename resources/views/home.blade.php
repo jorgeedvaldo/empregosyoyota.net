@@ -167,7 +167,7 @@
         <div class="container">
             <div class="row">
             <div class="col-lg-12 text-center">
-                <h1 class="section-heading text-uppercase">. . .</h1>
+                <div class="section-dots" aria-hidden="true">. . .</div>
                 <h2 class="section-heading text-uppercase">Oportunidades</h2>
                 <p class="section-subheading text-muted">Vagas de emprego recentemente publicadas</p>
             </div>
@@ -182,7 +182,7 @@
                                     <i class="bi bi-briefcase"></i>
                                 </div>
                                 <div class="job-card-body">
-                                    <h5 class="job-card-title">{{ $job['title'] }}</h5>
+                                    <h3 class="job-card-title">{{ $job['title'] }}</h5>
                                     <div class="job-card-meta">
                                         <span><i class="bi bi-building"></i> {{ $job['company'] }}</span>
                                         <span><i class="bi bi-geo-alt"></i> {{ $job['province'] }}</span>
@@ -207,7 +207,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 text-center">
-                    <h1 class="section-heading text-uppercase">. . .</h1>
+                    <div class="section-dots" aria-hidden="true">. . .</div>
                     <h2 class="section-heading text-uppercase">Vagas por País</h2>
                     <p class="section-subheading text-muted">Encontre oportunidades de emprego no seu país</p>
                 </div>
@@ -218,7 +218,7 @@
                         <div class="card h-100 text-center shadow-sm border-0" style="border-radius: 12px; transition: transform .2s;">
                             <div class="card-body py-4">
                                 <div class="mb-3" style="font-size: 3rem; line-height: 1;">&#127462;&#127476;</div>
-                                <h5 class="card-title fw-bold mb-1">Angola</h5>
+                                <h3 class="card-title fw-bold mb-1 h5">Angola</h5>
                                 <p class="card-text text-muted small">Vagas de emprego em Angola</p>
                                 <span class="btn btn-dark btn-sm mt-2">Ver vagas</span>
                             </div>
@@ -230,7 +230,7 @@
                         <div class="card h-100 text-center shadow-sm border-0" style="border-radius: 12px; transition: transform .2s;">
                             <div class="card-body py-4">
                                 <div class="mb-3" style="font-size: 3rem; line-height: 1;">&#127463;&#127479;</div>
-                                <h5 class="card-title fw-bold mb-1">Brasil</h5>
+                                <h3 class="card-title fw-bold mb-1 h5">Brasil</h5>
                                 <p class="card-text text-muted small">Vagas de emprego no Brasil</p>
                                 <span class="btn btn-dark btn-sm mt-2">Ver vagas</span>
                             </div>
@@ -242,7 +242,7 @@
                         <div class="card h-100 text-center shadow-sm border-0" style="border-radius: 12px; transition: transform .2s;">
                             <div class="card-body py-4">
                                 <div class="mb-3" style="font-size: 3rem; line-height: 1;">&#127474;&#127487;</div>
-                                <h5 class="card-title fw-bold mb-1">Moçambique</h5>
+                                <h3 class="card-title fw-bold mb-1 h5">Moçambique</h5>
                                 <p class="card-text text-muted small">Vagas de emprego em Moçambique</p>
                                 <span class="btn btn-dark btn-sm mt-2">Ver vagas</span>
                             </div>
@@ -272,7 +272,7 @@
         <div class="container">
 			<div class="row">
             <div class="col-lg-12 text-center">
-                <h1 class="section-heading text-uppercase">. . .</h1>
+                <div class="section-dots" aria-hidden="true">. . .</div>
                 <h2 class="section-heading text-uppercase">O Nosso Blog</h2>
                 <p class="section-subheading text-muted">Fique atento/a aos últimos artigos</p>
             </div>
@@ -283,7 +283,7 @@
             <div class="col-md-6">
                 <a href="{{ url('/articles/' . $article['slug']) }}" class="list-group-item list-group-item-action mb-3">
                     <div class="d-flex w-100 justify-content-between">
-                    <h5 class="mb-1"><b>{{ $article['title'] }}</b></h5>
+                    <h3 class="mb-1 h5"><b>{{ $article['title'] }}</b></h3>
                     <small>Publicado em: {{ date_format(new DateTime($article['created_at']), 'd-m-Y') }}</small>
                     </div>
                     <p class="mb-1"> </p>
@@ -303,7 +303,7 @@
         <div class="container">
             <div class="row">
             <div class="col-lg-12 text-center">
-                <h1 class="section-heading text-uppercase">. . .</h1>
+                <div class="section-dots" aria-hidden="true">. . .</div>
                 <h2 class="section-heading text-uppercase">Serviços</h2>
                 <p class="section-subheading text-muted">Oferecemos diversos serviços, com soluções inteligentes.</p>
             </div>
@@ -314,7 +314,7 @@
                     <i class="fa fa-circle fa-stack-2x text-dark"></i>
                     <i class="fa fa-asterisk fa-stack-1x fa-inverse"></i>
                 </span>
-                <h4 class="service-heading">Dicas</h4>
+                <h3 class="service-heading">Dicas</h4>
                 <p class="text-muted">Encontre dicas útes de como ter uma boa entrevista</p>
             </div>
             <div class="col-md-4">
@@ -322,7 +322,7 @@
                     <i class="fa fa-circle fa-stack-2x text-dark"></i>
                     <i class="fa fa-search fa-stack-1x fa-inverse"></i>
                 </span>
-                <h4 class="service-heading">Encontre Empregos</h4>
+                <h3 class="service-heading">Encontre Empregos</h4>
                 <p class="text-muted">Aqui você encontra diversas oportunidades de emprego nas mais diversas categorias</p>
             </div>
             <div class="col-md-4">
@@ -330,7 +330,7 @@
                     <i class="fa fa-circle fa-stack-2x text-dark"></i>
                     <i class="fa fa-feed fa-stack-1x fa-inverse"></i>
                 </span>
-                <h4 class="service-heading">Faça Publicidade</h4>
+                <h3 class="service-heading">Faça Publicidade</h4>
                 <p class="text-muted">Este serviço é mais voltado para aqueles que desejam fazer marketing dos seus negócios, e outros no nosso site, temos planos bem baratos para qualquer um aderir</p>
             </div>
             </div>
