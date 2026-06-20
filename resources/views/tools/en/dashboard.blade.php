@@ -3,9 +3,9 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://ao.empregosyoyota.net/assets/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="https://ao.empregosyoyota.net/assets/css/font-awesome.min.css" />
-    <link rel="stylesheet" href="https://ao.empregosyoyota.net/assets/css/main.css" />
+    <link rel="stylesheet" href="https://empregosyoyota.net/assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://empregosyoyota.net/assets/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="https://empregosyoyota.net/assets/css/main.css" />
     <title>Group of Apps - Empregos Yoyota</title>
     <style>
         .app-block {
@@ -32,7 +32,7 @@
         <!-- Navbar -->
         <nav class="navbar navbar-expand-lg bg-white">
             <div class="container">
-                <a class="navbar-brand" href="https://ao.empregosyoyota.net"><img src="https://ao.empregosyoyota.net/storage/images/logo.png"></a>
+                <a class="navbar-brand" href="https://empregosyoyota.net"><img src="https://empregosyoyota.net/storage/images/logo.png"></a>
                 <div class="navbar-collapse justify-content-end" id="navbarNav">
                     <ul class="nav nav-pills nav-fill">
                         <li class="nav-item">
@@ -42,7 +42,7 @@
                             <a href="?lang=pt" class="nav-link">PT</a>
                         </li>
                         <li class="nav-item">
-                            <a href="https://ao.empregosyoyota.net" class="nav-link">
+                            <a href="https://empregosyoyota.net" class="nav-link">
                                 <i class="fa fa-home"></i> Back to Home
                             </a>
                         </li>
@@ -61,7 +61,7 @@
                         <i class="fa fa-camera app-icon"></i>
                         <h2>Online OCR</h2>
                         <p>A free tool to convert images and PDFs into text with multi-language support.</p>
-                        <a href="https://ao.empregosyoyota.net/en/onlineocr" class="btn btn-primary mt-auto">Go to OCR App</a>
+                        <a href="https://empregosyoyota.net/en/onlineocr" class="btn btn-primary mt-auto">Go to OCR App</a>
                     </div>
                 </div>
                 
@@ -71,7 +71,7 @@
                         <i class="fa fa-microphone app-icon"></i>
                         <h2>Speech to Text</h2>
                         <p>A powerful app to convert spoken words into text efficiently and accurately.</p>
-                        <a href="https://ao.empregosyoyota.net/en/speechtotext" class="btn btn-primary mt-auto">Go to Speech-to-Text App</a>
+                        <a href="https://empregosyoyota.net/en/speechtotext" class="btn btn-primary mt-auto">Go to Speech-to-Text App</a>
                     </div>
                 </div>
 
@@ -93,8 +93,8 @@
                 <div class="row text-center text-md-left mt-3 pb-3">
                     <div class="col-md-3 col-lg-6 col-xl-3 mx-auto mt-3">
                         <h6 class="text-uppercase mb-4 font-weight-bold">Empregos Yoyota</h6>
-                        <a href="https://ao.empregosyoyota.net/terms">Terms</a>
-                        <p><a href="https://ao.empregosyoyota.net/en/onlineocr">OCR Online</a></p>
+                        <a href="https://empregosyoyota.net/terms">Terms</a>
+                        <p><a href="https://empregosyoyota.net/en/onlineocr">OCR Online</a></p>
                     </div>
                     <hr class="w-100 clearfix d-md-none">
                     <div class="col-md-4 col-lg-6 col-xl-3 mx-auto mt-3">

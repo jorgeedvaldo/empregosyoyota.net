@@ -3,12 +3,12 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="icon" href="https://ao.empregosyoyota.net/storage/images/logo-16x16.png" sizes="16x16" />
-        <link rel="icon" href="https://ao.empregosyoyota.net/storage/images/logo-32x32.png" sizes="32x32" />
-        <link rel="icon" href="https://ao.empregosyoyota.net/storage/images/logo-96x96.png" sizes="96x96" />
-        <link rel="apple-touch-icon" href="https://ao.empregosyoyota.net/storage/images/logo-180x180.png" />
+        <link rel="icon" href="https://empregosyoyota.net/storage/images/logo-16x16.png" sizes="16x16" />
+        <link rel="icon" href="https://empregosyoyota.net/storage/images/logo-32x32.png" sizes="32x32" />
+        <link rel="icon" href="https://empregosyoyota.net/storage/images/logo-96x96.png" sizes="96x96" />
+        <link rel="apple-touch-icon" href="https://empregosyoyota.net/storage/images/logo-180x180.png" />
 
-        <title>Convert Image and PDF to Text - Online OCR - Empregos Yoyota Angola</title>
+        <title>Convert Image and PDF to Text - Online OCR - Empregos Yoyota</title>
         <meta name="description" content="Known as Online OCR. A free online tool to convert images and PDFs into text with multi-language support. Here you can perform text recognition, convert images to text, convert PDFs to text, and use a free OCR tool." />
         <meta name="robots" content="follow, index, max-snippet:-1, max-video-preview:-1, max-image-preview:large"/>
 
@@ -28,11 +28,11 @@
         <!-- Open Graph / Facebook -->
         <meta property="og:type" content="article" />
         <meta property="og:title" content="Convert Image and PDF to Text - Online OCR" />
-        <meta property="og:url" content="https://ao.empregosyoyota.net/onlineocr" />
+        <meta property="og:url" content="https://empregosyoyota.net/onlineocr" />
         <meta property="og:description" content="Known as Online OCR. A free online tool to convert images and PDFs into text with multi-language support. Here you can perform text recognition, convert images to text, convert PDFs to text, and use a free OCR tool." />
         <meta property="article:published_time" content="2024-08-30 12:00:40" />
         <meta property="article:modified_time" content="2024-08-30 12:00:40" />
-        <meta property="og:site_name" content="Empregos Yoyota Angola" />
+        <meta property="og:site_name" content="Empregos Yoyota" />
         <meta property="og:image" content="" />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="700" />
@@ -44,18 +44,18 @@
         <meta name="twitter:card" content="summary_large_image" />
 		
         <!-- Feed -->
-        <link rel="alternate" type="application/rss+xml" title="Empregos Yoyota &raquo; Feed" href="https://ao.empregosyoyota.net/feed" />
+        <link rel="alternate" type="application/rss+xml" title="Empregos Yoyota &raquo; Feed" href="https://empregosyoyota.net/feed" />
 
         <!-- Canonical Link -->
-        <link rel="canonical" href="https://ao.empregosyoyota.net/en/onlineocr"/>
+        <link rel="canonical" href="https://empregosyoyota.net/en/onlineocr"/>
 		
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet"/>
 
         <!-- Styles -->
-        <link href="https://ao.empregosyoyota.net/assets/css/bootstrap.min.css" rel="stylesheet" />
-        <link href="https://ao.empregosyoyota.net/assets/css/font-awesome.min.css" rel="stylesheet" />
-        <link href="https://ao.empregosyoyota.net/assets/css/main.css" rel="stylesheet" />
+        <link href="https://empregosyoyota.net/assets/css/bootstrap.min.css" rel="stylesheet" />
+        <link href="https://empregosyoyota.net/assets/css/font-awesome.min.css" rel="stylesheet" />
+        <link href="https://empregosyoyota.net/assets/css/main.css" rel="stylesheet" />
     </head>
 
     <body>
@@ -63,11 +63,11 @@
             <!-- ======= Navbar Section ======= -->
             <nav class="navbar navbar-expand-lg bg-white">
                 <div class="container">
-                    <a class="navbar-band" href="https://ao.empregosyoyota.net"><img src="https://ao.empregosyoyota.net/storage/images/logo.png"></a>
+                    <a class="navbar-band" href="https://empregosyoyota.net"><img src="https://empregosyoyota.net/storage/images/logo.png"></a>
                     <div class="navbar-collapse justify-content-end" id="navbarNav">
                         <ul class="nav nav-pills nav-fill">
                             <li class="nav-item">
-                                <a href="https://ao.empregosyoyota.net" class = "nav-link"><i class="fa fa-home"></i> Back to Home</a>
+                                <a href="https://empregosyoyota.net" class = "nav-link"><i class="fa fa-home"></i> Back to Home</a>
                             </li>
                         </ul>
                     </div>
@@ -295,8 +295,8 @@
 
                 <div class="col-md-3 col-lg-6 col-xl-3 mx-auto mt-3">
                     <h6 class="text-uppercase mb-4 font-weight-bold">Empregos Yoyota</h6>
-					<a href="https://ao.empregosyoyota.net/terms">Terms</a>
-					<p><a href="https://ao.empregosyoyota.net/en/onlineocr">OCR Online</a></p>
+					<a href="https://empregosyoyota.net/terms">Terms</a>
+					<p><a href="https://empregosyoyota.net/en/onlineocr">OCR Online</a></p>
                 </div>
 
                 <hr class="w-100 clearfix d-md-none">

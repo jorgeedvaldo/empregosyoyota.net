@@ -9,36 +9,36 @@
   "@graph": [
     {
       "@type": "WebPage",
-      "@id": "https://ao.empregosyoyota.net/empregos/",
-      "url": "https://ao.empregosyoyota.net/empregos/",
+      "@id": "https://empregosyoyota.net/empregos/",
+      "url": "https://empregosyoyota.net/empregos/",
       "name": "Vagas de Emprego em Angola - Empregos Yoyota",
       "isPartOf": {
-        "@id": "https://ao.empregosyoyota.net/#website"
+        "@id": "https://empregosyoyota.net/#website"
       },
       "datePublished": "2025-01-13T00:00:00+00:00",
       "dateModified": "2025-01-13T00:00:00+00:00",
       "breadcrumb": {
-        "@id": "https://ao.empregosyoyota.net/empregos/#breadcrumb"
+        "@id": "https://empregosyoyota.net/empregos/#breadcrumb"
       },
       "inLanguage": "pt-AO",
       "potentialAction": [
         {
           "@type": "ReadAction",
           "target": [
-            "https://ao.empregosyoyota.net/empregos/"
+            "https://empregosyoyota.net/empregos/"
           ]
         }
       ]
     },
     {
       "@type": "BreadcrumbList",
-      "@id": "https://ao.empregosyoyota.net/empregos/#breadcrumb",
+      "@id": "https://empregosyoyota.net/empregos/#breadcrumb",
       "itemListElement": [
         {
           "@type": "ListItem",
           "position": 1,
           "name": "Home",
-          "item": "https://ao.empregosyoyota.net/"
+          "item": "https://empregosyoyota.net/"
         },
         {
           "@type": "ListItem",
@@ -49,19 +49,19 @@
     },
     {
       "@type": "WebSite",
-      "@id": "https://ao.empregosyoyota.net/#website",
-      "url": "https://ao.empregosyoyota.net/",
+      "@id": "https://empregosyoyota.net/#website",
+      "url": "https://empregosyoyota.net/",
       "name": "Empregos Yoyota",
       "description": "Site Angolano com vagas de emprego em Angola e oportunidades de recrutamento.",
       "publisher": {
-        "@id": "https://ao.empregosyoyota.net/#organization"
+        "@id": "https://empregosyoyota.net/#organization"
       },
       "potentialAction": [
         {
           "@type": "SearchAction",
           "target": {
             "@type": "EntryPoint",
-            "urlTemplate": "https://ao.empregosyoyota.net/?s={search_term_string}"
+            "urlTemplate": "https://empregosyoyota.net/?s={search_term_string}"
           },
           "query-input": {
             "@type": "PropertyValueSpecification",
@@ -74,21 +74,21 @@
     },
     {
       "@type": "Organization",
-      "@id": "https://ao.empregosyoyota.net/#organization",
+      "@id": "https://empregosyoyota.net/#organization",
       "name": "Empregos Yoyota",
-      "url": "https://ao.empregosyoyota.net/",
+      "url": "https://empregosyoyota.net/",
       "logo": {
         "@type": "ImageObject",
         "inLanguage": "pt-AO",
-        "@id": "https://ao.empregosyoyota.net/#/schema/logo/image/",
-        "url": "https://ao.empregosyoyota.net/assets/logo-yoyota.png",
-        "contentUrl": "https://ao.empregosyoyota.net/assets/logo-yoyota.png",
+        "@id": "https://empregosyoyota.net/#/schema/logo/image/",
+        "url": "https://empregosyoyota.net/assets/logo-yoyota.png",
+        "contentUrl": "https://empregosyoyota.net/assets/logo-yoyota.png",
         "width": 1200,
         "height": 1200,
         "caption": "Empregos Yoyota"
       },
       "image": {
-        "@id": "https://ao.empregosyoyota.net/#/schema/logo/image/"
+        "@id": "https://empregosyoyota.net/#/schema/logo/image/"
       },
       "sameAs": [
         "https://www.facebook.com/EmpregosYoyota",

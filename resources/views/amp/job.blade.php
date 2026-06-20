@@ -2,7 +2,7 @@
 <html ⚡="">
   <head>
     <meta charset="utf-8" />
-    <title>{{$job->title}} - Empregos Yoyota Angola</title>
+    <title>{{$job->title}} - Empregos Yoyota</title>
     <link rel="canonical" href="{{url('/empregos/'. $job['slug'])}}" />
     <meta name="viewport" content="width=device-width" />
     <meta name="amp-google-client-id-api" content="googleanalytics" />
@@ -1866,7 +1866,7 @@
         ☰
       </div>
       <amp-img
-    src="https://ao.empregosyoyota.net/storage/images/logo.png"
+    src="https://empregosyoyota.net/storage/images/logo.png"
     width="200"
     height="15.3"
     layout="fixed"
