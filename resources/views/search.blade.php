@@ -22,16 +22,24 @@
                 <input type="search" class="form-control rounded mr-2" placeholder="Digite a sua pesquisa" aria-label="Search" aria-describedby="search-addon" name="query" value="{{ $query }}"/>
                 <button type="submit" class="btn btn-dark" data-mdb-ripple-init>Pesquisar</button>
             </form>
-            <div class="list-group">
+            <div class="job-list">
                 @foreach($jobs as $job)
 
-                    <a href="{{ url('/empregos/' . $job['slug']) }}" class="list-group-item list-group-item-action mb-3">
-                        <div class="d-flex w-100 justify-content-between">
-                        <h5 class="mb-1"><b>{{ $job['title'] }}</b></h5>
-                        <small>Publicado em: {{ date_format(new DateTime($job['created_at']), 'd-m-Y') }}</small>
+                    <a href="{{ url('/empregos/' . $job['slug']) }}" class="job-card-item">
+                        <div class="job-card-icon">
+                            <i class="bi bi-briefcase"></i>
                         </div>
-                        <p class="mb-1">Empresa: {{ $job['company'] }}</p>
-                        <small><i class="fa fa-map-marker"></i> Localização: <span>{{ $job['province'] }}</span></small>
+                        <div class="job-card-body">
+                            <h5 class="job-card-title">{{ $job['title'] }}</h5>
+                            <div class="job-card-meta">
+                                <span><i class="bi bi-building"></i> {{ $job['company'] }}</span>
+                                <span><i class="bi bi-geo-alt"></i> {{ $job['province'] }}</span>
+                                <span><i class="bi bi-calendar3"></i> {{ date_format(new DateTime($job['created_at']), 'd-m-Y') }}</span>
+                            </div>
+                        </div>
+                        <div class="job-card-arrow">
+                            <i class="bi bi-arrow-right"></i>
+                        </div>
                     </a>
 
                 @endforeach
