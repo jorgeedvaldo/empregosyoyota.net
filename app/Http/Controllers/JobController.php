@@ -7,6 +7,8 @@ use App\Models\Category;
 use App\Models\Job;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Cache;
 
 class JobController extends Controller
 {
@@ -21,10 +23,25 @@ class JobController extends Controller
         return $countries[$country] ?? null;
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $jobs = Job::where('country_id', 1)->orderByRaw('id DESC')->paginate(30);
-        $categories = Category::orderBy('name')->get();
+        // First page is served from cache to avoid hitting the database
+        if ($request->get('page', 1) == 1) {
+            $perPage = 30;
+            $cachedJobs = Job::getCachedLatest();
+
+            $jobs = new LengthAwarePaginator(
+                $cachedJobs->slice(0, $perPage)->values(),
+                Job::where('country_id', 1)->count(),
+                $perPage,
+                1,
+                ['path' => $request->url(), 'query' => $request->query()]
+            );
+        } else {
+            $jobs = Job::where('country_id', 1)->orderByRaw('id DESC')->paginate(30);
+        }
+
+        $categories = Category::getCachedAll();
         return view('jobs', compact('jobs', 'categories'));
     }
 
@@ -51,7 +68,7 @@ class JobController extends Controller
             ->orderByRaw('id DESC')
             ->paginate(30);
 
-        $categories = Category::orderBy('name')->get();
+        $categories = Category::getCachedAll();
 
         $title = 'Vagas de Emprego ' . $this->getCountryName($country);
 
@@ -61,12 +78,16 @@ class JobController extends Controller
     public function getById($id)
     {
         try {
-            $job = Job::with('categories')->where('country_id', 1)->where('id', $id)->firstOrFail();
+            $job = Cache::remember('job_id_' . $id, 1440, function () use ($id) {
+                return Job::with('categories')->where('country_id', 1)->where('id', $id)->firstOrFail();
+            });
 
-            $LastArticles = Article::orderByRaw('id DESC')->get();
-            $LastJobs = Job::with('categories')->where('country_id', 1)->where('id', '<>', $id)->orderByRaw('id DESC')->get();
+            $LastArticles = Article::getCachedLatest();
+            $LastJobs = Job::getCachedLatest()->reject(function ($value) use ($id) {
+                return $value->id == $id;
+            })->values();
 
-            $categories = Category::orderBy('name')->get();
+            $categories = Category::getCachedAll();
 
             return view('job', compact('job', 'categories', 'LastArticles', 'LastJobs'));
         } catch (Exception $ex) {
@@ -77,7 +98,7 @@ class JobController extends Controller
     public function getByCategoryId($id)
     {
         try {
-            $categories = Category::orderBy('name')->get();
+            $categories = Category::getCachedAll();
 
             $category = Category::with(['jobs' => function ($query) {
                 $query->where('country_id', 1)->orderByRaw('id DESC');
@@ -93,12 +114,16 @@ class JobController extends Controller
     public function getBySlug($slug)
     {
         try {
-            $job = Job::with('categories')->where('slug', $slug)->firstOrFail();
+            $job = Cache::remember('job_' . $slug, 1440, function () use ($slug) {
+                return Job::with('categories')->where('slug', $slug)->firstOrFail();
+            });
 
-            $LastArticles = Article::orderByRaw('id DESC')->get();
-            $LastJobs = Job::with('categories')->where('country_id', 1)->where('slug', '<>', $slug)->orderByRaw('id DESC')->get();
+            $LastArticles = Article::getCachedLatest();
+            $LastJobs = Job::getCachedLatest()->reject(function ($value) use ($slug) {
+                return $value->slug === $slug;
+            })->values();
 
-            $categories = Category::orderBy('name')->get();
+            $categories = Category::getCachedAll();
 
             return view('job', compact('job', 'categories', 'LastArticles', 'LastJobs'));
         } catch (Exception $ex) {
@@ -128,7 +153,7 @@ class JobController extends Controller
             ->orderByRaw('id DESC')
             ->paginate(30);
 
-        $categories = Category::orderBy('name')->get();
+        $categories = Category::getCachedAll();
 
         return view('search', compact('categories', 'jobs', 'query'));
     }

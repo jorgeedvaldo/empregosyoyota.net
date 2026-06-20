@@ -14,10 +14,10 @@ class OcrController extends Controller
     {
         try
         {
-            $LastArticles = Article::orderByRaw('id DESC')->get();
-            $LastJobs = Job::with('categories')->where('country_id', 1)->orderByRaw('id DESC')->get();
+            $LastArticles = Article::getCachedLatest();
+            $LastJobs = Job::getCachedLatest();
 
-            $categories = Category::orderBy('name')->get();
+            $categories = Category::getCachedAll();
 
             return view('tools.ocr', compact('categories', 'LastArticles', 'LastJobs'));
         }
