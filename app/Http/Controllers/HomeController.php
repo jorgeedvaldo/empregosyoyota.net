@@ -10,8 +10,8 @@ class HomeController extends Controller
 {
     public function index()
     {
-        $jobs = Job::where('country_id', 1)->orderByRaw('id DESC')->paginate(15);
-		$articles = Article::where('country_id', 1)->orderByRaw('id DESC')->paginate(8);
+        $jobs = Job::getCachedLatest()->take(15);
+        $articles = Article::getCachedLatest()->take(8);
         return view('home', compact('jobs', 'articles'));
     }
 }
