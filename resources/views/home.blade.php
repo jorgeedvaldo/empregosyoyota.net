@@ -125,90 +125,37 @@
     <!-- Hero Section -->
     <section class="hero-section">
         <div class="container">
-            <div class="row align-items-center">
-                <div class="col-lg-6">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 text-center">
                     <h1 class="hero-title">
-                        A tua <span class="highlight">carreira</span><br>
-                        começa agora
+                        A tua carreira<br>começa <span class="highlight">agora</span>
                     </h1>
-                    
+
                     <p class="hero-subtitle">
-                        Rápido, fácil e eficiente - conectamos talentos às melhores oportunidades de emprego em Angola com uma plataforma moderna e intuitiva.
+                        Aqui você encontra o seu emprego ideal
                     </p>
-                    
+
                     <div class="search-container">
-                        <div class="d-flex">
-                            <form action="{{ route('search') }}" method="GET" class="input-group mb-3">
-                                <input type="search" class="form-control search-input flex-grow-1" placeholder="Digite o cargo ou palavra-chave..." aria-label="Search" aria-describedby="search-addon" name="query"/>
-                                <button type="submit" class="btn search-btn">Pesquisar</button>
-                            </form>
-                        </div>
-                    </div>
-                    
-                    <div class="stats-container">
-                        <div class="stat-item">
-                            <div class="stat-number">12.7k+</div>
-                            <div class="stat-label">Vagas ativas</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-number">~15k</div>
-                            <div class="stat-label">Candidatos registrados</div>
-                        </div>
-                    </div>
-                    
-                    <div class="rating-container">
-                        <div class="stars">
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-half"></i>
-                        </div>
-                        <span class="rating-text">4.7</span>
-                        <span class="rating-label">Avaliação dos usuários</span>
-                    </div>
-                </div>
-                
-                <div class="col-lg-6">
-                    <div class="hero-image position-relative">
-                        <!-- Job Card 1 -->
-                        <div class="job-card job-card-1">
-                            <div class="company-logo">
-                                <i class="bi bi-code-slash" style="color: #000000;"></i>
+                        <form action="{{ route('search') }}" method="GET" class="hero-search-form">
+                            <div class="search-field">
+                                <i class="bi bi-search"></i>
+                                <input type="search" class="search-input" placeholder="Cargo, empresa ou competências" name="query"/>
                             </div>
-                            <div class="job-title">Desenvolvedor Full Stack</div>
-                            <div class="job-company">TechSolutions Angola</div>
-                            <div class="job-location">
+                            <div class="search-divider"></div>
+                            <div class="search-field">
                                 <i class="bi bi-geo-alt"></i>
-                                <span>Luanda</span>
+                                <input type="text" class="search-input" placeholder="Cidade ou Província" name="location"/>
                             </div>
-                        </div>
-                        
-                        <!-- Job Card 2 -->
-                        <div class="job-card job-card-2">
-                            <div class="company-logo">
-                                <i class="bi bi-graph-up" style="color: #000000;"></i>
-                            </div>
-                            <div class="job-title">Analista de Marketing</div>
-                            <div class="job-company">Marketing Pro</div>
-                            <div class="job-location">
-                                <i class="bi bi-geo-alt"></i>
-                                <span>Luanda</span>
-                            </div>
-                        </div>
-                        
-                        <!-- Job Card 3 -->
-                        <div class="job-card job-card-3">
-                            <div class="company-logo">
-                                <i class="bi bi-gear" style="color: #000000;"></i>
-                            </div>
-                            <div class="job-title">Engenheiro Civil</div>
-                            <div class="job-company">Construções SA</div>
-                            <div class="job-location">
-                                <i class="bi bi-geo-alt"></i>
-                                <span>Luanda</span>
-                            </div>
-                        </div>
+                            <button type="submit" class="btn search-btn">Pesquisar Vagas</button>
+                        </form>
+                    </div>
+
+                    <div class="trending-tags">
+                        <span class="trending-label">Tendências:</span>
+                        <a href="{{ url('/pesquisar?query=Tecnologia') }}" class="trending-tag">Tecnologia</a>
+                        <a href="{{ url('/pesquisar?query=Vendas') }}" class="trending-tag">Vendas</a>
+                        <a href="{{ url('/pesquisar?query=Construção') }}" class="trending-tag">Construção</a>
+                        <a href="{{ url('/pesquisar?query=Administração') }}" class="trending-tag">Administração</a>
                     </div>
                 </div>
             </div>
