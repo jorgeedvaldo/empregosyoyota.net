@@ -123,6 +123,15 @@
                                 <a href="https://www.linkedin.com/company/empregosyoyota" aria-label="LinkedIn"><i class="bi bi-linkedin" aria-hidden="true"></i></a>
                                 <a href="https://instagram.com/empregosyoyota" aria-label="Instagram"><i class="bi bi-instagram" aria-hidden="true"></i></a>
                             </div>
+                            <a href="https://play.google.com/store/apps/details?id=net.empregosyoyota.app"
+                               target="_blank" rel="noopener"
+                               class="d-inline-block mt-3"
+                               aria-label="Baixar o app Empregos Yoyota na Google Play">
+                                <img src="https://play.google.com/intl/pt-BR_pt/badges/static/images/badges/pt-br_badge_web_generic.png"
+                                     alt="Disponível no Google Play"
+                                     loading="lazy"
+                                     style="height: 48px; width: auto;">
+                            </a>
                         </div>
 
                         <div class="col-lg-2 col-md-6 mb-4">
