@@ -187,6 +187,7 @@
                     <div class="footer-bottom">
                         <div class="footer-bottom-links">
                             <a href="{{ url('/terms') }}">Termos de Uso e Política de Privacidade</a>
+                            <a href="{{ url('/api-docs') }}">API para Programadores</a>
                             <a href="#">Cookies</a>
                             <a href="#">Suporte</a>
                             <a href="#">Contato</a>
