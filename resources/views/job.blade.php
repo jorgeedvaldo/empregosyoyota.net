@@ -196,6 +196,10 @@
                 <strong>Entre no nosso canal do WhatsApp </strong>
                 <a href="https://whatsapp.com/channel/0029VaCfSeo0bIdgKs7bIB3t"><strong>CLICANDO AQUI</strong></a>
             </p>
+
+            <!-- Divulgação do App -->
+            @include('partials.app-download')
+
             <hr>
 
             @if($previousJobUrl)
@@ -275,9 +279,6 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Divulgação do App -->
-            @include('partials.app-download')
 
             <!-- Anúncio sidebar -->
             <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2118765549976668" crossorigin="anonymous"></script>
