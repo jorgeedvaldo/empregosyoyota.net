@@ -260,7 +260,9 @@
                  style="background: linear-gradient(135deg, #1a1a1a 0%, #343a40 100%); border-radius: 16px; color: #fff;">
                 <div class="col-lg-8 text-center text-lg-start">
                     <h2 class="fw-bold mb-3" style="color: #fff;">
-                        <i class="bi bi-google-play me-2" aria-hidden="true"></i>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" viewBox="0 0 16 16" class="me-2" style="vertical-align: -4px;" aria-hidden="true">
+                            <path d="M14.222 9.374c1.037-.61 1.037-2.137 0-2.748L11.528 5.04 8.32 8l3.207 2.96zm-3.595 2.116L7.583 8.68 1.03 14.73c.201 1.029 1.36 1.61 2.303 1.055zM1 13.396V2.603L6.846 8zM1.03 1.27l6.553 6.05 3.044-2.81L3.333.215C2.39-.341 1.231.24 1.03 1.27"/>
+                        </svg>
                         Leve a Empregos Yoyota consigo
                     </h2>
                     <p class="mb-0" style="color: rgba(255, 255, 255, 0.85); font-size: 1.1rem;">
