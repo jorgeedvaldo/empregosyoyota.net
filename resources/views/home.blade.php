@@ -253,6 +253,35 @@
         </div>
     </section>
 
+    <!-- Divulgação do App (Google Play) -->
+    <section class="app-promo-section mt-5 mb-5">
+        <div class="container">
+            <div class="row align-items-center g-4 p-4 p-md-5"
+                 style="background: linear-gradient(135deg, #1a1a1a 0%, #343a40 100%); border-radius: 16px; color: #fff;">
+                <div class="col-lg-8 text-center text-lg-start">
+                    <h2 class="fw-bold mb-3" style="color: #fff;">
+                        <i class="bi bi-google-play me-2" aria-hidden="true"></i>
+                        Leve a Empregos Yoyota consigo
+                    </h2>
+                    <p class="mb-0" style="color: rgba(255, 255, 255, 0.85); font-size: 1.1rem;">
+                        Baixe o nosso aplicativo na Google Play e receba notificações das vagas
+                        de emprego mais recentes diretamente no seu telemóvel.
+                    </p>
+                </div>
+                <div class="col-lg-4 text-center text-lg-end">
+                    <a href="https://play.google.com/store/apps/details?id=net.empregosyoyota.app"
+                       target="_blank" rel="noopener"
+                       aria-label="Baixar o app Empregos Yoyota na Google Play">
+                        <img src="https://play.google.com/intl/pt-BR_pt/badges/static/images/badges/pt-br_badge_web_generic.png"
+                             alt="Disponível no Google Play"
+                             loading="lazy"
+                             style="height: 64px; width: auto;">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!--Lei Geral do Trabalho-->
     <section class="labor-law-section mb-5" style="background-color: #f8f8f8; padding: 40px 20px; text-align: center;">
         <div class="container">

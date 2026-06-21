@@ -276,6 +276,9 @@
                 </div>
             </div>
 
+            <!-- Divulgação do App -->
+            @include('partials.app-download')
+
             <!-- Anúncio sidebar -->
             <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2118765549976668" crossorigin="anonymous"></script>
             <ins class="adsbygoogle"
