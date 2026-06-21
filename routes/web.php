@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\AboutController;
+use App\Http\Controllers\ApiDocController;
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\CurriculoController;
 use App\Http\Controllers\HomeController;
@@ -33,6 +34,7 @@ Route::get('/articles/novo-portal-de-recrutamento-da-policia-nacional-de-angola-
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/about', [AboutController::class, 'index'])->name('about');
 Route::get('/terms', [TermController::class, 'index'])->name('terms');
+Route::get('/api-docs', [ApiDocController::class, 'index'])->name('api.docs');
 
 Route::get('/categories/{id}', [JobController::class, 'getByCategoryId'])
     ->where('id', '[0-9]+');
