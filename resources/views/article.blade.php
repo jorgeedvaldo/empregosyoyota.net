@@ -153,6 +153,9 @@
             {!!$article['description']!!}
         </div>
 
+        <!-- Divulgação do App -->
+        @include('partials.app-download')
+
         <hr>
 
       </div>
