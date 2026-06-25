@@ -23,6 +23,8 @@ Route::post('/category_job/create', [JobController::class, 'setCategories']);
 
 Route::post('/job/create', [JobController::class, 'store']);
 
+Route::post('/jobs/upload-image', [JobController::class, 'uploadImage']);
+
 Route::get('/jobs', [JobController::class, 'get']);
 Route::get('/jobs/all', [JobController::class, 'index']);
 Route::get('/jobs/{id}', [JobController::class, 'getById']);
