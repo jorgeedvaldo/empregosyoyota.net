@@ -155,7 +155,7 @@
     <!-- Vagas por cidade e estado -->
     <section id="cidades" class="card border-0 shadow-sm mb-4">
         <div class="card-body p-4">
-            <h2 class="h5 fw-bold mb-4">Vagas por cidade e estado no {{ $location }}</h2>
+            <h2 class="h5 fw-bold mb-4">Vagas por cidade e província em {{ $location }}</h2>
             <div class="d-flex flex-wrap gap-2">
                 @foreach($cidadesLinks as $cidade)
                     <a href="{{ $cidade['url'] }}" class="trending-tag">Vagas em {{ $cidade['name'] }}</a>

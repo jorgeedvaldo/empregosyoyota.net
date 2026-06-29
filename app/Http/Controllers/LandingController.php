@@ -34,11 +34,11 @@ class LandingController extends Controller
         $filtros      = $this->filtros($location, $exploreUrl, $s);
         $faqs         = $this->faqs($location);
 
-        // Interligacao de cidades (apenas na pagina de pais do Brasil)
+        // Interligacao de cidades/provincias (nas paginas de pais)
         $cidadesLinks = [];
-        if ($key === 'brasil') {
+        if ($type === 'country') {
             foreach (config('landings') as $c) {
-                if (($c['type'] ?? null) === 'city' && ($c['country_id'] ?? null) == 2) {
+                if (($c['type'] ?? null) === 'city' && ($c['country_id'] ?? null) == $cfg['country_id']) {
                     $cidadesLinks[] = ['name' => $c['name'], 'url' => url($c['slug'])];
                 }
             }

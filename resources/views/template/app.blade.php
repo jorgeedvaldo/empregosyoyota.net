@@ -184,16 +184,30 @@
                         </div>
                     </div>
 
-                    <div class="footer-section mb-4">
-                        <h5>Vagas por cidade no Brasil</h5>
-                        <ul class="footer-links footer-cities" style="display:flex; flex-wrap:wrap; gap:.25rem 1.5rem; list-style:none; padding-left:0; margin-bottom:0;">
-                            @foreach (config('landings') as $landingCfg)
-                                @if (($landingCfg['type'] ?? null) === 'city' && ($landingCfg['country_id'] ?? null) == 2)
+                    @php
+                        $footerCityGroups = [
+                            ['id' => 1, 'label' => 'Vagas por cidade em Angola'],
+                            ['id' => 2, 'label' => 'Vagas por cidade no Brasil'],
+                            ['id' => 3, 'label' => 'Vagas por cidade em Moçambique'],
+                        ];
+                    @endphp
+                    @foreach ($footerCityGroups as $group)
+                        @php
+                            $footerCities = array_filter(config('landings'), function ($c) use ($group) {
+                                return ($c['type'] ?? null) === 'city' && ($c['country_id'] ?? null) == $group['id'];
+                            });
+                        @endphp
+                        @if (!empty($footerCities))
+                        <div class="footer-section mb-4">
+                            <h5>{{ $group['label'] }}</h5>
+                            <ul class="footer-links footer-cities" style="display:flex; flex-wrap:wrap; gap:.25rem 1.5rem; list-style:none; padding-left:0; margin-bottom:0;">
+                                @foreach ($footerCities as $landingCfg)
                                     <li><a href="{{ url($landingCfg['slug']) }}">{{ $landingCfg['name'] }}</a></li>
-                                @endif
-                            @endforeach
-                        </ul>
-                    </div>
+                                @endforeach
+                            </ul>
+                        </div>
+                        @endif
+                    @endforeach
 
                     <div class="footer-bottom">
                         <div class="footer-bottom-links">

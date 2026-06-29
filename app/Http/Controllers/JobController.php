@@ -81,7 +81,15 @@ class JobController extends Controller
         $jobs = Job::getCachedLatest();
         $categories = Category::getCachedAll();
 
-        return view('vagas-de-emprego-em-angola', compact('jobs', 'categories'));
+        // Interligacao das provincias de Angola (a partir de config/landings.php)
+        $cidadesLinks = [];
+        foreach (config('landings') as $c) {
+            if (($c['type'] ?? null) === 'city' && ($c['country_id'] ?? null) == 1) {
+                $cidadesLinks[] = ['name' => $c['name'], 'url' => url($c['slug'])];
+            }
+        }
+
+        return view('vagas-de-emprego-em-angola', compact('jobs', 'categories', 'cidadesLinks'));
     }
 
     public function getById($id)
