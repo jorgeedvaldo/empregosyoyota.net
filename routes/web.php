@@ -8,6 +8,7 @@ use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\CurriculoController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\JobController;
+use App\Http\Controllers\LandingController;
 use App\Http\Controllers\OcrController;
 use App\Http\Controllers\TermController;
 
@@ -36,6 +37,13 @@ Route::get('/about', [AboutController::class, 'index'])->name('about');
 Route::get('/terms', [TermController::class, 'index'])->name('terms');
 Route::get('/api-docs', [ApiDocController::class, 'index'])->name('api.docs');
 Route::get('/vagas-de-emprego-em-angola', [JobController::class, 'vagasAngola'])->name('vagas.angola');
+
+// Landings SEO de vagas (Brasil, Mocambique e cidades) geradas a partir de config/landings.php
+foreach ((array) config('landings') as $landingKey => $landingCfg) {
+    Route::get('/' . $landingCfg['slug'], [LandingController::class, 'show'])
+        ->defaults('key', $landingKey)
+        ->name('landing.' . $landingKey);
+}
 
 Route::get('/categories/{id}', [JobController::class, 'getByCategoryId'])
     ->where('id', '[0-9]+');
