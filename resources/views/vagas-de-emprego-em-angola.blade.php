@@ -152,24 +152,55 @@
     ];
 @endphp
 <script type="application/ld+json">{!! json_encode($schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) !!}</script>
+
+<style>
+    /* FAQ alinhado com a identidade do site (preto/cinza, sem azuis) */
+    .faq-accordion .accordion-item {
+        border: 1px solid #e9ecef;
+        border-radius: 10px !important;
+        margin-bottom: 0.75rem;
+        overflow: hidden;
+    }
+    .faq-accordion .accordion-button {
+        font-weight: 600;
+        color: #1a1a1a;
+        background-color: #fff;
+    }
+    .faq-accordion .accordion-button:not(.collapsed) {
+        color: #000;
+        background-color: #f8f9fa;
+        box-shadow: none;
+    }
+    .faq-accordion .accordion-button:focus {
+        box-shadow: none;
+        border-color: #e9ecef;
+    }
+    .faq-accordion .accordion-button:not(.collapsed)::after {
+        /* mantem o chevron mas em tom escuro em vez do azul padrao */
+        filter: grayscale(1) brightness(0.2);
+    }
+    .faq-accordion .accordion-body {
+        color: #555;
+    }
+</style>
 @endsection
 
 @section('content')
 <div class="container my-4">
 
     <!-- Cabeçalho da landing -->
-    <section class="p-4 mb-4 rounded" style="background-color: #f8f9fa;">
-        <h1 class="fw-bold mb-3">Vagas de emprego em Angola</h1>
-        <p class="text-muted mb-4" style="max-width: 900px;">
+    <section class="hero-section rounded mb-4" style="padding: 3rem 2rem;">
+        <h1 class="hero-title">Vagas de emprego em <span class="highlight">Angola</span></h1>
+        <p class="hero-subtitle" style="max-width: 900px;">
             Esta é a landing principal para quem pesquisa vagas de emprego em Angola. Aqui encontra
             oportunidades atualizadas, links por cidade e categoria, e atalhos para vagas de entrada,
             júnior e estágio num único ponto de discovery orgânico. Também ligamos para buscas amplas
             como trabalho, recrutamento, jobs, CV e concursos públicos.
         </p>
         <div class="d-flex flex-wrap gap-2">
-            <a href="{{ url('/ao/empregos') }}" class="btn btn-outline-dark">Explorar vagas em Angola</a>
-            <a href="{{ url('/ao/empregos') }}" class="btn btn-outline-dark">Ver vagas por localização</a>
-            <a href="{{ url('/empregos') }}" class="btn btn-outline-dark">Ver vagas por categoria</a>
+            <a href="{{ url('/ao/empregos') }}" class="trending-tag">Explorar vagas em Angola</a>
+            <a href="{{ url('/ao/empregos') }}" class="trending-tag">Ver vagas por localização</a>
+            <a href="{{ url('/empregos') }}" class="trending-tag">Ver vagas por categoria</a>
         </div>
     </section>
 
@@ -197,7 +228,7 @@
             <div class="d-flex flex-wrap gap-2">
                 @foreach($relacionadas as $termo)
                     <a href="{{ route('search', ['query' => $termo]) }}"
-                       class="btn btn-sm btn-outline-secondary rounded-pill">{{ $termo }}</a>
+                       class="trending-tag">{{ $termo }}</a>
                 @endforeach
             </div>
         </div>
@@ -239,7 +270,7 @@
     <section class="card border-0 shadow-sm mb-4">
         <div class="card-body p-4">
             <h2 class="h5 fw-bold mb-4">Perguntas frequentes sobre vagas de emprego em Angola</h2>
-            <div class="accordion" id="faqAccordion">
+            <div class="accordion faq-accordion" id="faqAccordion">
                 @foreach($faqs as $i => $faq)
                 <div class="accordion-item">
                     <h3 class="accordion-header" id="faqHeading{{ $i }}">
