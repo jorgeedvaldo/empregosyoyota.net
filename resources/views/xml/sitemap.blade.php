@@ -23,6 +23,12 @@
 		<lastmod>2024-09-06T13:52:38+00:00</lastmod>
 	</url>
 
+	<!-- Landing SEO -->
+	<url>
+		<loc>{{ url('/vagas-de-emprego-em-angola') }}</loc>
+		<lastmod>{{ now()->toAtomString() }}</lastmod>
+	</url>
+
 	<!-- Páginas de vagas por país -->
 	<url>
 		<loc>{{ url('/empregos') }}</loc>
