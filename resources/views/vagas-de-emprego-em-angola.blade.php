@@ -221,6 +221,20 @@
         </div>
     </section>
 
+    @if(!empty($cidadesLinks))
+    <!-- Vagas por província -->
+    <section id="cidades" class="card border-0 shadow-sm mb-4">
+        <div class="card-body p-4">
+            <h2 class="h5 fw-bold mb-4">Vagas por cidade e província em Angola</h2>
+            <div class="d-flex flex-wrap gap-2">
+                @foreach($cidadesLinks as $cidade)
+                    <a href="{{ $cidade['url'] }}" class="trending-tag">Vagas em {{ $cidade['name'] }}</a>
+                @endforeach
+            </div>
+        </div>
+    </section>
+    @endif
+
     <!-- Pesquisas relacionadas -->
     <section class="card border-0 shadow-sm mb-4">
         <div class="card-body p-4">
