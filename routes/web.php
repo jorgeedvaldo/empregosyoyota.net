@@ -35,6 +35,7 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/about', [AboutController::class, 'index'])->name('about');
 Route::get('/terms', [TermController::class, 'index'])->name('terms');
 Route::get('/api-docs', [ApiDocController::class, 'index'])->name('api.docs');
+Route::get('/vagas-de-emprego-em-angola', [JobController::class, 'vagasAngola'])->name('vagas.angola');
 
 Route::get('/categories/{id}', [JobController::class, 'getByCategoryId'])
     ->where('id', '[0-9]+');

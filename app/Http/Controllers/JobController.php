@@ -75,6 +75,15 @@ class JobController extends Controller
         return view('jobs', compact('jobs', 'categories', 'country', 'title'));
     }
 
+    public function vagasAngola()
+    {
+        // Landing SEO. Reaproveita o cache das ultimas vagas de Angola.
+        $jobs = Job::getCachedLatest();
+        $categories = Category::getCachedAll();
+
+        return view('vagas-de-emprego-em-angola', compact('jobs', 'categories'));
+    }
+
     public function getById($id)
     {
         try {
