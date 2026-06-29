@@ -151,9 +151,9 @@
                             <div class="footer-section">
                                 <h5>Vagas por País</h5>
                                 <ul class="footer-links">
-                                    <li><a href="{{ url('/ao/empregos') }}">&#127462;&#127476; Angola</a></li>
-                                    <li><a href="{{ url('/br/empregos') }}">&#127463;&#127479; Brasil</a></li>
-                                    <li><a href="{{ url('/mz/empregos') }}">&#127474;&#127487; Moçambique</a></li>
+                                    <li><a href="{{ url('/vagas-de-emprego-em-angola') }}">&#127462;&#127476; Angola</a></li>
+                                    <li><a href="{{ url('/vagas-de-emprego-no-brasil') }}">&#127463;&#127479; Brasil</a></li>
+                                    <li><a href="{{ url('/vagas-de-emprego-em-mocambique') }}">&#127474;&#127487; Moçambique</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -182,6 +182,17 @@
                                 </ul>
                             </div>
                         </div>
+                    </div>
+
+                    <div class="footer-section mb-4">
+                        <h5>Vagas por cidade no Brasil</h5>
+                        <ul class="footer-links footer-cities" style="display:flex; flex-wrap:wrap; gap:.25rem 1.5rem; list-style:none; padding-left:0; margin-bottom:0;">
+                            @foreach (config('landings') as $landingCfg)
+                                @if (($landingCfg['type'] ?? null) === 'city' && ($landingCfg['country_id'] ?? null) == 2)
+                                    <li><a href="{{ url($landingCfg['slug']) }}">{{ $landingCfg['name'] }}</a></li>
+                                @endif
+                            @endforeach
+                        </ul>
                     </div>
 
                     <div class="footer-bottom">
