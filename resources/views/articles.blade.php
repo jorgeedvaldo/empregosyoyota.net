@@ -25,7 +25,7 @@
                     <small>Publicado em: {{ date_format(new DateTime($article['created_at']), 'd-m-Y') }}</small>
                     </div>
                     <p class="mb-1"> </p>
-                    <small><i class="fa fa-journal"></i>   <span> </span></small>
+                    <small><i class="bi bi-journal-text"></i>   <span> </span></small>
                 </a>
             </div>
           @endforeach
