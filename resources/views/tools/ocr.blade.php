@@ -15,30 +15,9 @@
       <!-- Post Content Column -->
       <div class="col-lg-8">
 		<!-- AD 1 -->
-		<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2118765549976668"
-     crossorigin="anonymous"></script>
-		<!-- AnuncioVizualizacao2 -->
-		<ins class="adsbygoogle"
-			 style="display:block"
-			 data-ad-client="ca-pub-2118765549976668"
-			 data-ad-slot="5838441610"
-			 data-ad-format="auto"
-			 data-full-width-responsive="true"></ins>
-		<script>
-			 (adsbygoogle = window.adsbygoogle || []).push({});
-		</script>
+		@include('partials.adsense', ['slot' => '5838441610', 'format' => 'auto', 'responsive' => true])
 		<!-- AD 2 -->
-        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2118765549976668" crossorigin="anonymous"></script>
-        <ins class="adsbygoogle"
-            style="display:block; text-align:center;"
-            data-ad-layout="in-article"
-            data-ad-format="fluid"
-            data-ad-client="ca-pub-2118765549976668"
-            data-ad-slot="7583808877">
-        </ins>
-        <script>
-            (adsbygoogle = window.adsbygoogle || []).push({});
-        </script>
+        @include('partials.adsense', ['slot' => '7583808877', 'layout' => 'in-article', 'format' => 'fluid', 'style' => 'display:block; text-align:center;'])
 	  
 		  <h1 class="text-center mb-4">Converter Imagem e PDF em Texto - Online OCR</h1>
         <div class="mb-3">
@@ -186,31 +165,10 @@
 
 
 			  
-		<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2118765549976668"
-     crossorigin="anonymous"></script>
 		<!-- AnuncioVisualizacao -->
-		<ins class="adsbygoogle"
-			 style="display:block"
-			 data-ad-client="ca-pub-2118765549976668"
-			 data-ad-slot="9753835582"
-			 data-ad-format="auto"
-			 data-full-width-responsive="true"></ins>
-		<script>
-			 (adsbygoogle = window.adsbygoogle || []).push({});
-		</script>
-			  
-		<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2118765549976668"
-     crossorigin="anonymous"></script>
+		@include('partials.adsense', ['slot' => '9753835582', 'format' => 'auto', 'responsive' => true])
 		<!-- AnuncioVisualizacao3 -->
-		<ins class="adsbygoogle"
-			 style="display:block"
-			 data-ad-client="ca-pub-2118765549976668"
-			 data-ad-slot="2166789917"
-			 data-ad-format="auto"
-			 data-full-width-responsive="true"></ins>
-		<script>
-			 (adsbygoogle = window.adsbygoogle || []).push({});
-		</script>
+		@include('partials.adsense', ['slot' => '2166789917', 'format' => 'auto', 'responsive' => true])
       </div>
 
       <!-- Sidebar Widgets Column -->
@@ -266,18 +224,7 @@
         </div>
         <!-- End -->
         <!-- Anúncio Adaptável -->
-        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2118765549976668"
-            crossorigin="anonymous"></script>
-        <!-- Anúncio Adaptável -->
-        <ins class="adsbygoogle"
-            style="display:block"
-            data-ad-client="ca-pub-2118765549976668"
-            data-ad-slot="8002595367"
-            data-ad-format="auto"
-            data-full-width-responsive="true"></ins>
-        <script>
-            (adsbygoogle = window.adsbygoogle || []).push({});
-        </script>
+        @include('partials.adsense', ['slot' => '8002595367', 'format' => 'auto', 'responsive' => true])
 
       </div>
 

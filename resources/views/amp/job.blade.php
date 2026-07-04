@@ -1849,9 +1849,11 @@
     </style>
   </head>
   <body>
+	  @if($adsEnabled ?? true)
 	  <amp-auto-ads type="adsense"
         data-ad-client="ca-pub-2118765549976668">
 </amp-auto-ads>
+	  @endif
     <!-- Start Navbar -->
     <header
       class="ampstart-headerbar fixed flex justify-start items-center top-0 left-0 right-0 pl2 pr4"

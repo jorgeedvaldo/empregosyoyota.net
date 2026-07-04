@@ -166,24 +166,10 @@
             <h3>Descrição:</h3>
 
             <!-- Anúncio 1 -->
-            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2118765549976668" crossorigin="anonymous"></script>
-            <ins class="adsbygoogle"
-                 style="display:block"
-                 data-ad-client="ca-pub-2118765549976668"
-                 data-ad-slot="5838441610"
-                 data-ad-format="auto"
-                 data-full-width-responsive="true"></ins>
-            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+            @include('partials.adsense', ['slot' => '5838441610', 'format' => 'auto', 'responsive' => true])
 
             <!-- Anúncio em artigo -->
-            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2118765549976668" crossorigin="anonymous"></script>
-            <ins class="adsbygoogle"
-                 style="display:block; text-align:center;"
-                 data-ad-layout="in-article"
-                 data-ad-format="fluid"
-                 data-ad-client="ca-pub-2118765549976668"
-                 data-ad-slot="7583808877"></ins>
-            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+            @include('partials.adsense', ['slot' => '7583808877', 'layout' => 'in-article', 'format' => 'fluid', 'style' => 'display:block; text-align:center;'])
 
             <div class="lead content mt-3">
                 {!! $job['description'] !!}
@@ -207,24 +193,10 @@
             @endif
 
             <!-- Anúncio adaptável -->
-            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2118765549976668" crossorigin="anonymous"></script>
-            <ins class="adsbygoogle"
-                 style="display:block"
-                 data-ad-client="ca-pub-2118765549976668"
-                 data-ad-slot="9753835582"
-                 data-ad-format="auto"
-                 data-full-width-responsive="true"></ins>
-            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+            @include('partials.adsense', ['slot' => '9753835582', 'format' => 'auto', 'responsive' => true])
 
             <!-- Anúncio 4 -->
-            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2118765549976668" crossorigin="anonymous"></script>
-            <ins class="adsbygoogle"
-                 style="display:block"
-                 data-ad-client="ca-pub-2118765549976668"
-                 data-ad-slot="2166789917"
-                 data-ad-format="auto"
-                 data-full-width-responsive="true"></ins>
-            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+            @include('partials.adsense', ['slot' => '2166789917', 'format' => 'auto', 'responsive' => true])
 
             @if($countryCode === 'ao')
             <section class="my-4 p-4 text-center rounded" style="background-color: #f8f8f8;">
@@ -281,14 +253,7 @@
             </div>
 
             <!-- Anúncio sidebar -->
-            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2118765549976668" crossorigin="anonymous"></script>
-            <ins class="adsbygoogle"
-                 style="display:block"
-                 data-ad-client="ca-pub-2118765549976668"
-                 data-ad-slot="8002595367"
-                 data-ad-format="auto"
-                 data-full-width-responsive="true"></ins>
-            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+            @include('partials.adsense', ['slot' => '8002595367', 'format' => 'auto', 'responsive' => true])
 
         </div>
     </div>

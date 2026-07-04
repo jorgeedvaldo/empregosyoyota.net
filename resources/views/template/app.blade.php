@@ -22,7 +22,9 @@
         </script>
 
         <!-- AdSense -->
+        @if($adsEnabled ?? true)
         <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2118765549976668" crossorigin="anonymous"></script>
+        @endif
 
         <!-- Open Graph / Facebook -->
 		<meta property="og:type" content="article" />
