@@ -14,7 +14,7 @@ class SitemapController extends Controller
      * (o limite do protocolo e 50.000; usamos um valor menor para
      *  manter os ficheiros leves.)
      */
-    const CHUNK = 1000;
+    const CHUNK = 2000;
 
     /**
      * Indice de sitemaps: /sitemap.xml
@@ -46,21 +46,30 @@ class SitemapController extends Controller
     public function pages()
     {
         $now = now()->toAtomString();
+        $urls = [];
 
-        $static = [
-            '/', '/about', '/terms', '/api-docs',
+        // Homepage
+        $urls[] = ['loc' => url('/'), 'lastmod' => $now, 'changefreq' => 'daily', 'priority' => '1.0'];
+
+        // Listagens e landings principais (conteudo que muda com frequencia)
+        $daily = [
             '/empregos', '/articles', '/modelos-de-curriculos',
-            '/onlineocr', '/en/onlineocr', '/quiz', '/dashboard', '/en/dashboard',
             '/ao/empregos', '/br/empregos', '/mz/empregos',
             '/vagas-de-emprego-em-angola',
         ];
-
-        $urls = [];
-        foreach ($static as $path) {
-            $urls[] = ['loc' => url($path), 'lastmod' => $now];
+        foreach ($daily as $path) {
+            $urls[] = ['loc' => url($path), 'lastmod' => $now, 'changefreq' => 'daily', 'priority' => '0.8'];
         }
+
+        // Paginas institucionais / ferramentas (mudam pouco)
+        $static = ['/about', '/terms', '/api-docs', '/onlineocr', '/en/onlineocr', '/quiz', '/dashboard', '/en/dashboard'];
+        foreach ($static as $path) {
+            $urls[] = ['loc' => url($path), 'lastmod' => $now, 'changefreq' => 'monthly', 'priority' => '0.4'];
+        }
+
+        // Landings SEO de vagas por pais/cidade
         foreach (config('landings') as $cfg) {
-            $urls[] = ['loc' => url($cfg['slug']), 'lastmod' => $now];
+            $urls[] = ['loc' => url($cfg['slug']), 'lastmod' => $now, 'changefreq' => 'weekly', 'priority' => '0.7'];
         }
 
         return $this->xml('xml.sitemap-urlset', ['urls' => $urls]);
@@ -77,6 +86,8 @@ class SitemapController extends Controller
             return [
                 'loc' => url('/categories/' . $c->id),
                 'lastmod' => optional($c->updated_at)->toAtomString() ?: $now,
+                'changefreq' => 'weekly',
+                'priority' => '0.6',
             ];
         })->all();
 
@@ -94,6 +105,8 @@ class SitemapController extends Controller
             fn ($job) => [
                 'loc' => url('/empregos/' . $job->slug),
                 'lastmod' => optional($job->updated_at)->toAtomString(),
+                'changefreq' => 'weekly',
+                'priority' => '0.7',
                 'image' => $job->photo ? asset('storage/' . $job->photo) : null,
             ]
         );
@@ -112,6 +125,8 @@ class SitemapController extends Controller
             fn ($article) => [
                 'loc' => url('/articles/' . $article->slug),
                 'lastmod' => optional($article->updated_at)->toAtomString(),
+                'changefreq' => 'monthly',
+                'priority' => '0.6',
                 'image' => $article->photo ? asset('storage/' . $article->photo) : null,
             ]
         );
@@ -130,6 +145,8 @@ class SitemapController extends Controller
             fn ($cv) => [
                 'loc' => url('/modelos-de-curriculos/' . $cv->slug),
                 'lastmod' => optional($cv->updated_at)->toAtomString(),
+                'changefreq' => 'monthly',
+                'priority' => '0.5',
                 'image' => $cv->photo ? asset('storage/' . $cv->photo) : null,
             ]
         );

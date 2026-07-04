@@ -6,6 +6,12 @@
 @if (!empty($u['lastmod']))
         <lastmod>{{ $u['lastmod'] }}</lastmod>
 @endif
+@if (!empty($u['changefreq']))
+        <changefreq>{{ $u['changefreq'] }}</changefreq>
+@endif
+@if (!empty($u['priority']))
+        <priority>{{ $u['priority'] }}</priority>
+@endif
 @if (!empty($u['image']))
         <image:image>
             <image:loc>{{ $u['image'] }}</image:loc>
