@@ -29,17 +29,7 @@
       <!-- Post Content -->
       <h3>Descrição:</h3>
 
-      <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2118765549976668" crossorigin="anonymous"></script>
-      <ins class="adsbygoogle"
-          style="display:block; text-align:center;"
-          data-ad-layout="in-article"
-          data-ad-format="fluid"
-          data-ad-client="ca-pub-2118765549976668"
-          data-ad-slot="7583808877">
-      </ins>
-      <script>
-          (adsbygoogle = window.adsbygoogle || []).push({});
-      </script>
+      @include('partials.adsense', ['slot' => '7583808877', 'layout' => 'in-article', 'format' => 'fluid', 'style' => 'display:block; text-align:center;'])
       <p class="lead">{!!$curriculo['description']!!}</p>
 
       <p>Download {{$curriculo['link']}} </p>
@@ -51,18 +41,7 @@
     <div class="col-md-4"> 
     
       <!-- Anúncio Adaptável -->
-      <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2118765549976668"
-          crossorigin="anonymous"></script>
-      <!-- Anúncio Adaptável -->
-      <ins class="adsbygoogle"
-          style="display:block"
-          data-ad-client="ca-pub-2118765549976668"
-          data-ad-slot="8002595367"
-          data-ad-format="auto"
-          data-full-width-responsive="true"></ins>
-      <script>
-          (adsbygoogle = window.adsbygoogle || []).push({});
-      </script>
+      @include('partials.adsense', ['slot' => '8002595367', 'format' => 'auto', 'responsive' => true])
 
     </div>
 
