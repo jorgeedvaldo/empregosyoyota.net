@@ -9,6 +9,7 @@ use App\Http\Controllers\CurriculoController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\LandingController;
+use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\OcrController;
 use App\Http\Controllers\TermController;
 
@@ -77,7 +78,14 @@ Route::get('/en/onlineocr', [OcrController::class, 'indexEn'])->name('ocren');
 Route::get('/en/dashboard', [OcrController::class, 'indexDashboardEn'])->name('dashboardEn');
 Route::get('/dashboard', [OcrController::class, 'indexDashboardPt'])->name('dashboardPt');
 
-Route::get('/sitemap.xml', [JobController::class, 'siteMapGenerator'])->name('sitemap');
+// Sitemap: indice + sub-sitemaps paginados (cobre todas as paginas do site)
+Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
+Route::get('/sitemap-pages.xml', [SitemapController::class, 'pages']);
+Route::get('/sitemap-categories.xml', [SitemapController::class, 'categories']);
+Route::get('/sitemap-jobs-{page}.xml', [SitemapController::class, 'jobs'])->where('page', '[0-9]+');
+Route::get('/sitemap-articles-{page}.xml', [SitemapController::class, 'articles'])->where('page', '[0-9]+');
+Route::get('/sitemap-curriculos-{page}.xml', [SitemapController::class, 'curriculos'])->where('page', '[0-9]+');
+
 Route::get('/feed', [JobController::class, 'feedGenerator'])->name('feed');
 
 

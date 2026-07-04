@@ -175,13 +175,6 @@ class JobController extends Controller
         return view('search', compact('categories', 'jobs', 'query'));
     }
 
-    public function siteMapGenerator()
-    {
-        $jobs = Job::orderByRaw('id DESC')->paginate(500);
-        $articles = Article::orderByRaw('id DESC')->paginate(300);
-        return response()->view('xml.sitemap', compact('jobs', 'articles'))->header('Content-Type', 'text/xml');
-    }
-
     public function feedGenerator()
     {
         $jobs = Job::orderByRaw('id DESC')->paginate(10);
