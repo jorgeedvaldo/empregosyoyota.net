@@ -12,14 +12,14 @@
         <meta name="description" content="Known as Online OCR. A free online tool to convert images and PDFs into text with multi-language support. Here you can perform text recognition, convert images to text, convert PDFs to text, and use a free OCR tool." />
         <meta name="robots" content="follow, index, max-snippet:-1, max-video-preview:-1, max-image-preview:large"/>
 
-        <!-- Global site tag (gtag.js) - Google Analytics -->
-        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-189086548-1"></script>
+        <!-- Google tag (gtag.js) - GA4 -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-CZKH9CWSVX"></script>
         <script>
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
 
-            gtag('config', 'UA-189086548-1');
+            gtag('config', 'G-CZKH9CWSVX');
         </script>
 
         <!-- AdSense -->
@@ -56,7 +56,7 @@
 
         <!-- Styles -->
         <link href="https://empregosyoyota.net/assets/css/bootstrap.min.css" rel="stylesheet" />
-        <link href="https://empregosyoyota.net/assets/css/font-awesome.min.css" rel="stylesheet" />
+        <link href="https://empregosyoyota.net/assets/css/icons.css" rel="stylesheet" />
         <link href="https://empregosyoyota.net/assets/css/main.css" rel="stylesheet" />
     </head>
 
@@ -69,7 +69,7 @@
                     <div class="navbar-collapse justify-content-end" id="navbarNav">
                         <ul class="nav nav-pills nav-fill">
                             <li class="nav-item">
-                                <a href="https://empregosyoyota.net" class = "nav-link"><i class="fa fa-home"></i> Back to Home</a>
+                                <a href="https://empregosyoyota.net" class = "nav-link"><i class="bi bi-house"></i> Back to Home</a>
                             </li>
                         </ul>
                     </div>
@@ -264,11 +264,11 @@
                 <div class="col-md-4 col-lg-6 col-xl-3 mx-auto mt-3">
                     <h6 class="text-uppercase mb-4 font-weight-bold">Social Network</h6>
                     <p>
-                    <i class="fa fa-facebook mr-3"></i> <a href="http://facebook.com/empregosyoyota">Empregos Yoyota</a></p>
+                    <i class="bi bi-facebook mr-3"></i> <a href="http://facebook.com/empregosyoyota">Empregos Yoyota</a></p>
                     <p>
-                    <i class="fa fa-instagram mr-3"></i><a href="http://instagram.com/empregosyoyota">empregosyoyota</a></p>
+                    <i class="bi bi-instagram mr-3"></i><a href="http://instagram.com/empregosyoyota">empregosyoyota</a></p>
                     <p>
-                    <i class="fa fa-linkedin mr-3"></i><a href="http://linkedin.com/company/empregosyoyota">Empregos Yoyota</a></p>
+                    <i class="bi bi-linkedin mr-3"></i><a href="http://linkedin.com/company/empregosyoyota">Empregos Yoyota</a></p>
                 </div>
 					
 				<div class="col-md-4 col-lg-6 col-xl-3 mx-auto mt-3">

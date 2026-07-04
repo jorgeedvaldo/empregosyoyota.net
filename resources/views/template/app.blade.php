@@ -12,13 +12,13 @@
         <meta name="description" content="@yield('description')" />
 		<meta name="robots" content="follow, index, max-snippet:-1, max-video-preview:-1, max-image-preview:large"/>
 
-        <!-- Google Analytics (deferred) -->
-        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-189086548-1"></script>
+        <!-- Google tag (gtag.js) - GA4 -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-CZKH9CWSVX"></script>
         <script>
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-            gtag('config', 'UA-189086548-1');
+            gtag('config', 'G-CZKH9CWSVX');
         </script>
 
         <!-- AdSense -->
@@ -68,9 +68,6 @@
 
         <link rel="preload" as="style" href="{{ asset('assets/css/icons.css') }}?v={{ @filemtime(public_path('assets/css/icons.css')) ?: '1' }}" onload="this.onload=null;this.rel='stylesheet'">
         <noscript><link href="{{ asset('assets/css/icons.css') }}" rel="stylesheet"></noscript>
-
-        <link rel="preload" as="style" href="{{ asset('assets/css/font-awesome.min.css') }}" onload="this.onload=null;this.rel='stylesheet'">
-        <noscript><link href="{{ asset('assets/css/font-awesome.min.css') }}" rel="stylesheet"></noscript>
 
 			@yield('head-scripts')
     </head>

@@ -166,7 +166,7 @@
                             <p class="mb-1"><b>{{ $LastJobs[$i]['title'] }}</b></p>
                           </div>
                           <p class="mb-1">Empresa: {{ $LastJobs[$i]['company'] }}</p>
-                          <small><i class="fa fa-map-marker"></i> Localização: <span>{{ $LastJobs[$i]['province'] }}</span></small>
+                          <small><i class="bi bi-geo-alt"></i> Localização: <span>{{ $LastJobs[$i]['province'] }}</span></small>
                       </a>
   
                   @endfor
@@ -191,7 +191,7 @@
                       <p class="mb-1"><b>{{ $LastArticles[$i]['title'] }}</b></p>
                       </div>
                       <p class="mb-1">Publicado em: {{ date_format(new DateTime($LastArticles[$i]['created_at']), 'd-m-Y') }}</p>
-                      <small><i class="fa fa-journal"></i>   <span> </span></small>
+                      <small><i class="bi bi-journal-text"></i>   <span> </span></small>
                     </a>
   
                   @endfor

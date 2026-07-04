@@ -108,18 +108,6 @@
         }
 
     </script>
-<script type="application/ld+json" class="reviews-schema" data-type="all">
-															{
-									"@context": "http://schema.org", 
-									"@type": "Product", 
-									"name": "Empregos Yoyota", 
-																			"aggregateRating": { 
-											"@type": "AggregateRating", 
-											"bestRating":5,
-											"ratingValue": 4.50,
-											"reviewCount": 36979										}
-																	}
-														</script>
 @endsection
 @section('content')
     <!-- Hero Section -->
@@ -182,7 +170,7 @@
                                     <i class="bi bi-briefcase"></i>
                                 </div>
                                 <div class="job-card-body">
-                                    <h3 class="job-card-title">{{ $job['title'] }}</h5>
+                                    <h3 class="job-card-title">{{ $job['title'] }}</h3>
                                     <div class="job-card-meta">
                                         <span><i class="bi bi-building"></i> {{ $job['company'] }}</span>
                                         <span><i class="bi bi-geo-alt"></i> {{ $job['province'] }}</span>
@@ -218,7 +206,7 @@
                         <div class="card h-100 text-center shadow-sm border-0" style="border-radius: 12px; transition: transform .2s;">
                             <div class="card-body py-4">
                                 <div class="mb-3" style="font-size: 3rem; line-height: 1;">&#127462;&#127476;</div>
-                                <h3 class="card-title fw-bold mb-1 h5">Angola</h5>
+                                <h3 class="card-title fw-bold mb-1 h5">Angola</h3>
                                 <p class="card-text text-muted small">Vagas de emprego em Angola</p>
                                 <span class="btn btn-dark btn-sm mt-2">Ver vagas</span>
                             </div>
@@ -230,7 +218,7 @@
                         <div class="card h-100 text-center shadow-sm border-0" style="border-radius: 12px; transition: transform .2s;">
                             <div class="card-body py-4">
                                 <div class="mb-3" style="font-size: 3rem; line-height: 1;">&#127463;&#127479;</div>
-                                <h3 class="card-title fw-bold mb-1 h5">Brasil</h5>
+                                <h3 class="card-title fw-bold mb-1 h5">Brasil</h3>
                                 <p class="card-text text-muted small">Vagas de emprego no Brasil</p>
                                 <span class="btn btn-dark btn-sm mt-2">Ver vagas</span>
                             </div>
@@ -242,7 +230,7 @@
                         <div class="card h-100 text-center shadow-sm border-0" style="border-radius: 12px; transition: transform .2s;">
                             <div class="card-body py-4">
                                 <div class="mb-3" style="font-size: 3rem; line-height: 1;">&#127474;&#127487;</div>
-                                <h3 class="card-title fw-bold mb-1 h5">Moçambique</h5>
+                                <h3 class="card-title fw-bold mb-1 h5">Moçambique</h3>
                                 <p class="card-text text-muted small">Vagas de emprego em Moçambique</p>
                                 <span class="btn btn-dark btn-sm mt-2">Ver vagas</span>
                             </div>
@@ -318,7 +306,7 @@
                     <small>Publicado em: {{ date_format(new DateTime($article['created_at']), 'd-m-Y') }}</small>
                     </div>
                     <p class="mb-1"> </p>
-                    <small><i class="fa fa-journal"></i>   <span> </span></small>
+                    <small><i class="bi bi-journal-text"></i>   <span> </span></small>
                 </a>
             </div>
           @endforeach
@@ -341,27 +329,24 @@
             </div>
             <div class="row text-center">
             <div class="col-md-4">
-                <span class="fa-stack fa-4x">
-                    <i class="fa fa-circle fa-stack-2x text-dark"></i>
-                    <i class="fa fa-asterisk fa-stack-1x fa-inverse"></i>
+                <span class="service-icon d-inline-flex align-items-center justify-content-center rounded-circle bg-dark text-white mb-3" style="width:80px;height:80px;font-size:2rem;">
+                    <i class="bi bi-info-circle"></i>
                 </span>
-                <h3 class="service-heading">Dicas</h4>
+                <h3 class="service-heading">Dicas</h3>
                 <p class="text-muted">Encontre dicas útes de como ter uma boa entrevista</p>
             </div>
             <div class="col-md-4">
-                <span class="fa-stack fa-4x">
-                    <i class="fa fa-circle fa-stack-2x text-dark"></i>
-                    <i class="fa fa-search fa-stack-1x fa-inverse"></i>
+                <span class="service-icon d-inline-flex align-items-center justify-content-center rounded-circle bg-dark text-white mb-3" style="width:80px;height:80px;font-size:2rem;">
+                    <i class="bi bi-search"></i>
                 </span>
-                <h3 class="service-heading">Encontre Empregos</h4>
+                <h3 class="service-heading">Encontre Empregos</h3>
                 <p class="text-muted">Aqui você encontra diversas oportunidades de emprego nas mais diversas categorias</p>
             </div>
             <div class="col-md-4">
-                <span class="fa-stack fa-4x">
-                    <i class="fa fa-circle fa-stack-2x text-dark"></i>
-                    <i class="fa fa-feed fa-stack-1x fa-inverse"></i>
+                <span class="service-icon d-inline-flex align-items-center justify-content-center rounded-circle bg-dark text-white mb-3" style="width:80px;height:80px;font-size:2rem;">
+                    <i class="bi bi-megaphone"></i>
                 </span>
-                <h3 class="service-heading">Faça Publicidade</h4>
+                <h3 class="service-heading">Faça Publicidade</h3>
                 <p class="text-muted">Este serviço é mais voltado para aqueles que desejam fazer marketing dos seus negócios, e outros no nosso site, temos planos bem baratos para qualquer um aderir</p>
             </div>
             </div>

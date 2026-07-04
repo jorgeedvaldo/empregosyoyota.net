@@ -8,6 +8,12 @@ return new class extends Migration
 {
     public function up()
     {
+        // Acautelado: nao recria a tabela se ela ja tiver sido criada
+        // diretamente no banco de dados (script SQL).
+        if (Schema::hasTable('settings')) {
+            return;
+        }
+
         Schema::create('settings', function (Blueprint $table) {
             $table->id();
             $table->string('key')->unique();

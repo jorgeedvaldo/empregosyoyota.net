@@ -230,7 +230,7 @@
                         <a href="{{ $lastJobUrl }}" class="list-group-item list-group-item-action mb-2">
                             <p class="mb-1 fw-bold">{{ $lastJob['title'] }}</p>
                             <p class="mb-1 small">Empresa: {{ $lastJob['company'] }}</p>
-                            <small><i class="fa fa-map-marker"></i> {{ $lastJob['province'] }}</small>
+                            <small><i class="bi bi-geo-alt"></i> {{ $lastJob['province'] }}</small>
                         </a>
                         @endforeach
                     </div>

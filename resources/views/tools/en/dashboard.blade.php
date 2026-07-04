@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://empregosyoyota.net/assets/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="https://empregosyoyota.net/assets/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="https://empregosyoyota.net/assets/css/icons.css" />
     <link rel="stylesheet" href="https://empregosyoyota.net/assets/css/main.css" />
     <title>Group of Apps - Empregos Yoyota</title>
     <style>
@@ -43,7 +43,7 @@
                         </li>
                         <li class="nav-item">
                             <a href="https://empregosyoyota.net" class="nav-link">
-                                <i class="fa fa-home"></i> Back to Home
+                                <i class="bi bi-house"></i> Back to Home
                             </a>
                         </li>
                     </ul>
@@ -58,7 +58,7 @@
                 <!-- OCR App Section -->
                 <div class="col-md-4 d-flex">
                     <div class="app-block text-center">
-                        <i class="fa fa-camera app-icon"></i>
+                        <i class="bi bi-camera-fill app-icon"></i>
                         <h2>Online OCR</h2>
                         <p>A free tool to convert images and PDFs into text with multi-language support.</p>
                         <a href="https://empregosyoyota.net/en/onlineocr" class="btn btn-primary mt-auto">Go to OCR App</a>
@@ -68,7 +68,7 @@
                 <!-- Speech-to-Text App Section -->
                 <div class="col-md-4 d-flex">
                     <div class="app-block text-center">
-                        <i class="fa fa-microphone app-icon"></i>
+                        <i class="bi bi-mic-fill app-icon"></i>
                         <h2>Speech to Text</h2>
                         <p>A powerful app to convert spoken words into text efficiently and accurately.</p>
                         <a href="https://empregosyoyota.net/en/speechtotext" class="btn btn-primary mt-auto">Go to Speech-to-Text App</a>
@@ -78,7 +78,7 @@
                 <!-- Placeholder for Future App -->
                 <div class="col-md-4 d-flex">
                     <div class="app-block text-center">
-                        <i class="fa fa-cogs app-icon"></i>
+                        <i class="bi bi-tools app-icon"></i>
                         <h2>Future App</h2>
                         <p>An app for future development.</p>
                         <a href="#" class="btn btn-primary mt-auto">Coming Soon</a>
@@ -99,9 +99,9 @@
                     <hr class="w-100 clearfix d-md-none">
                     <div class="col-md-4 col-lg-6 col-xl-3 mx-auto mt-3">
                         <h6 class="text-uppercase mb-4 font-weight-bold">Social Network</h6>
-                        <p><i class="fa fa-facebook mr-3"></i> <a href="http://facebook.com/empregosyoyota">Empregos Yoyota</a></p>
-                        <p><i class="fa fa-instagram mr-3"></i><a href="http://instagram.com/empregosyoyota">empregosyoyota</a></p>
-                        <p><i class="fa fa-linkedin mr-3"></i><a href="http://linkedin.com/company/empregosyoyota">Empregos Yoyota</a></p>
+                        <p><i class="bi bi-facebook mr-3"></i> <a href="http://facebook.com/empregosyoyota">Empregos Yoyota</a></p>
+                        <p><i class="bi bi-instagram mr-3"></i><a href="http://instagram.com/empregosyoyota">empregosyoyota</a></p>
+                        <p><i class="bi bi-linkedin mr-3"></i><a href="http://linkedin.com/company/empregosyoyota">Empregos Yoyota</a></p>
                     </div>
                     <div class="col-md-4 col-lg-6 col-xl-3 mx-auto mt-3">
                         <h6 class="text-uppercase mb-4 font-weight-bold">Partners</h6>
