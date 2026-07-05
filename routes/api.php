@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\api\JobController;
+use App\Http\Controllers\api\ArticleController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,6 +25,9 @@ Route::post('/category_job/create', [JobController::class, 'setCategories']);
 Route::post('/job/create', [JobController::class, 'store']);
 
 Route::post('/jobs/upload-image', [JobController::class, 'uploadImage']);
+
+Route::post('/article/create', [ArticleController::class, 'store']);
+Route::post('/articles/upload-image', [ArticleController::class, 'uploadImage']);
 
 Route::get('/jobs', [JobController::class, 'get']);
 Route::get('/jobs/all', [JobController::class, 'index']);
