@@ -16,26 +16,49 @@ class SitemapController extends Controller
      */
     const CHUNK = 2000;
 
+    /** Tempo de vida da cache dos sitemaps (6 horas). */
+    const TTL = 21600;
+
+    /**
+     * Cache versionada: a chave inclui uma "versao" que e incrementada
+     * sempre que uma vaga/artigo/categoria/curriculo muda, invalidando
+     * instantaneamente todos os sub-sitemaps sem os ter de enumerar.
+     */
+    private function cached(string $suffix, \Closure $callback)
+    {
+        $version = (int) \Illuminate\Support\Facades\Cache::rememberForever('sitemap_version', fn () => 1);
+
+        return \Illuminate\Support\Facades\Cache::remember(
+            "sitemap_v{$version}_{$suffix}",
+            self::TTL,
+            $callback
+        );
+    }
+
     /**
      * Indice de sitemaps: /sitemap.xml
      */
     public function index()
     {
-        $now = now()->toAtomString();
-        $sitemaps = [];
+        $sitemaps = $this->cached('index', function () {
+            $now = now()->toAtomString();
+            $sitemaps = [];
 
-        $sitemaps[] = ['loc' => url('/sitemap-pages.xml'), 'lastmod' => $now];
-        $sitemaps[] = ['loc' => url('/sitemap-categories.xml'), 'lastmod' => $now];
+            $sitemaps[] = ['loc' => url('/sitemap-pages.xml'), 'lastmod' => $now];
+            $sitemaps[] = ['loc' => url('/sitemap-categories.xml'), 'lastmod' => $now];
 
-        foreach ($this->pageRange(Job::count()) as $i) {
-            $sitemaps[] = ['loc' => url("/sitemap-jobs-{$i}.xml"), 'lastmod' => $now];
-        }
-        foreach ($this->pageRange(Article::where('country_id', 1)->count()) as $i) {
-            $sitemaps[] = ['loc' => url("/sitemap-articles-{$i}.xml"), 'lastmod' => $now];
-        }
-        foreach ($this->pageRange(Curriculo::count()) as $i) {
-            $sitemaps[] = ['loc' => url("/sitemap-curriculos-{$i}.xml"), 'lastmod' => $now];
-        }
+            foreach ($this->pageRange(Job::count()) as $i) {
+                $sitemaps[] = ['loc' => url("/sitemap-jobs-{$i}.xml"), 'lastmod' => $now];
+            }
+            foreach ($this->pageRange(Article::where('country_id', 1)->count()) as $i) {
+                $sitemaps[] = ['loc' => url("/sitemap-articles-{$i}.xml"), 'lastmod' => $now];
+            }
+            foreach ($this->pageRange(Curriculo::count()) as $i) {
+                $sitemaps[] = ['loc' => url("/sitemap-curriculos-{$i}.xml"), 'lastmod' => $now];
+            }
+
+            return $sitemaps;
+        });
 
         return $this->xml('xml.sitemap-index', ['sitemaps' => $sitemaps]);
     }
@@ -80,16 +103,18 @@ class SitemapController extends Controller
      */
     public function categories()
     {
-        $now = now()->toAtomString();
+        $urls = $this->cached('categories', function () {
+            $now = now()->toAtomString();
 
-        $urls = Category::orderBy('id')->get()->map(function ($c) use ($now) {
-            return [
-                'loc' => url('/categories/' . $c->id),
-                'lastmod' => optional($c->updated_at)->toAtomString() ?: $now,
-                'changefreq' => 'weekly',
-                'priority' => '0.6',
-            ];
-        })->all();
+            return Category::orderBy('id')->get()->map(function ($c) use ($now) {
+                return [
+                    'loc' => url('/categories/' . $c->id),
+                    'lastmod' => optional($c->updated_at)->toAtomString() ?: $now,
+                    'changefreq' => 'weekly',
+                    'priority' => '0.6',
+                ];
+            })->all();
+        });
 
         return $this->xml('xml.sitemap-urlset', ['urls' => $urls]);
     }
@@ -99,9 +124,11 @@ class SitemapController extends Controller
      */
     public function jobs($page)
     {
-        $urls = $this->chunkUrls(
+        $page = max(1, (int) $page);
+
+        $urls = $this->cached("jobs_{$page}", fn () => $this->chunkUrls(
             Job::orderByRaw('id DESC'),
-            (int) $page,
+            $page,
             fn ($job) => [
                 'loc' => url('/empregos/' . $job->slug),
                 'lastmod' => optional($job->updated_at)->toAtomString(),
@@ -109,7 +136,7 @@ class SitemapController extends Controller
                 'priority' => '0.7',
                 'image' => $job->photo ? asset('storage/' . $job->photo) : null,
             ]
-        );
+        ));
 
         return $this->xml('xml.sitemap-urlset', ['urls' => $urls]);
     }
@@ -119,9 +146,11 @@ class SitemapController extends Controller
      */
     public function articles($page)
     {
-        $urls = $this->chunkUrls(
+        $page = max(1, (int) $page);
+
+        $urls = $this->cached("articles_{$page}", fn () => $this->chunkUrls(
             Article::where('country_id', 1)->orderByRaw('id DESC'),
-            (int) $page,
+            $page,
             fn ($article) => [
                 'loc' => url('/articles/' . $article->slug),
                 'lastmod' => optional($article->updated_at)->toAtomString(),
@@ -129,7 +158,7 @@ class SitemapController extends Controller
                 'priority' => '0.6',
                 'image' => $article->photo ? asset('storage/' . $article->photo) : null,
             ]
-        );
+        ));
 
         return $this->xml('xml.sitemap-urlset', ['urls' => $urls]);
     }
@@ -139,9 +168,11 @@ class SitemapController extends Controller
      */
     public function curriculos($page)
     {
-        $urls = $this->chunkUrls(
+        $page = max(1, (int) $page);
+
+        $urls = $this->cached("curriculos_{$page}", fn () => $this->chunkUrls(
             Curriculo::orderByRaw('id DESC'),
-            (int) $page,
+            $page,
             fn ($cv) => [
                 'loc' => url('/modelos-de-curriculos/' . $cv->slug),
                 'lastmod' => optional($cv->updated_at)->toAtomString(),
@@ -149,7 +180,7 @@ class SitemapController extends Controller
                 'priority' => '0.5',
                 'image' => $cv->photo ? asset('storage/' . $cv->photo) : null,
             ]
-        );
+        ));
 
         return $this->xml('xml.sitemap-urlset', ['urls' => $urls]);
     }

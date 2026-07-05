@@ -36,6 +36,7 @@ class Category extends Model
     {
         Cache::forget('categories_all');
         Cache::forget('categories_with_jobs');
+        Cache::forever('sitemap_version', ((int) Cache::get('sitemap_version', 1)) + 1);
     }
 
     public static function getCachedAll()
