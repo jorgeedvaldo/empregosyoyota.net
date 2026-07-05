@@ -33,6 +33,10 @@
 @section('updated_at', $job->updated_at)
 
 @section('head-scripts')
+{{-- Pre-carrega a imagem principal (elemento LCP) para acelerar o carregamento --}}
+@if(!empty($job['photo']))
+<link rel="preload" as="image" href="{{ asset('storage/' . $job['photo']) }}" fetchpriority="high">
+@endif
 <script type="application/ld+json">
 {
     "@context": "https://schema.org",

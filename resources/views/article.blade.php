@@ -4,6 +4,10 @@
 @section('url', asset('storage/' . $article['photo']))
 @section('canonical_link', url('/articles/'. $article['slug']))
 @section('head-scripts')
+{{-- Pre-carrega a imagem principal (elemento LCP) para acelerar o carregamento --}}
+@if(!empty($article['photo']))
+<link rel="preload" as="image" href="{{ asset('storage/' . $article['photo']) }}" fetchpriority="high">
+@endif
 <script type="application/ld+json" class="yoast-schema-graph">
     {
         "@context": "https://schema.org",
