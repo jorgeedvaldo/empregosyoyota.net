@@ -177,7 +177,8 @@ class JobController extends Controller
 
     public function feedGenerator()
     {
-        $jobs = Job::orderByRaw('id DESC')->paginate(10);
+        // RSS nao tem limite de protocolo; publicamos as ultimas 200 vagas.
+        $jobs = Job::orderByRaw('id DESC')->limit(200)->get();
         return response()->view('xml.feed', compact('jobs'))->header('Content-Type', 'text/xml');
     }
 }
