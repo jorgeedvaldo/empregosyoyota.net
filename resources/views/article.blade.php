@@ -135,7 +135,7 @@
         <hr>
 		  
 		<!-- Preview Image -->
-        <img class="img-fluid rounded" src="{{asset('storage/' . $article['photo'])}}" alt="Emprego">
+        <img class="img-fluid rounded" src="{{asset('storage/' . $article['photo'])}}" alt="{{ $article['title'] }}" fetchpriority="high" decoding="async" style="width:100%;height:auto;">
 		  
         <!-- Anúncio de artigo -->
         @include('partials.adsense', ['slot' => '9222329186', 'layout' => 'in-article', 'format' => 'fluid', 'style' => 'display:block; text-align:center;'])

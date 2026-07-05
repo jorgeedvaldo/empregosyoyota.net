@@ -157,7 +157,7 @@
             </a>
             <hr>
 
-            <img class="img-fluid rounded mb-3" src="{{ asset('storage/' . $job['photo']) }}" alt="{{ $job['title'] }}">
+            <img class="img-fluid rounded mb-3" src="{{ asset('storage/' . $job['photo']) }}" alt="{{ $job['title'] }}" fetchpriority="high" decoding="async" style="width:100%;height:auto;">
 
             @if($previousJobUrl)
             <a href="{{ $previousJobUrl }}" class="btn btn-dark w-100 mb-3">VER PROXIMA VAGA</a>
