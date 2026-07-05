@@ -44,6 +44,7 @@ class Job extends Model
         Cache::forget('categories_with_jobs');
         Cache::forget('job_' . $job->slug);
         Cache::forget('job_id_' . $job->id);
+        Cache::forget('rss_feed_items');
     }
 
     private function generateSlug($title, $id)

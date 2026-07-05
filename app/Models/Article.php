@@ -38,6 +38,7 @@ class Article extends Model
         Cache::forget('latest_articles_50');
         Cache::forget('article_' . $article->slug);
         Cache::forget('article_id_' . $article->id);
+        Cache::forget('rss_feed_items');
     }
 
     private function generateSlug($title, $id)
