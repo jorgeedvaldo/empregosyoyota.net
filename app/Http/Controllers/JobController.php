@@ -177,7 +177,36 @@ class JobController extends Controller
 
     public function feedGenerator()
     {
-        $jobs = Job::orderByRaw('id DESC')->paginate(10);
-        return response()->view('xml.feed', compact('jobs'))->header('Content-Type', 'text/xml');
+        // Feed com vagas (Angola, Brasil e Mocambique) e artigos, ordenados
+        // por data. Em cache 30 min (invalidado ao criar/editar vaga ou artigo).
+        $items = Cache::remember('rss_feed_items', 1800, function () {
+            $jobs = Job::orderByRaw('id DESC')->limit(500)->get()->map(function ($job) {
+                return [
+                    'title' => $job->title,
+                    'url' => url('/empregos/' . $job->slug),
+                    'description' => $job->description,
+                    'pubDate' => optional($job->created_at)->format(DATE_ATOM),
+                    'sort' => optional($job->created_at)->timestamp ?? 0,
+                    'guid' => url('/empregos/' . $job->slug),
+                    'categories' => ['Emprego'],
+                ];
+            });
+
+            $articles = Article::where('country_id', 1)->orderByRaw('id DESC')->limit(300)->get()->map(function ($article) {
+                return [
+                    'title' => $article->title,
+                    'url' => url('/articles/' . $article->slug),
+                    'description' => $article->description,
+                    'pubDate' => optional($article->created_at)->format(DATE_ATOM),
+                    'sort' => optional($article->created_at)->timestamp ?? 0,
+                    'guid' => url('/articles/' . $article->slug),
+                    'categories' => ['Artigo'],
+                ];
+            });
+
+            return $jobs->concat($articles)->sortByDesc('sort')->take(500)->values();
+        });
+
+        return response()->view('xml.feed', compact('items'))->header('Content-Type', 'text/xml');
     }
 }

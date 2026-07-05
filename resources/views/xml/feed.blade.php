@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?php echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n"; ?>
 <rss version="2.0"
 	xmlns:content="http://purl.org/rss/1.0/modules/content/"
 	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
@@ -14,8 +14,8 @@
         <title>Empregos Yoyota</title>
         <atom:link href="{{ url('/feed') }}" rel="self" type="application/rss+xml" />
         <link>{{ url('/') }}</link>
-        <description>Vagas de emprego, estágio e bolsas de estudo</description>
-        <lastBuildDate>{{ date_format(new DateTime($jobs[0]['created_at']), DATE_ATOM) }}</lastBuildDate>
+        <description>Vagas de emprego em Angola, Brasil e Moçambique, estágios, bolsas de estudo e artigos</description>
+        <lastBuildDate>{{ $items->isNotEmpty() ? $items->first()['pubDate'] : now()->format(DATE_ATOM) }}</lastBuildDate>
         <language>pt-PT</language>
         <sy:updatePeriod>hourly</sy:updatePeriod>
         <sy:updateFrequency>1</sy:updateFrequency>
@@ -29,19 +29,20 @@
             <height>32</height>
         </image>
 
-        @foreach($jobs as $job)
+        @foreach($items as $item)
             <item>
-                <title>{{$job->title}}</title>
-                <link>{{ url('/empregos/' . $job->slug) }}</link>
+                <title>{{ $item['title'] }}</title>
+                <link>{{ $item['url'] }}</link>
                 <dc:creator><![CDATA[Edivaldo Jorge]]></dc:creator>
-                <pubDate>{{ date_format(new DateTime($job['created_at']), DATE_ATOM) }}</pubDate>
-                <category><![CDATA[Emprego]]></category>
-                <category><![CDATA[Estágio]]></category>
-                <guid isPermaLink="false">{{ url('/empregos/' . $job->slug) }}</guid>
-                <description><![CDATA[<p>{!! \Illuminate\Support\Str::limit(strip_tags($job->description), 402, $end='...') !!}</p><p>O conteúdo <a href="{{ url('/empregos/' . $job->slug) }}">{{$job->title}}</a> aparece primeiro em <a href="{{ url('/') }}">Empregos Yoyota</a>.</p>
+                <pubDate>{{ $item['pubDate'] }}</pubDate>
+                @foreach($item['categories'] as $cat)
+                <category><![CDATA[{{ $cat }}]]></category>
+                @endforeach
+                <guid isPermaLink="false">{{ $item['guid'] }}</guid>
+                <description><![CDATA[<p>{!! \Illuminate\Support\Str::limit(strip_tags($item['description']), 402, $end='...') !!}</p><p>O conteúdo <a href="{{ $item['url'] }}">{{ $item['title'] }}</a> aparece primeiro em <a href="{{ url('/') }}">Empregos Yoyota</a>.</p>
                 ]]></description>
-                <content:encoded><![CDATA[{{$job->description}}]]></content:encoded>
-                <post-id xmlns="com-wordpress:feed-additions:1">{{$job->id}}</post-id>
+                <content:encoded><![CDATA[{!! $item['description'] !!}]]></content:encoded>
+                <post-id xmlns="com-wordpress:feed-additions:1">{{ $item['guid'] }}</post-id>
             </item>
         @endforeach
     </channel>
