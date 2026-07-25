@@ -100,9 +100,6 @@
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ url('/dashboard') }}"><i class="bi bi-tools me-1" aria-hidden="true"></i>Ferramentas</a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="https://www.procureaqui.net/" target="_blank" rel="noopener noreferrer"><i class="bi bi-search me-1" aria-hidden="true"></i>Procure Aqui</a>
-                            </li>
                         </ul>
                     </nav>
                 </div>
