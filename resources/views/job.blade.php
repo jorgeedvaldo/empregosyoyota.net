@@ -110,7 +110,7 @@
             "datePosted": "{{ date_format(new DateTime($job['created_at']), DATE_ATOM) }}",
             "validThrough": "{{ date('Y-m-d\TH:i', strtotime($job->created_at . ' +45 days')) }}",
             "title": {!! json_encode($job['title']) !!},
-            "description": {!! json_encode(strip_tags($job['description'])) !!},
+            "description": {!! json_encode($job['description']) !!},
             "employmentType": ["FULL_TIME"],
             "hiringOrganization": {
                 "@type": "Organization",
