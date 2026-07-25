@@ -153,6 +153,7 @@
                                     <li><a href="{{ url('/vagas-de-emprego-em-angola') }}">&#127462;&#127476; Angola</a></li>
                                     <li><a href="{{ url('/vagas-de-emprego-no-brasil') }}">&#127463;&#127479; Brasil</a></li>
                                     <li><a href="{{ url('/vagas-de-emprego-em-mocambique') }}">&#127474;&#127487; Moçambique</a></li>
+                                    <li><a href="{{ url('/vagas-de-emprego-em-portugal') }}">&#127477;&#127481; Portugal</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -188,6 +189,7 @@
                             ['id' => 1, 'label' => 'Vagas por cidade em Angola'],
                             ['id' => 2, 'label' => 'Vagas por cidade no Brasil'],
                             ['id' => 3, 'label' => 'Vagas por cidade em Moçambique'],
+                            ['id' => 5, 'label' => 'Vagas por cidade em Portugal'],
                         ];
                     @endphp
                     @foreach ($footerCityGroups as $group)
