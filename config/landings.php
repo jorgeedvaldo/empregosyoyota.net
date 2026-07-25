@@ -222,4 +222,86 @@ return [
         'name' => 'Niassa', 'country_id' => 3, 'type' => 'city', 'province' => 'Niassa', 'explore' => '/mz/empregos',
     ],
 
+    // ---- Portugal: distritos e regioes autonomas ----
+    'lisboa' => [
+        'slug' => 'vagas-de-emprego-em-lisboa',
+        'name' => 'Lisboa', 'country_id' => 5, 'type' => 'city', 'province' => 'Lisboa', 'explore' => '/pt/empregos',
+    ],
+    'porto' => [
+        'slug' => 'vagas-de-emprego-no-porto',
+        'name' => 'Porto', 'country_id' => 5, 'type' => 'city', 'province' => 'Porto', 'explore' => '/pt/empregos',
+    ],
+    'braga' => [
+        'slug' => 'vagas-de-emprego-em-braga',
+        'name' => 'Braga', 'country_id' => 5, 'type' => 'city', 'province' => 'Braga', 'explore' => '/pt/empregos',
+    ],
+    'coimbra' => [
+        'slug' => 'vagas-de-emprego-em-coimbra',
+        'name' => 'Coimbra', 'country_id' => 5, 'type' => 'city', 'province' => 'Coimbra', 'explore' => '/pt/empregos',
+    ],
+    'faro' => [
+        'slug' => 'vagas-de-emprego-em-faro',
+        'name' => 'Faro', 'country_id' => 5, 'type' => 'city', 'province' => 'Faro', 'explore' => '/pt/empregos',
+    ],
+    'setubal' => [
+        'slug' => 'vagas-de-emprego-em-setubal',
+        'name' => 'Setúbal', 'country_id' => 5, 'type' => 'city', 'province' => 'Setúbal', 'explore' => '/pt/empregos',
+    ],
+    'aveiro' => [
+        'slug' => 'vagas-de-emprego-em-aveiro',
+        'name' => 'Aveiro', 'country_id' => 5, 'type' => 'city', 'province' => 'Aveiro', 'explore' => '/pt/empregos',
+    ],
+    'leiria' => [
+        'slug' => 'vagas-de-emprego-em-leiria',
+        'name' => 'Leiria', 'country_id' => 5, 'type' => 'city', 'province' => 'Leiria', 'explore' => '/pt/empregos',
+    ],
+    'santarem' => [
+        'slug' => 'vagas-de-emprego-em-santarem',
+        'name' => 'Santarém', 'country_id' => 5, 'type' => 'city', 'province' => 'Santarém', 'explore' => '/pt/empregos',
+    ],
+    'viseu' => [
+        'slug' => 'vagas-de-emprego-em-viseu',
+        'name' => 'Viseu', 'country_id' => 5, 'type' => 'city', 'province' => 'Viseu', 'explore' => '/pt/empregos',
+    ],
+    'evora' => [
+        'slug' => 'vagas-de-emprego-em-evora',
+        'name' => 'Évora', 'country_id' => 5, 'type' => 'city', 'province' => 'Évora', 'explore' => '/pt/empregos',
+    ],
+    'beja' => [
+        'slug' => 'vagas-de-emprego-em-beja',
+        'name' => 'Beja', 'country_id' => 5, 'type' => 'city', 'province' => 'Beja', 'explore' => '/pt/empregos',
+    ],
+    'braganca' => [
+        'slug' => 'vagas-de-emprego-em-braganca',
+        'name' => 'Bragança', 'country_id' => 5, 'type' => 'city', 'province' => 'Bragança', 'explore' => '/pt/empregos',
+    ],
+    'castelo-branco' => [
+        'slug' => 'vagas-de-emprego-em-castelo-branco',
+        'name' => 'Castelo Branco', 'country_id' => 5, 'type' => 'city', 'province' => 'Castelo Branco', 'explore' => '/pt/empregos',
+    ],
+    'guarda' => [
+        'slug' => 'vagas-de-emprego-na-guarda',
+        'name' => 'Guarda', 'country_id' => 5, 'type' => 'city', 'province' => 'Guarda', 'explore' => '/pt/empregos',
+    ],
+    'portalegre' => [
+        'slug' => 'vagas-de-emprego-em-portalegre',
+        'name' => 'Portalegre', 'country_id' => 5, 'type' => 'city', 'province' => 'Portalegre', 'explore' => '/pt/empregos',
+    ],
+    'viana-do-castelo' => [
+        'slug' => 'vagas-de-emprego-em-viana-do-castelo',
+        'name' => 'Viana do Castelo', 'country_id' => 5, 'type' => 'city', 'province' => 'Viana do Castelo', 'explore' => '/pt/empregos',
+    ],
+    'vila-real' => [
+        'slug' => 'vagas-de-emprego-em-vila-real',
+        'name' => 'Vila Real', 'country_id' => 5, 'type' => 'city', 'province' => 'Vila Real', 'explore' => '/pt/empregos',
+    ],
+    'acores' => [
+        'slug' => 'vagas-de-emprego-nos-acores',
+        'name' => 'Açores', 'country_id' => 5, 'type' => 'city', 'province' => 'Açores', 'explore' => '/pt/empregos',
+    ],
+    'madeira' => [
+        'slug' => 'vagas-de-emprego-na-madeira',
+        'name' => 'Madeira', 'country_id' => 5, 'type' => 'city', 'province' => 'Madeira', 'explore' => '/pt/empregos',
+    ],
+
 ];

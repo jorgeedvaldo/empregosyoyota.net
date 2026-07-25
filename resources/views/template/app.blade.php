@@ -189,6 +189,7 @@
                             ['id' => 1, 'label' => 'Vagas por cidade em Angola'],
                             ['id' => 2, 'label' => 'Vagas por cidade no Brasil'],
                             ['id' => 3, 'label' => 'Vagas por cidade em Moçambique'],
+                            ['id' => 5, 'label' => 'Vagas por cidade em Portugal'],
                         ];
                     @endphp
                     @foreach ($footerCityGroups as $group)
