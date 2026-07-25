@@ -100,6 +100,9 @@
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ url('/dashboard') }}"><i class="bi bi-tools me-1" aria-hidden="true"></i>Ferramentas</a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="https://www.procureaqui.net/" target="_blank" rel="noopener noreferrer"><i class="bi bi-search me-1" aria-hidden="true"></i>Procure Aqui</a>
+                            </li>
                         </ul>
                     </nav>
                 </div>
@@ -142,6 +145,7 @@
                                     <li><a href="{{ url('/empregos') }}">Oportunidades</a></li>
                                     <li><a href="{{ url('/articles') }}">Blog</a></li>
                                     <li><a href="{{ url('/dashboard') }}">Ferramentas</a></li>
+                                    <li><a href="https://www.procureaqui.net/" target="_blank" rel="noopener noreferrer">Procure Aqui</a></li>
                                 </ul>
                             </div>
                         </div>
