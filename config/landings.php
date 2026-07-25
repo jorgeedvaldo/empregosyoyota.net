@@ -8,7 +8,7 @@
 | Registo central das paginas de aterragem geradas pelo LandingController.
 | Cada entrada gera automaticamente: rota, pagina e entrada no sitemap.
 |
-| country_id: 1 = Angola, 2 = Brasil, 3 = Mocambique
+| country_id: 1 = Angola, 2 = Brasil, 3 = Mocambique, 5 = Portugal
 | type:       'country' ou 'city'
 | province:   (apenas cidades) termo usado para filtrar as vagas pela
 |             coluna "province".
@@ -31,6 +31,13 @@ return [
         'country_id' => 2,
         'type' => 'country',
         'explore' => '/br/empregos',
+    ],
+    'portugal' => [
+        'slug' => 'vagas-de-emprego-em-portugal',
+        'name' => 'Portugal',
+        'country_id' => 5,
+        'type' => 'country',
+        'explore' => '/pt/empregos',
     ],
 
     // ---- Brasil: cidades e estados ----

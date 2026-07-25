@@ -18,6 +18,7 @@ class JobController extends Controller
             'ao' => 1,
             'br' => 2,
             'mz' => 3,
+            'pt' => 5,
         ];
 
         return $countries[$country] ?? null;
@@ -51,6 +52,7 @@ class JobController extends Controller
             'ao' => 'Angola',
             'br' => 'Brasil',
             'mz' => 'Moçambique',
+            'pt' => 'Portugal',
         ];
 
         return $names[$country] ?? null;

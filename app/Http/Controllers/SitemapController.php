@@ -77,7 +77,7 @@ class SitemapController extends Controller
         // Listagens e landings principais (conteudo que muda com frequencia)
         $daily = [
             '/empregos', '/articles', '/modelos-de-curriculos',
-            '/ao/empregos', '/br/empregos', '/mz/empregos',
+            '/ao/empregos', '/br/empregos', '/mz/empregos', '/pt/empregos',
             '/vagas-de-emprego-em-angola',
         ];
         foreach ($daily as $path) {

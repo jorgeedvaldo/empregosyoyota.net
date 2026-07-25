@@ -237,6 +237,18 @@
                         </div>
                     </a>
                 </div>
+                <div class="col-md-4 col-sm-6 mb-4">
+                    <a href="{{ url('/pt/empregos') }}" class="text-decoration-none">
+                        <div class="card h-100 text-center shadow-sm border-0" style="border-radius: 12px; transition: transform .2s;">
+                            <div class="card-body py-4">
+                                <div class="mb-3" style="font-size: 3rem; line-height: 1;">&#127477;&#127481;</div>
+                                <h3 class="card-title fw-bold mb-1 h5">Portugal</h3>
+                                <p class="card-text text-muted small">Vagas de emprego em Portugal</p>
+                                <span class="btn btn-dark btn-sm mt-2">Ver vagas</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
             </div>
         </div>
     </section>
