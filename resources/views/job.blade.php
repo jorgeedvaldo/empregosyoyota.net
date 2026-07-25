@@ -1,10 +1,10 @@
 @extends('template.app')
 
 @php
-    $countryIdToCode = [1 => 'ao', 2 => 'br', 3 => 'mz'];
+    $countryIdToCode = [1 => 'ao', 2 => 'br', 3 => 'mz', 5 => 'pt'];
     $countryCode     = $countryIdToCode[$job->country_id] ?? 'ao';
-    $countryNames    = ['ao' => 'Angola', 'br' => 'Brasil', 'mz' => 'Moçambique'];
-    $countryISO      = ['ao' => 'AO',     'br' => 'BR',     'mz' => 'MZ'];
+    $countryNames    = ['ao' => 'Angola', 'br' => 'Brasil', 'mz' => 'Moçambique', 'pt' => 'Portugal'];
+    $countryISO      = ['ao' => 'AO',     'br' => 'BR',     'mz' => 'MZ',         'pt' => 'PT'];
     $countryName     = $countryNames[$countryCode];
 
     $jobUrl  = isset($country)
