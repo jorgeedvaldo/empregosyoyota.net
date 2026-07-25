@@ -85,7 +85,7 @@ class SitemapController extends Controller
         }
 
         // Paginas institucionais / ferramentas (mudam pouco)
-        $static = ['/about', '/terms', '/api-docs', '/onlineocr', '/en/onlineocr', '/quiz', '/dashboard', '/en/dashboard'];
+        $static = ['/about', '/terms', '/api-docs', '/onlineocr', '/en/onlineocr', '/quiz', '/dashboard', '/en/dashboard', '/biblioteca-de-documentos-legais'];
         foreach ($static as $path) {
             $urls[] = ['loc' => url($path), 'lastmod' => $now, 'changefreq' => 'monthly', 'priority' => '0.4'];
         }

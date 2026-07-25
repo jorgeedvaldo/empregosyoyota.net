@@ -6,6 +6,7 @@ use App\Http\Controllers\AboutController;
 use App\Http\Controllers\ApiDocController;
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\CurriculoController;
+use App\Http\Controllers\DocumentLibraryController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\LandingController;
@@ -71,6 +72,8 @@ Route::get('/articles/{slug}', [ArticleController::class, 'getBySlug']);
 
 Route::get('/modelos-de-curriculos', [CurriculoController::class, 'index']);
 Route::get('/modelos-de-curriculos/{slug}', [CurriculoController::class, 'getBySlug']);
+
+Route::get('/biblioteca-de-documentos-legais', [DocumentLibraryController::class, 'index'])->name('documentos.legais');
 
 Route::get('/onlineocr', [OcrController::class, 'index'])->name('ocr');
 Route::get('/quiz', [OcrController::class, 'indexQuizPt'])->name('quiz');

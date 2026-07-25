@@ -164,13 +164,10 @@
 
                         <div class="col-lg-2 col-md-6 mb-4">
                             <div class="footer-section">
-                                <h5>Para Candidatos</h5>
+                                <h5>Modelos e Documentos</h5>
                                 <ul class="footer-links">
-                                    <li><a href="{{ url('/empregos') }}">Buscar Vagas</a></li>
-                                    <li><a href="#">Cadastrar Currículo</a></li>
-                                    <li><a href="#">Dicas de Carreira</a></li>
-                                    <li><a href="#">Preparação para Entrevistas</a></li>
-                                    <li><a href="{{ url('articles/salarios-em-angola-saiba-o-salario-do-presidente-da-republica-e-outros-titulares-de-cargos-da-funcao-executiva-do-estado') }}">Salários em Angola</a></li>
+                                    <li><a href="{{ url('/biblioteca-de-documentos-legais') }}">Biblioteca de Documentos Legais</a></li>
+                                    <li><a href="{{ url('/modelos-de-curriculos') }}">Modelos de Currículos</a></li>
                                 </ul>
                             </div>
                         </div>
