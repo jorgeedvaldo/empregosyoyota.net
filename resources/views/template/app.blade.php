@@ -114,8 +114,11 @@
                     <div class="row">
                         <div class="col-lg-4 mb-4">
                             <a href="{{ url('/') }}" class="footer-brand"><span class="empregos">EMPREGOS</span><span class="yoyota">YOYOTA</span></a>
-                            <p class="footer-description">
-                                Conectamos talentos às melhores oportunidades de emprego em Angola. A plataforma líder em recrutamento e seleção do país.
+                            <p class="footer-description" style="margin-bottom: 0.75rem;">
+                                Conectamos talentos às melhores oportunidades de emprego em 4 países: Angola, Brasil, Moçambique e Portugal. A plataforma de recrutamento e seleção que cresce com quem procura emprego.
+                            </p>
+                            <p class="footer-description" style="font-size: 0.8rem;">
+                                OBS: Não recrutamos ninguém, as vagas divulgadas aqui pertencem às respetivas empresas.
                             </p>
                             <div class="social-links">
                                 <a href="https://facebook.com/empregosyoyota" aria-label="Facebook"><i class="bi bi-facebook" aria-hidden="true"></i></a>
