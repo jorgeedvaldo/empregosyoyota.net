@@ -1,6 +1,6 @@
 @extends('template.app')
 @section('title', 'Sobre')
-@section('description', 'É uma plataforma que reúne oportunidades de emprego no solo angolano, tendo como fonte principal o "Jornal de Angola", criada aos 5 de Dezembro de 2018, a Empregos Yoyota tem ajudado muita gente a encontrar empregos no solo angolano')
+@section('description', 'É uma plataforma que reúne oportunidades de emprego em Angola, Brasil, Moçambique e Portugal, tendo como fonte principal o "Jornal de Angola" para as vagas angolanas, criada aos 5 de Dezembro de 2018, a Empregos Yoyota tem ajudado muita gente a encontrar emprego nestes países')
 @section('canonical_link', url('/about'))
 @section('content')
 <style>
@@ -285,7 +285,7 @@
                 <h2 class="section-title">O que é a Empregos Yoyota?</h2>
                 <div class="platform-content">
                     <p>
-                        É uma plataforma que reúne oportunidades de emprego no solo angolano, tendo como fonte principal o "Jornal de Angola". A Empregos Yoyota tem ajudado muita gente a encontrar empregos no solo angolano.
+                        É uma plataforma que reúne oportunidades de emprego em Angola, Brasil, Moçambique e Portugal, tendo como fonte principal o "Jornal de Angola" para as vagas angolanas. A Empregos Yoyota tem ajudado muita gente a encontrar emprego nestes países.
                     </p>
                 </div>
                 
