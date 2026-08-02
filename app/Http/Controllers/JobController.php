@@ -163,14 +163,13 @@ class JobController extends Controller
 
     public function search(Request $request)
     {
-        $query = $request->input('query');
+        $query = trim((string) $request->input('query'));
 
-        $jobs = Job::where(function ($q) use ($query) {
-                $q->where('title', 'LIKE', "%{$query}%")
-                  ->orWhere('description', 'LIKE', "%{$query}%");
-            })
-            ->orderByRaw('id DESC')
-            ->paginate(30);
+        // Pesquisa por relevancia (titulo, empresa, provincia e descricao)
+        // via TNTSearch/Scout. Sem termo, mostra as vagas mais recentes.
+        $jobs = $query !== ''
+            ? Job::search($query)->paginate(30)
+            : Job::orderByRaw('id DESC')->paginate(30);
 
         $categories = Category::getCachedAll();
 
