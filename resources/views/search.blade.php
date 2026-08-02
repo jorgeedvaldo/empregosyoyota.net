@@ -3,25 +3,30 @@
 @section('description', 'É uma plataforma que reúne oportunidades de emprego no solo angolano, tendo como fonte principal o "Jornal de Angola", criada aos 5 de Dezembro de 2018, a Empregos Yoyota tem ajudado muita gente a encontrar empregos no solo angolano')
 @section('canonical_link', url('/empregos'))
 @section('content')
-<section class="capa-sobre mb-5" style="background-image: url('{{ asset('storage/images/bg_6.jpg') }}');">
+
+<section class="jobs-hero">
     <div class="container">
-        <div class="row">
-            <div class="col-md-12 mt-4 p-4 center-all">
-                @if(isset($query))
-                    <h1 class="text-white">Resultados da pesquisa: {{ $query }}</h1>
-                @endif
-            </div>
-        </div>
+        <h1 class="jobs-hero-title">
+            @if(!empty($query))
+                Resultados para &ldquo;{{ $query }}&rdquo;
+            @else
+                Pesquisar Vagas
+            @endif
+        </h1>
+        <p class="jobs-hero-subtitle">Encontre as melhores oportunidades de emprego, atualizadas todos os dias.</p>
+        <span class="jobs-hero-count"><i class="bi bi-briefcase"></i> {{ $jobs->total() }} vaga(s) encontrada(s)</span>
     </div>
 </section>
 
-<div class="container">
-    <div class="row mt-5">
-        <div class="col-md-8 p-0 mr-3">
-            <form action="{{ route('search') }}" method="GET" class="input-group mb-3">
-                <input type="search" class="form-control rounded mr-2" placeholder="Digite a sua pesquisa" aria-label="Search" aria-describedby="search-addon" name="query" value="{{ $query }}"/>
-                <button type="submit" class="btn btn-dark" data-mdb-ripple-init>Pesquisar</button>
+<div class="container my-5">
+    <div class="row">
+        <div class="col-lg-8">
+            <form action="{{ route('search') }}" method="GET" class="jobs-search-form">
+                <input type="search" class="jobs-search-input" placeholder="Digite a sua pesquisa" aria-label="Search" name="query" value="{{ $query }}"/>
+                <button type="submit" class="jobs-search-btn">Pesquisar</button>
             </form>
+
+            @if($jobs->count() > 0)
             <div class="job-list">
                 @foreach($jobs as $job)
 
@@ -44,17 +49,25 @@
 
                 @endforeach
             </div>
-            {{ $jobs->withQueryString()->links() }}
+            <div class="mt-4">{{ $jobs->withQueryString()->links() }}</div>
+            @else
+            <div class="jobs-empty">
+                <i class="bi bi-search" style="font-size:2rem;"></i>
+                <p class="mt-2 mb-0">Nenhuma vaga encontrada para esta pesquisa.</p>
+            </div>
+            @endif
         </div>
 
-        <div class="col-md-3 p-0 mb-3">
-			<div class="nav flex-column nav-pills p-3 m-0 bg-white border">
-                <p class="text-muted">Filtrar</p>
-                <a href="{{ url('/empregos') }}" class = "nav-link">Todos</a>
-				@foreach($categories as $item)
-                    <a href="{{ url('/categories/' . $item['id']) }}" class = "nav-link">{{ $item['name'] }}</a>
-                @endforeach
-    		</div>
+        <div class="col-lg-4">
+            <div class="filter-card">
+                <div class="filter-card-header">Filtrar por Categoria</div>
+                <div class="filter-card-body">
+                    <a href="{{ url('/empregos') }}" class="filter-link">Todos</a>
+                    @foreach($categories as $item)
+                        <a href="{{ url('/categories/' . $item['id']) }}" class="filter-link">{{ $item['name'] }}</a>
+                    @endforeach
+                </div>
+            </div>
         </div>
 
     </div>
