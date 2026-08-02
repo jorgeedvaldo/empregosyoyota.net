@@ -17,7 +17,7 @@
         @foreach($articles as $article)
             <a href="{{ url('/articles/' . $article['slug']) }}" class="blog-card">
                 <div class="blog-card-image">
-                    <img src="{{ asset('storage/' . ($article['photo_thumb'] ?? $article['photo'])) }}" alt="{{ $article['title'] }}" loading="lazy" decoding="async">
+                    <img src="{{ $article['photo_thumb_url'] }}" alt="{{ $article['title'] }}" loading="lazy" decoding="async">
                 </div>
                 <div class="blog-card-body">
                     <span class="blog-card-date"><i class="bi bi-calendar3"></i> {{ date_format(new DateTime($article['created_at']), 'd-m-Y') }}</span>

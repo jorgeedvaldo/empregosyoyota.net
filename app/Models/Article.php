@@ -19,7 +19,7 @@ class Article extends Model
     const THUMB_QUALITY = 75;
 
     protected $fillable = [
-        'title', 'slug', 'description', 'photo', 'photo_thumb'
+        'title', 'slug', 'description', 'photo'
     ];
 
 	protected static function boot()
@@ -33,10 +33,7 @@ class Article extends Model
 
         static::saved(function ($article) {
             self::clearCache($article);
-
-            if ($article->wasChanged('photo') || (!empty($article->photo) && empty($article->photo_thumb))) {
-                $article->generateThumbnail();
-            }
+            $article->generateThumbnail();
         });
 
         static::deleted(function ($article) {
@@ -45,20 +42,30 @@ class Article extends Model
     }
 
     /**
-     * Gera (ou regenera) a thumb otimizada da foto do artigo usando o
-     * Intervention Image. Falha silenciosamente se a imagem de origem
-     * nao existir ou nao puder ser processada — a view usa a foto
-     * original como fallback nesse caso.
+     * Caminho (relativo ao disco "public") da thumb da foto do artigo.
+     * Segue a mesma estrutura de pastas da foto original, apenas com um
+     * prefixo "thumb/": images/articles/x.jpg -> thumb/images/articles/x.jpg
      */
-    public function generateThumbnail(): void
+    public function thumbPath(): ?string
     {
-        if (empty($this->photo)) {
+        return $this->photo ? 'thumb/' . $this->photo : null;
+    }
+
+    /**
+     * Gera a thumb otimizada da foto do artigo usando o Intervention
+     * Image, caso ainda nao exista. Falha silenciosamente se a imagem
+     * de origem nao existir ou nao puder ser processada — a view usa a
+     * foto original como fallback nesse caso.
+     */
+    public function generateThumbnail(bool $force = false): void
+    {
+        $thumbPath = $this->thumbPath();
+
+        if (!$thumbPath) {
             return;
         }
 
-        $thumbPath = 'images/articles/thumbs/' . pathinfo($this->photo, PATHINFO_FILENAME) . '.webp';
-
-        if ($this->photo_thumb === $thumbPath && Storage::disk('public')->exists($thumbPath)) {
+        if (!$force && Storage::disk('public')->exists($thumbPath)) {
             return;
         }
 
@@ -72,15 +79,29 @@ class Article extends Model
             $manager = new ImageManager(['driver' => 'gd']);
             $encoded = (string) $manager->make($sourcePath)
                 ->fit(self::THUMB_WIDTH, self::THUMB_HEIGHT)
-                ->encode('webp', self::THUMB_QUALITY);
+                ->encode(null, self::THUMB_QUALITY);
 
             Storage::disk('public')->put($thumbPath, $encoded);
-
-            $this->photo_thumb = $thumbPath;
-            $this->saveQuietly();
         } catch (\Throwable $e) {
             report($e);
         }
+    }
+
+    /**
+     * URL publica da thumb, com fallback para a foto original caso a
+     * thumb ainda nao tenha sido gerada.
+     */
+    public function getPhotoThumbUrlAttribute(): ?string
+    {
+        if (!$this->photo) {
+            return null;
+        }
+
+        $thumbPath = $this->thumbPath();
+
+        return Storage::disk('public')->exists($thumbPath)
+            ? asset('storage/' . $thumbPath)
+            : asset('storage/' . $this->photo);
     }
 
     private static function clearCache($article)

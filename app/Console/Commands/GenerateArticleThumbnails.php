@@ -13,13 +13,8 @@ class GenerateArticleThumbnails extends Command
 
     public function handle(): int
     {
-        $query = Article::query();
-
-        if (!$this->option('force')) {
-            $query->whereNull('photo_thumb');
-        }
-
-        $articles = $query->get();
+        $force = (bool) $this->option('force');
+        $articles = Article::whereNotNull('photo')->get();
         $total = $articles->count();
 
         if ($total === 0) {
@@ -31,13 +26,13 @@ class GenerateArticleThumbnails extends Command
         $bar->start();
 
         foreach ($articles as $article) {
-            $article->generateThumbnail();
+            $article->generateThumbnail($force);
             $bar->advance();
         }
 
         $bar->finish();
         $this->newLine(2);
-        $this->info("Thumbs geradas para {$total} artigo(s).");
+        $this->info("Thumbs verificadas/geradas para {$total} artigo(s).");
 
         return self::SUCCESS;
     }
