@@ -743,3 +743,74 @@ footer {
     .jobs-hero { padding: 32px 0 24px; }
     .jobs-search-form { flex-direction: column; }
 }
+
+/* Cards de artigo com thumb (home.blade.php e articles.blade.php) */
+.blog-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+    gap: 1.5rem;
+}
+
+.blog-card {
+    display: flex;
+    flex-direction: column;
+    background: #ffffff;
+    border: 1px solid #e9ecef;
+    border-radius: 16px;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.blog-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    border-color: #000000;
+    color: inherit;
+    text-decoration: none;
+}
+
+.blog-card-image {
+    aspect-ratio: 8 / 5;
+    background: #f1f1f1;
+    overflow: hidden;
+}
+
+.blog-card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s ease;
+}
+
+.blog-card:hover .blog-card-image img {
+    transform: scale(1.05);
+}
+
+.blog-card-body {
+    padding: 1.25rem 1.5rem 1.5rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.blog-card-date {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: #6c757d;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.blog-card-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #000000;
+    line-height: 1.4;
+    margin: 0;
+}

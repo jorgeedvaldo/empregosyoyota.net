@@ -1,0 +1,44 @@
+<?php
+
+namespace App\Console\Commands;
+
+use App\Models\Article;
+use Illuminate\Console\Command;
+
+class GenerateArticleThumbnails extends Command
+{
+    protected $signature = 'articles:generate-thumbs {--force : Regenerar mesmo os artigos que ja tem thumb}';
+
+    protected $description = 'Gera as thumbs otimizadas (Intervention Image) para artigos que ainda nao tem.';
+
+    public function handle(): int
+    {
+        $query = Article::query();
+
+        if (!$this->option('force')) {
+            $query->whereNull('photo_thumb');
+        }
+
+        $articles = $query->get();
+        $total = $articles->count();
+
+        if ($total === 0) {
+            $this->info('Nenhum artigo por processar.');
+            return self::SUCCESS;
+        }
+
+        $bar = $this->output->createProgressBar($total);
+        $bar->start();
+
+        foreach ($articles as $article) {
+            $article->generateThumbnail();
+            $bar->advance();
+        }
+
+        $bar->finish();
+        $this->newLine(2);
+        $this->info("Thumbs geradas para {$total} artigo(s).");
+
+        return self::SUCCESS;
+    }
+}

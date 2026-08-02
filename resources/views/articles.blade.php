@@ -4,33 +4,29 @@
 @section('canonical_link', url('/articles'))
 @section('content')
 
-<section class="capa-sobre mb-5" style="background-image: url('{{ asset('storage/images/bg_5.jpg') }}');">
+<section class="jobs-hero">
     <div class="container">
-        <div class="row">
-            <div class="col-md-12 mt-4 p-4 big-text center-all">
-                <p class="text-white">Blog</p>
-            </div>
-        </div>
+        <h1 class="jobs-hero-title">Blog</h1>
+        <p class="jobs-hero-subtitle">Artigos, dicas de carreira e novidades sobre o mercado de trabalho.</p>
+        <span class="jobs-hero-count"><i class="bi bi-journal-text"></i> {{ $articles->total() }} artigo(s)</span>
     </div>
 </section>
 
-<div class="container">
-    <div class="row mt-5">
-
+<div class="container my-5">
+    <div class="blog-grid">
         @foreach($articles as $article)
-            <div class="col-md-6">
-                <a href="{{ url('/articles/' . $article['slug']) }}" class="list-group-item list-group-item-action mb-3">
-                    <div class="d-flex w-100 justify-content-between">
-                    <h5 class="mb-1"><b>{{ $article['title'] }}</b></h5>
-                    <small>Publicado em: {{ date_format(new DateTime($article['created_at']), 'd-m-Y') }}</small>
-                    </div>
-                    <p class="mb-1"> </p>
-                    <small><i class="bi bi-journal-text"></i>   <span> </span></small>
-                </a>
-            </div>
-          @endforeach
-
-          {{ $articles->links() }}
+            <a href="{{ url('/articles/' . $article['slug']) }}" class="blog-card">
+                <div class="blog-card-image">
+                    <img src="{{ asset('storage/' . ($article['photo_thumb'] ?? $article['photo'])) }}" alt="{{ $article['title'] }}" loading="lazy" decoding="async">
+                </div>
+                <div class="blog-card-body">
+                    <span class="blog-card-date"><i class="bi bi-calendar3"></i> {{ date_format(new DateTime($article['created_at']), 'd-m-Y') }}</span>
+                    <h3 class="blog-card-title">{{ $article['title'] }}</h3>
+                </div>
+            </a>
+        @endforeach
     </div>
+
+    <div class="mt-4">{{ $articles->links() }}</div>
 </div>
 @endsection('content')

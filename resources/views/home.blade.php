@@ -308,23 +308,23 @@
                 <p class="section-subheading text-muted">Fique atento/a aos últimos artigos</p>
             </div>
             </div>
-    <div class="row mt-5">
-
+    <div class="blog-grid mt-5">
         @foreach($articles as $article)
-            <div class="col-md-6">
-                <a href="{{ url('/articles/' . $article['slug']) }}" class="list-group-item list-group-item-action mb-3">
-                    <div class="d-flex w-100 justify-content-between">
-                    <h3 class="mb-1 h5"><b>{{ $article['title'] }}</b></h3>
-                    <small>Publicado em: {{ date_format(new DateTime($article['created_at']), 'd-m-Y') }}</small>
-                    </div>
-                    <p class="mb-1"> </p>
-                    <small><i class="bi bi-journal-text"></i>   <span> </span></small>
-                </a>
-            </div>
-          @endforeach
-			<div class="col-md-12">
-                <center><a href="{{ url('/articles') }}" class = "btn btn-lg btn-block btn-dark">Ver mais artigos...</a></center>
-            </div>
+            <a href="{{ url('/articles/' . $article['slug']) }}" class="blog-card">
+                <div class="blog-card-image">
+                    <img src="{{ asset('storage/' . ($article['photo_thumb'] ?? $article['photo'])) }}" alt="{{ $article['title'] }}" loading="lazy" decoding="async">
+                </div>
+                <div class="blog-card-body">
+                    <span class="blog-card-date"><i class="bi bi-calendar3"></i> {{ date_format(new DateTime($article['created_at']), 'd-m-Y') }}</span>
+                    <h3 class="blog-card-title">{{ $article['title'] }}</h3>
+                </div>
+            </a>
+        @endforeach
+    </div>
+    <div class="row">
+        <div class="col-md-12 mt-4">
+            <center><a href="{{ url('/articles') }}" class = "btn btn-lg btn-block btn-dark">Ver mais artigos...</a></center>
+        </div>
     </div>
 </div>
     </section>
