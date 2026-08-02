@@ -151,7 +151,9 @@ return [
     */
 
     'tntsearch' => [
-        'storage' => storage_path('app/scout'),
+        // O driver concatena storage + nome do indice sem separador,
+        // por isso a barra final aqui e obrigatoria.
+        'storage' => storage_path('app/scout') . '/',
         'fuzziness' => env('TNTSEARCH_FUZZINESS', true),
         'fuzzy' => [
             'prefix_length' => 2,
