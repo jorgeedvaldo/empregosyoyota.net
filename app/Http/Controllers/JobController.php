@@ -180,19 +180,35 @@ class JobController extends Controller
     public function search(Request $request)
     {
         $query = trim((string) $request->input('query'));
+        $location = trim((string) $request->input('location'));
         $perPage = 30;
         $page = max(1, (int) $request->get('page', 1));
 
-        if ($query === '') {
-            // Sem termo de pesquisa: lista simples, mais recentes primeiro.
+        if ($query === '' && $location === '') {
+            // Sem termo nem localizacao: lista simples, mais recentes primeiro.
             $jobs = Job::orderByRaw('id DESC')->paginate($perPage);
+        } elseif ($query === '') {
+            // So localizacao: filtro direto por provincia, sem passar pelo
+            // indice de texto (nao ha nada para o TNTSearch classificar).
+            $jobs = Job::where('province', 'LIKE', "%{$location}%")
+                ->orderByRaw('id DESC')
+                ->paginate($perPage);
         } else {
             // Traz um conjunto maior de candidatos ordenados por relevancia
-            // (titulo, empresa, provincia, descricao) via TNTSearch/Scout,
-            // e depois reordena combinando relevancia + recencia, para que
-            // vagas antigas com match textual forte nao dominem sempre
-            // sobre vagas recentes igualmente relevantes.
+            // (titulo, empresa, provincia, descricao) via TNTSearch/Scout.
             $candidates = Job::search($query)->take(self::SEARCH_CANDIDATE_POOL)->get()->values();
+
+            // Com localizacao tambem preenchida, restringe aos candidatos
+            // cuja provincia bate com o texto indicado.
+            if ($location !== '') {
+                $candidates = $candidates->filter(function ($job) use ($location) {
+                    return stripos((string) $job->province, $location) !== false;
+                })->values();
+            }
+
+            // Reordena combinando relevancia + recencia, para que vagas
+            // antigas com match textual forte nao dominem sempre sobre
+            // vagas recentes igualmente relevantes.
             $total = $candidates->count();
             $now = now();
 
@@ -221,7 +237,7 @@ class JobController extends Controller
 
         $categories = Category::getCachedAll();
 
-        return view('search', compact('categories', 'jobs', 'query'));
+        return view('search', compact('categories', 'jobs', 'query', 'location'));
     }
 
     public function feedGenerator()

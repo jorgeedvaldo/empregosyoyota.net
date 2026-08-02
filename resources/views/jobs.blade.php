@@ -118,6 +118,7 @@
         <div class="col-lg-8">
             <form action="{{ route('search') }}" method="GET" class="jobs-search-form">
                 <input type="search" class="jobs-search-input" placeholder="Pesquisar por cargo, empresa..." aria-label="Search" name="query"/>
+                <input type="text" class="jobs-search-input" placeholder="Cidade ou Província" aria-label="Localização" name="location"/>
                 <button type="submit" class="jobs-search-btn">Pesquisar</button>
             </form>
 
