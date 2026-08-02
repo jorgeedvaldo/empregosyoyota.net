@@ -154,10 +154,10 @@
                             <div class="footer-section">
                                 <h5>Vagas por País</h5>
                                 <ul class="footer-links">
-                                    <li><a href="{{ url('/vagas-de-emprego-em-angola') }}">&#127462;&#127476; Angola</a></li>
-                                    <li><a href="{{ url('/vagas-de-emprego-no-brasil') }}">&#127463;&#127479; Brasil</a></li>
-                                    <li><a href="{{ url('/vagas-de-emprego-em-mocambique') }}">&#127474;&#127487; Moçambique</a></li>
-                                    <li><a href="{{ url('/vagas-de-emprego-em-portugal') }}">&#127477;&#127481; Portugal</a></li>
+                                    <li><a href="{{ url('/vagas-de-emprego-em-angola') }}"><img src="{{ asset('assets/images/flags/ao.svg') }}" alt="" width="16" height="16" class="rounded-circle me-1" loading="lazy"> Angola</a></li>
+                                    <li><a href="{{ url('/vagas-de-emprego-no-brasil') }}"><img src="{{ asset('assets/images/flags/br.svg') }}" alt="" width="16" height="16" class="rounded-circle me-1" loading="lazy"> Brasil</a></li>
+                                    <li><a href="{{ url('/vagas-de-emprego-em-mocambique') }}"><img src="{{ asset('assets/images/flags/mz.svg') }}" alt="" width="16" height="16" class="rounded-circle me-1" loading="lazy"> Moçambique</a></li>
+                                    <li><a href="{{ url('/vagas-de-emprego-em-portugal') }}"><img src="{{ asset('assets/images/flags/pt.svg') }}" alt="" width="16" height="16" class="rounded-circle me-1" loading="lazy"> Portugal</a></li>
                                 </ul>
                             </div>
                         </div>
