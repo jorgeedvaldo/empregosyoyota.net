@@ -610,3 +610,14 @@ button.search-btn:hover {
 footer {
     color: white;
 }
+
+/* Links dentro da descricao de vagas e artigos (conteudo HTML vindo da fonte) */
+.content a {
+    color: #0d6efd;
+    text-decoration: underline;
+}
+
+.content a:hover,
+.content a:focus {
+    color: #0a58ca;
+}
