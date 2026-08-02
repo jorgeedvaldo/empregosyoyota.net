@@ -11,7 +11,7 @@ class HomeController extends Controller
     public function index()
     {
         $jobs = Job::getCachedLatest()->take(15);
-        $articles = Article::getCachedLatest()->take(8);
+        $articles = Article::getCachedLatest()->take(9);
         return view('home', compact('jobs', 'articles'));
     }
 }

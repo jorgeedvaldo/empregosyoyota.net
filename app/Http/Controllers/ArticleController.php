@@ -16,7 +16,7 @@ class ArticleController extends Controller
     {
         // First page is served from cache to avoid hitting the database
         if ($request->get('page', 1) == 1) {
-            $perPage = 16;
+            $perPage = 18;
             $cachedArticles = Article::getCachedLatest();
 
             $articles = new LengthAwarePaginator(
@@ -27,7 +27,7 @@ class ArticleController extends Controller
                 ['path' => $request->url(), 'query' => $request->query()]
             );
         } else {
-            $articles = Article::where('country_id', 1)->orderByRaw('id DESC')->paginate(16);
+            $articles = Article::where('country_id', 1)->orderByRaw('id DESC')->paginate(18);
         }
 
         return view('articles', compact('articles'));
