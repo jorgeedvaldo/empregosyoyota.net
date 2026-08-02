@@ -7,8 +7,12 @@
 <section class="jobs-hero">
     <div class="container">
         <h1 class="jobs-hero-title">
-            @if(!empty($query))
+            @if(!empty($query) && !empty($location))
+                Resultados para &ldquo;{{ $query }}&rdquo; em {{ $location }}
+            @elseif(!empty($query))
                 Resultados para &ldquo;{{ $query }}&rdquo;
+            @elseif(!empty($location))
+                Vagas em {{ $location }}
             @else
                 Pesquisar Vagas
             @endif
@@ -22,7 +26,8 @@
     <div class="row">
         <div class="col-lg-8">
             <form action="{{ route('search') }}" method="GET" class="jobs-search-form">
-                <input type="search" class="jobs-search-input" placeholder="Digite a sua pesquisa" aria-label="Search" name="query" value="{{ $query }}"/>
+                <input type="search" class="jobs-search-input" placeholder="Cargo, empresa ou competências" aria-label="Search" name="query" value="{{ $query }}"/>
+                <input type="text" class="jobs-search-input" placeholder="Cidade ou Província" aria-label="Localização" name="location" value="{{ $location }}"/>
                 <button type="submit" class="jobs-search-btn">Pesquisar</button>
             </form>
 
@@ -53,7 +58,13 @@
             @else
             <div class="jobs-empty">
                 <i class="bi bi-search" style="font-size:2rem;"></i>
-                <p class="mt-2 mb-0">Nenhuma vaga encontrada para esta pesquisa.</p>
+                <p class="mt-2 mb-0">
+                    @if(!empty($location))
+                        Nenhuma vaga encontrada{{ !empty($query) ? " para \"{$query}\"" : '' }} em "{{ $location }}".
+                    @else
+                        Nenhuma vaga encontrada para esta pesquisa.
+                    @endif
+                </p>
             </div>
             @endif
         </div>
