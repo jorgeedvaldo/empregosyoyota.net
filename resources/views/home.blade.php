@@ -317,6 +317,7 @@
                 <div class="blog-card-body">
                     <span class="blog-card-date"><i class="bi bi-calendar3"></i> {{ date_format(new DateTime($article['created_at']), 'd-m-Y') }}</span>
                     <h3 class="blog-card-title">{{ $article['title'] }}</h3>
+                    <span class="blog-card-more">Ler mais <i class="bi bi-arrow-right"></i></span>
                 </div>
             </a>
         @endforeach
