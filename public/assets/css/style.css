@@ -621,3 +621,125 @@ footer {
 .content a:focus {
     color: #0a58ca;
 }
+
+/* Listagem de vagas: cabecalho, pesquisa e filtro (jobs.blade.php e search.blade.php) */
+.jobs-hero {
+    background: #ffffff;
+    border-bottom: 1px solid #e9ecef;
+    padding: 48px 0 32px;
+}
+
+.jobs-hero-title {
+    font-size: clamp(1.75rem, 4.5vw, 2.5rem);
+    font-weight: 900;
+    color: #000000;
+    margin-bottom: 0.5rem;
+}
+
+.jobs-hero-subtitle {
+    color: #6c757d;
+    font-size: 1.05rem;
+    margin-bottom: 1rem;
+}
+
+.jobs-hero-count {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 20px;
+    padding: 0.35rem 1rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #333333;
+}
+
+.jobs-search-form {
+    display: flex;
+    gap: 0.6rem;
+    margin-bottom: 1.75rem;
+}
+
+.jobs-search-input {
+    flex: 1;
+    min-width: 0;
+    border: 1px solid #e9ecef;
+    border-radius: 25px;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    background: #f8f9fa;
+    color: #000000;
+}
+
+.jobs-search-input:focus {
+    outline: none;
+    border-color: #000000;
+    background: #ffffff;
+}
+
+.jobs-search-btn {
+    background: #000000;
+    color: #ffffff;
+    border: 2px solid #000000;
+    border-radius: 25px;
+    padding: 0.75rem 1.75rem;
+    font-weight: 700;
+    white-space: nowrap;
+    transition: all 0.3s ease;
+}
+
+.jobs-search-btn:hover {
+    background: #ffffff;
+    color: #000000;
+}
+
+.filter-card {
+    background: #ffffff;
+    border: 1px solid #e9ecef;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+}
+
+.filter-card-header {
+    background: #000000;
+    color: #ffffff;
+    font-weight: 800;
+    padding: 1rem 1.5rem;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+}
+
+.filter-card-body { padding: 0.5rem; }
+
+.filter-link {
+    display: block;
+    padding: 0.65rem 1rem;
+    border-radius: 10px;
+    color: #333333;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.filter-link:hover {
+    background: #f8f9fa;
+    color: #000000;
+}
+
+.jobs-empty {
+    text-align: center;
+    padding: 3rem 1.5rem;
+    color: #6c757d;
+    background: #f8f9fa;
+    border: 1px dashed #e9ecef;
+    border-radius: 16px;
+}
+
+@media (max-width: 576px) {
+    .jobs-hero { padding: 32px 0 24px; }
+    .jobs-search-form { flex-direction: column; }
+}

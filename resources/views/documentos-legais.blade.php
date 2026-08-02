@@ -157,30 +157,30 @@
     $mailto = fn ($doc) => "mailto:{$mailBase}?subject=" . rawurlencode("Pedido de modelo: {$doc}");
 
     $candidatoDocs = [
-        ['icon' => 'bi-file-earmark-x', 'title' => 'Carta de Demissão', 'desc' => 'Modelo para o trabalhador comunicar formalmente à empresa o pedido de demissão.'],
-        ['icon' => 'bi-clock-history', 'title' => 'Aviso Prévio do Trabalhador', 'desc' => 'Documento que formaliza o período de aviso prévio antes da saída da empresa.'],
-        ['icon' => 'bi-person-badge', 'title' => 'Carta de Referência Profissional', 'desc' => 'Modelo para pedir ou redigir uma referência profissional junto de um antigo empregador.'],
-        ['icon' => 'bi-file-earmark-medical', 'title' => 'Reclamação Laboral', 'desc' => 'Modelo base para apresentar uma reclamação formal relacionada com direitos laborais.'],
-        ['icon' => 'bi-calendar-check', 'title' => 'Requerimento de Férias', 'desc' => 'Modelo simples para o trabalhador solicitar formalmente o gozo de férias.'],
-        ['icon' => 'bi-file-earmark-lock', 'title' => 'Procuração para Fins Laborais', 'desc' => 'Documento que autoriza terceiros a tratar de assuntos laborais em nome do trabalhador.'],
+        ['icon' => 'bi-file-earmark-text', 'title' => 'Carta de Demissão', 'desc' => 'Modelo para o trabalhador comunicar formalmente à empresa o pedido de demissão.'],
+        ['icon' => 'bi-file-earmark-text', 'title' => 'Aviso Prévio do Trabalhador', 'desc' => 'Documento que formaliza o período de aviso prévio antes da saída da empresa.'],
+        ['icon' => 'bi-file-earmark-text', 'title' => 'Carta de Referência Profissional', 'desc' => 'Modelo para pedir ou redigir uma referência profissional junto de um antigo empregador.'],
+        ['icon' => 'bi-file-earmark-text', 'title' => 'Reclamação Laboral', 'desc' => 'Modelo base para apresentar uma reclamação formal relacionada com direitos laborais.'],
+        ['icon' => 'bi-file-earmark-text', 'title' => 'Requerimento de Férias', 'desc' => 'Modelo simples para o trabalhador solicitar formalmente o gozo de férias.'],
+        ['icon' => 'bi-file-earmark-text', 'title' => 'Procuração para Fins Laborais', 'desc' => 'Documento que autoriza terceiros a tratar de assuntos laborais em nome do trabalhador.'],
     ];
 
     $empresaDocs = [
-        ['icon' => 'bi-journal-bookmark', 'title' => 'Regulamento Interno da Empresa', 'desc' => 'Modelo de regulamento com normas de conduta, horários e regras internas da empresa.'],
-        ['icon' => 'bi-exclamation-triangle', 'title' => 'Carta de Advertência Disciplinar', 'desc' => 'Modelo para notificar formalmente um colaborador sobre uma falta disciplinar.'],
-        ['icon' => 'bi-file-earmark-minus', 'title' => 'Notificação de Rescisão de Contrato', 'desc' => 'Modelo para a empresa comunicar formalmente o términus do contrato de trabalho.'],
-        ['icon' => 'bi-clipboard-data', 'title' => 'Ficha de Avaliação de Desempenho', 'desc' => 'Modelo para avaliar periodicamente o desempenho dos colaboradores.'],
-        ['icon' => 'bi-wifi', 'title' => 'Política de Uso de Equipamentos e Internet', 'desc' => 'Modelo de política interna sobre o uso de equipamentos, internet e redes sociais.'],
-        ['icon' => 'bi-fingerprint', 'title' => 'Ficha de Registo de Ponto e Assiduidade', 'desc' => 'Modelo para controlo de horários de entrada, saída e assiduidade dos colaboradores.'],
+        ['icon' => 'bi-file-earmark-text', 'title' => 'Regulamento Interno da Empresa', 'desc' => 'Modelo de regulamento com normas de conduta, horários e regras internas da empresa.'],
+        ['icon' => 'bi-file-earmark-text', 'title' => 'Carta de Advertência Disciplinar', 'desc' => 'Modelo para notificar formalmente um colaborador sobre uma falta disciplinar.'],
+        ['icon' => 'bi-file-earmark-text', 'title' => 'Notificação de Rescisão de Contrato', 'desc' => 'Modelo para a empresa comunicar formalmente o términus do contrato de trabalho.'],
+        ['icon' => 'bi-file-earmark-text', 'title' => 'Ficha de Avaliação de Desempenho', 'desc' => 'Modelo para avaliar periodicamente o desempenho dos colaboradores.'],
+        ['icon' => 'bi-file-earmark-text', 'title' => 'Política de Uso de Equipamentos e Internet', 'desc' => 'Modelo de política interna sobre o uso de equipamentos, internet e redes sociais.'],
+        ['icon' => 'bi-file-earmark-text', 'title' => 'Ficha de Registo de Ponto e Assiduidade', 'desc' => 'Modelo para controlo de horários de entrada, saída e assiduidade dos colaboradores.'],
     ];
 
     $geraisDocs = [
         ['icon' => 'bi-file-earmark-text', 'title' => 'Contrato de Trabalho a Termo Certo', 'desc' => 'Modelo de contrato de trabalho com duração determinada, para empresa e trabalhador.'],
-        ['icon' => 'bi-file-earmark-check', 'title' => 'Contrato de Trabalho por Tempo Indeterminado', 'desc' => 'Modelo de contrato de trabalho sem prazo definido de duração.'],
-        ['icon' => 'bi-handshake', 'title' => 'Acordo de Rescisão por Mútuo Acordo', 'desc' => 'Modelo de acordo para términus do contrato por consenso entre as partes.'],
-        ['icon' => 'bi-file-earmark-person', 'title' => 'Declaração de Vínculo Empregatício', 'desc' => 'Modelo de declaração que comprova a relação de trabalho entre empresa e colaborador.'],
-        ['icon' => 'bi-shield-lock', 'title' => 'Termo de Confidencialidade (NDA)', 'desc' => 'Modelo de acordo de confidencialidade para proteger informações sensíveis de ambas as partes.'],
-        ['icon' => 'bi-receipt', 'title' => 'Recibo de Vencimento / Folha de Pagamento', 'desc' => 'Modelo de recibo para comprovar o pagamento do salário mensal ao trabalhador.'],
+        ['icon' => 'bi-file-earmark-text', 'title' => 'Contrato de Trabalho por Tempo Indeterminado', 'desc' => 'Modelo de contrato de trabalho sem prazo definido de duração.'],
+        ['icon' => 'bi-file-earmark-text', 'title' => 'Acordo de Rescisão por Mútuo Acordo', 'desc' => 'Modelo de acordo para términus do contrato por consenso entre as partes.'],
+        ['icon' => 'bi-file-earmark-text', 'title' => 'Declaração de Vínculo Empregatício', 'desc' => 'Modelo de declaração que comprova a relação de trabalho entre empresa e colaborador.'],
+        ['icon' => 'bi-file-earmark-text', 'title' => 'Termo de Confidencialidade (NDA)', 'desc' => 'Modelo de acordo de confidencialidade para proteger informações sensíveis de ambas as partes.'],
+        ['icon' => 'bi-file-earmark-text', 'title' => 'Recibo de Vencimento / Folha de Pagamento', 'desc' => 'Modelo de recibo para comprovar o pagamento do salário mensal ao trabalhador.'],
     ];
 @endphp
 

@@ -114,104 +114,216 @@
 </script>
 @endsection
 @section('content')
+<style>
+    .article-hero {
+        background: #ffffff;
+        border-bottom: 1px solid #e9ecef;
+        padding: 48px 0 40px;
+    }
 
-<!-- Page Content -->
+    .article-breadcrumb {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        color: #6c757d;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.9rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .article-breadcrumb:hover { color: #000000; }
+
+    .article-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        background: #f8f9fa;
+        border: 1px solid #e9ecef;
+        border-radius: 20px;
+        padding: 0.4rem 1rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #333333;
+        margin-bottom: 1.25rem;
+    }
+
+    .article-title {
+        font-size: clamp(1.75rem, 4.5vw, 2.75rem);
+        font-weight: 900;
+        color: #000000;
+        line-height: 1.2;
+        margin-bottom: 1.5rem;
+    }
+
+    .btn-share-article {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: #25D366;
+        color: #ffffff;
+        border-radius: 25px;
+        padding: 0.75rem 1.6rem;
+        font-weight: 700;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .btn-share-article:hover { background: #1da851; color: #ffffff; }
+
+    .article-section { padding: 3rem 0; }
+
+    .article-image-card {
+        border-radius: 16px;
+        overflow: hidden;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    }
+
+    .article-card {
+        background: #ffffff;
+        border: 1px solid #e9ecef;
+        border-radius: 16px;
+        padding: 2rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    }
+
+    .article-card .content {
+        color: #333333;
+        line-height: 1.8;
+        font-size: 1.05rem;
+    }
+
+    .article-card .content p { margin-bottom: 1rem; }
+    .article-card .content ul,
+    .article-card .content ol { padding-left: 1.5rem; margin-bottom: 1rem; }
+    .article-card .content li { margin-bottom: 0.5rem; }
+    .article-card .content img { max-width: 100%; height: auto; border-radius: 8px; }
+
+    .article-sidebar-card {
+        background: #ffffff;
+        border: 1px solid #e9ecef;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        margin-bottom: 1.5rem;
+    }
+
+    .article-sidebar-card-header {
+        background: #000000;
+        color: #ffffff;
+        font-weight: 800;
+        font-size: 1.05rem;
+        padding: 1rem 1.5rem;
+        display: flex;
+        align-items: center;
+    }
+
+    .article-sidebar-item {
+        display: block;
+        padding: 1rem 1.5rem;
+        text-decoration: none;
+        color: inherit;
+        border-bottom: 1px solid #f1f1f1;
+        transition: background 0.2s ease;
+    }
+
+    .article-sidebar-item:last-child { border-bottom: none; }
+    .article-sidebar-item:hover { background: #f8f9fa; }
+
+    .article-sidebar-item-title {
+        font-weight: 700;
+        color: #000000;
+        font-size: 0.95rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .article-sidebar-item-meta { color: #6c757d; font-size: 0.85rem; }
+
+    @media (max-width: 768px) {
+        .article-hero { padding: 32px 0 28px; }
+        .article-section { padding: 2rem 0; }
+        .article-card { padding: 1.5rem; }
+    }
+</style>
+
+<!-- Hero -->
+<section class="article-hero">
+    <div class="container">
+        <a href="{{ url('/articles') }}" class="article-breadcrumb"><i class="bi bi-arrow-right" style="transform:scaleX(-1);"></i> Voltar aos artigos</a>
+
+        <div>
+            <span class="article-badge"><i class="bi bi-calendar3"></i> {{ date_format(new DateTime($article['created_at']), 'd-m-Y') }}</span>
+        </div>
+
+        <h1 class="article-title">{{ $article['title'] }}</h1>
+
+        <a class="btn-share-article"
+           href="https://api.whatsapp.com/send?text={{ urlencode($article['title'] . "\n" . url('/articles/' . $article['slug'])) }}"
+           target="_blank" rel="noopener">
+            <i class="bi bi-whatsapp"></i> Partilhar via WhatsApp
+        </a>
+    </div>
+</section>
+
+<section class="article-section">
 <div class="container">
-
     <div class="row">
 
       <!-- Post Content Column -->
       <div class="col-lg-8">
 
-        <!-- Title -->
-        <h1 class="mt-4">{{$article['title']}}</h1>
+        <div class="article-image-card">
+            <img class="img-fluid" src="{{ asset('storage/' . $article['photo']) }}" alt="{{ $article['title'] }}" fetchpriority="high" decoding="async" style="width:100%;height:auto;display:block;">
+        </div>
 
-        <!-- Date/Time -->
-        <p>Publicado em: {{ date_format(new DateTime($article['created_at']), 'd-m-Y') }}</p>
-
-        <hr>
-		  
-		  <!-- Botão de Compartilhar via WhatsApp -->
-		<div class="container">
-			<p>Partilhar</p>
-			<a class="btn btn-success" href="https://api.whatsapp.com/send?text={{$article['title']}}%0A.%0ASe%20você%20deseja%20saber%20mais,%20por%20favor,%20clique%20no%20link:%20{{url('/articles/'. $article['slug'])}}%0A." target="_blank">Partilhar via WhatsApp</a>
-		</div>
-        <hr>
-		  
-		<!-- Preview Image -->
-        <img class="img-fluid rounded" src="{{asset('storage/' . $article['photo'])}}" alt="{{ $article['title'] }}" fetchpriority="high" decoding="async" style="width:100%;height:auto;">
-		  
         <!-- Anúncio de artigo -->
         @include('partials.adsense', ['slot' => '9222329186', 'layout' => 'in-article', 'format' => 'fluid', 'style' => 'display:block; text-align:center;'])
 
-        <div class="lead content">
-            {!!$article['description']!!}
+        <div class="article-card">
+            <div class="content">
+                {!! $article['description'] !!}
+            </div>
         </div>
 
         <!-- Divulgação do App -->
         @include('partials.app-download')
 
-        <hr>
-
       </div>
 
-      <div class="col-md-4">
-		<!-- Card de Últimas Oportunidades Widget -->
-        <div class="card my-4">
-          <h5 class="card-header">Últimas Oportunidades</h5>
-          <div class="card-body">
-            <div class="row">
-              <div class="col-lg-12">
-                <div class="list-group mb-3">
-                  @for($i = 0; $i < 5; $i++)
-  
-                      <a href="{{ url('/empregos/' . $LastJobs[$i]['slug']) }}" class="list-group-item list-group-item-action mb-3">
-                          <div class="d-flex w-100 justify-content-between">
-                            <p class="mb-1"><b>{{ $LastJobs[$i]['title'] }}</b></p>
-                          </div>
-                          <p class="mb-1">Empresa: {{ $LastJobs[$i]['company'] }}</p>
-                          <small><i class="bi bi-geo-alt"></i> Localização: <span>{{ $LastJobs[$i]['province'] }}</span></small>
-                      </a>
-  
-                  @endfor
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- End -->
+      <div class="col-lg-4">
 
-        <!-- Card de Últimos BlogPosts Widget -->
-        <div class="card my-4">
-          <h5 class="card-header">Últimas Notícias</h5>
-          <div class="card-body">
-            <div class="row">
-              <div class="col-lg-12">
-                <div class="list-group mb-3">
-                  @for($i = 0; $i < 5; $i++)
-  
-                    <a href="{{ url('/articles/' . $LastArticles[$i]['slug']) }}" class="list-group-item list-group-item-action mb-3">
-                      <div class="d-flex w-100 justify-content-between">
-                      <p class="mb-1"><b>{{ $LastArticles[$i]['title'] }}</b></p>
-                      </div>
-                      <p class="mb-1">Publicado em: {{ date_format(new DateTime($LastArticles[$i]['created_at']), 'd-m-Y') }}</p>
-                      <small><i class="bi bi-journal-text"></i>   <span> </span></small>
-                    </a>
-  
-                  @endfor
-                </div>
-              </div>
-            </div>
-          </div>
+        <!-- Últimas Oportunidades -->
+        <div class="article-sidebar-card">
+            <div class="article-sidebar-card-header"><i class="bi bi-briefcase me-2"></i>Últimas Oportunidades</div>
+            @foreach($LastJobs->take(5) as $lastJob)
+            <a href="{{ url('/empregos/' . $lastJob['slug']) }}" class="article-sidebar-item">
+                <p class="article-sidebar-item-title">{{ $lastJob['title'] }}</p>
+                <p class="article-sidebar-item-meta mb-1">{{ $lastJob['company'] }}</p>
+                <span class="article-sidebar-item-meta"><i class="bi bi-geo-alt"></i> {{ $lastJob['province'] }}</span>
+            </a>
+            @endforeach
         </div>
-        <!-- End -->
-         <!-- Adaptavel 2 no artigo -->
+
+        <!-- Últimas Notícias -->
+        <div class="article-sidebar-card">
+            <div class="article-sidebar-card-header"><i class="bi bi-journal-text me-2"></i>Últimas Notícias</div>
+            @foreach($LastArticles->take(5) as $lastArticle)
+            <a href="{{ url('/articles/' . $lastArticle['slug']) }}" class="article-sidebar-item">
+                <p class="article-sidebar-item-title">{{ $lastArticle['title'] }}</p>
+                <span class="article-sidebar-item-meta">{{ date_format(new DateTime($lastArticle['created_at']), 'd-m-Y') }}</span>
+            </a>
+            @endforeach
+        </div>
+
+        <!-- Adaptavel 2 no artigo -->
         @include('partials.adsense', ['slot' => '4901501299', 'format' => 'auto', 'responsive' => true])
       </div>
 
     </div>
     <!-- /.row -->
 
-  </div>
-  <!-- /.container -->
+</div>
+</section>
 @endsection('content')

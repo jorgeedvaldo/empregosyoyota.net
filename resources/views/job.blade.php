@@ -436,11 +436,11 @@
 <!-- Hero -->
 <section class="job-hero">
     <div class="container">
-        <a href="{{ $jobsUrl }}" class="job-breadcrumb"><i class="bi bi-arrow-left"></i> Voltar às vagas</a>
+        <a href="{{ $jobsUrl }}" class="job-breadcrumb"><i class="bi bi-arrow-right" style="transform:scaleX(-1);"></i> Voltar às vagas</a>
 
         <div class="job-badges">
             <span class="job-badge"><i class="bi bi-geo-alt"></i> {{ $job['province'] }}</span>
-            <span class="job-badge"><i class="bi bi-flag"></i> {{ $countryName }}</span>
+            <span class="job-badge">{{ $countryName }}</span>
             <span class="job-badge"><i class="bi bi-briefcase"></i> Tempo Inteiro</span>
             <span class="job-badge"><i class="bi bi-calendar3"></i> {{ date_format(new DateTime($job['created_at']), 'd-m-Y') }}</span>
         </div>
@@ -575,7 +575,7 @@
 
             <!-- Últimas Notícias -->
             <div class="sidebar-card">
-                <div class="sidebar-card-header"><i class="bi bi-newspaper me-2"></i>Últimas Notícias</div>
+                <div class="sidebar-card-header"><i class="bi bi-journal-text me-2"></i>Últimas Notícias</div>
                 @foreach($LastArticles->take(5) as $article)
                 <a href="{{ url('/articles/' . $article['slug']) }}" class="sidebar-item">
                     <p class="sidebar-item-title">{{ $article['title'] }}</p>

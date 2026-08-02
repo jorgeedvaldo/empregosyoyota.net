@@ -104,13 +104,24 @@
 
 @endsection('head-scripts')
 @section('content')
-<div class="container">
-    <div class="row mt-5">
-        <div class="col-md-8 p-0 mr-3">
-            <form action="{{ route('search') }}" method="GET" class="input-group mb-3">
-                <input type="search" class="form-control rounded mr-2" placeholder="Digite a sua pesquisa" aria-label="Search" aria-describedby="search-addon" name="query"/>
-                <button type="submit" class="btn btn-dark" data-mdb-ripple-init>Pesquisar</button>
+
+<section class="jobs-hero">
+    <div class="container">
+        <h1 class="jobs-hero-title">{{ $title ?? 'Vagas de Emprego' }}</h1>
+        <p class="jobs-hero-subtitle">Encontre as melhores oportunidades de emprego, atualizadas todos os dias.</p>
+        <span class="jobs-hero-count"><i class="bi bi-briefcase"></i> {{ $jobs->total() }} vaga(s) encontrada(s)</span>
+    </div>
+</section>
+
+<div class="container my-5">
+    <div class="row">
+        <div class="col-lg-8">
+            <form action="{{ route('search') }}" method="GET" class="jobs-search-form">
+                <input type="search" class="jobs-search-input" placeholder="Pesquisar por cargo, empresa..." aria-label="Search" name="query"/>
+                <button type="submit" class="jobs-search-btn">Pesquisar</button>
             </form>
+
+            @if($jobs->count() > 0)
             <div class="job-list">
                 @foreach($jobs as $job)
 
@@ -133,17 +144,25 @@
 
                 @endforeach
             </div>
-            {{ $jobs->links() }}
+            <div class="mt-4">{{ $jobs->links() }}</div>
+            @else
+            <div class="jobs-empty">
+                <i class="bi bi-search" style="font-size:2rem;"></i>
+                <p class="mt-2 mb-0">Nenhuma vaga encontrada de momento.</p>
+            </div>
+            @endif
         </div>
 
-        <div class="col-md-3 p-0 mb-3">
-			<div class="nav flex-column nav-pills p-3 m-0 bg-white border">
-                <p class="text-muted">Filtrar</p>
-                <a href="{{ url('/empregos') }}" class = "nav-link">Todos</a>
-				@foreach($categories as $item)
-                    <a href="{{ url('/categories/' . $item['id']) }}" class = "nav-link">{{ $item['name'] }}</a>
-                @endforeach
-    		</div>
+        <div class="col-lg-4">
+            <div class="filter-card">
+                <div class="filter-card-header">Filtrar por Categoria</div>
+                <div class="filter-card-body">
+                    <a href="{{ url('/empregos') }}" class="filter-link">Todos</a>
+                    @foreach($categories as $item)
+                        <a href="{{ url('/categories/' . $item['id']) }}" class="filter-link">{{ $item['name'] }}</a>
+                    @endforeach
+                </div>
+            </div>
         </div>
 
     </div>
