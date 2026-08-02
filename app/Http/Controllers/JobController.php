@@ -161,15 +161,63 @@ class JobController extends Controller
         }
     }
 
+    /**
+     * Quantos candidatos por relevancia (TNTSearch) sao trazidos antes
+     * de reordenar por relevancia + recencia. Maior = melhor qualidade
+     * de reordenacao, mas mais lento.
+     */
+    const SEARCH_CANDIDATE_POOL = 300;
+
+    /** Peso da relevancia textual vs. da recencia no ranking combinado. */
+    const SEARCH_RELEVANCE_WEIGHT = 0.65;
+    const SEARCH_RECENCY_WEIGHT = 0.35;
+
+    /** Meia-vida (dias) do decaimento de recencia: com este valor, uma
+     *  vaga com este numero de dias tem metade do "peso" de recencia
+     *  de uma vaga publicada hoje. */
+    const SEARCH_RECENCY_HALFLIFE_DAYS = 60;
+
     public function search(Request $request)
     {
         $query = trim((string) $request->input('query'));
+        $perPage = 30;
+        $page = max(1, (int) $request->get('page', 1));
 
-        // Pesquisa por relevancia (titulo, empresa, provincia e descricao)
-        // via TNTSearch/Scout. Sem termo, mostra as vagas mais recentes.
-        $jobs = $query !== ''
-            ? Job::search($query)->paginate(30)
-            : Job::orderByRaw('id DESC')->paginate(30);
+        if ($query === '') {
+            // Sem termo de pesquisa: lista simples, mais recentes primeiro.
+            $jobs = Job::orderByRaw('id DESC')->paginate($perPage);
+        } else {
+            // Traz um conjunto maior de candidatos ordenados por relevancia
+            // (titulo, empresa, provincia, descricao) via TNTSearch/Scout,
+            // e depois reordena combinando relevancia + recencia, para que
+            // vagas antigas com match textual forte nao dominem sempre
+            // sobre vagas recentes igualmente relevantes.
+            $candidates = Job::search($query)->take(self::SEARCH_CANDIDATE_POOL)->get()->values();
+            $total = $candidates->count();
+            $now = now();
+
+            $ranked = $candidates
+                ->map(function ($job, $index) use ($total, $now) {
+                    $relevanceScore = $total > 1 ? 1 - ($index / ($total - 1)) : 1;
+                    $daysOld = max(0, $now->diffInDays($job->created_at));
+                    $recencyScore = exp(-$daysOld / self::SEARCH_RECENCY_HALFLIFE_DAYS);
+
+                    $job->searchScore = (self::SEARCH_RELEVANCE_WEIGHT * $relevanceScore)
+                        + (self::SEARCH_RECENCY_WEIGHT * $recencyScore);
+
+                    return $job;
+                })
+                ->sortByDesc('searchScore')
+                ->values();
+
+            $jobs = new LengthAwarePaginator(
+                $ranked->slice(($page - 1) * $perPage, $perPage)->values(),
+                $ranked->count(),
+                $perPage,
+                $page,
+                ['path' => $request->url(), 'query' => $request->query()]
+            );
+        }
 
         $categories = Category::getCachedAll();
 
