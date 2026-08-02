@@ -205,7 +205,7 @@
                     <a href="{{ url('/ao/empregos') }}" class="text-decoration-none">
                         <div class="card h-100 text-center shadow-sm border-0" style="border-radius: 12px; transition: transform .2s;">
                             <div class="card-body py-4">
-                                <div class="mb-3" style="font-size: 3rem; line-height: 1;">&#127462;&#127476;</div>
+                                <img src="{{ asset('assets/images/flags/ao.svg') }}" alt="Bandeira de Angola" width="64" height="64" class="mb-3 rounded-circle" loading="lazy">
                                 <h3 class="card-title fw-bold mb-1 h5">Angola</h3>
                                 <p class="card-text text-muted small">Vagas de emprego em Angola</p>
                                 <span class="btn btn-dark btn-sm mt-2">Ver vagas</span>
@@ -217,7 +217,7 @@
                     <a href="{{ url('/br/empregos') }}" class="text-decoration-none">
                         <div class="card h-100 text-center shadow-sm border-0" style="border-radius: 12px; transition: transform .2s;">
                             <div class="card-body py-4">
-                                <div class="mb-3" style="font-size: 3rem; line-height: 1;">&#127463;&#127479;</div>
+                                <img src="{{ asset('assets/images/flags/br.svg') }}" alt="Bandeira do Brasil" width="64" height="64" class="mb-3 rounded-circle" loading="lazy">
                                 <h3 class="card-title fw-bold mb-1 h5">Brasil</h3>
                                 <p class="card-text text-muted small">Vagas de emprego no Brasil</p>
                                 <span class="btn btn-dark btn-sm mt-2">Ver vagas</span>
@@ -229,7 +229,7 @@
                     <a href="{{ url('/mz/empregos') }}" class="text-decoration-none">
                         <div class="card h-100 text-center shadow-sm border-0" style="border-radius: 12px; transition: transform .2s;">
                             <div class="card-body py-4">
-                                <div class="mb-3" style="font-size: 3rem; line-height: 1;">&#127474;&#127487;</div>
+                                <img src="{{ asset('assets/images/flags/mz.svg') }}" alt="Bandeira de Moçambique" width="64" height="64" class="mb-3 rounded-circle" loading="lazy">
                                 <h3 class="card-title fw-bold mb-1 h5">Moçambique</h3>
                                 <p class="card-text text-muted small">Vagas de emprego em Moçambique</p>
                                 <span class="btn btn-dark btn-sm mt-2">Ver vagas</span>
@@ -241,7 +241,7 @@
                     <a href="{{ url('/pt/empregos') }}" class="text-decoration-none">
                         <div class="card h-100 text-center shadow-sm border-0" style="border-radius: 12px; transition: transform .2s;">
                             <div class="card-body py-4">
-                                <div class="mb-3" style="font-size: 3rem; line-height: 1;">&#127477;&#127481;</div>
+                                <img src="{{ asset('assets/images/flags/pt.svg') }}" alt="Bandeira de Portugal" width="64" height="64" class="mb-3 rounded-circle" loading="lazy">
                                 <h3 class="card-title fw-bold mb-1 h5">Portugal</h3>
                                 <p class="card-text text-muted small">Vagas de emprego em Portugal</p>
                                 <span class="btn btn-dark btn-sm mt-2">Ver vagas</span>
