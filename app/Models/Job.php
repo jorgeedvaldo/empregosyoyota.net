@@ -6,10 +6,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cache;
+use Laravel\Scout\Searchable;
 
 class Job extends Model
 {
-    use HasFactory;
+    use HasFactory, Searchable;
 
     protected $fillable = [
         'title', 'slug', 'company', 'province', 'description', 'email_or_link', 'photo'
@@ -60,6 +61,21 @@ class Job extends Model
     public function categories()
     {
         return $this->belongsToMany('App\Models\Category', 'category_jobs');
+    }
+
+    /**
+     * Campos indexados pelo TNTSearch (via Laravel Scout) para a
+     * pesquisa de vagas: titulo, empresa, localizacao e descricao.
+     */
+    public function toSearchableArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'title' => $this->title,
+            'company' => $this->company,
+            'province' => $this->province,
+            'description' => strip_tags((string) $this->description),
+        ];
     }
 
 	public function country()
