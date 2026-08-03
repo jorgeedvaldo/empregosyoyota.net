@@ -7,6 +7,15 @@
     $countryISO      = ['ao' => 'AO',     'br' => 'BR',     'mz' => 'MZ',         'pt' => 'PT'];
     $countryName     = $countryNames[$countryCode];
 
+    // Canal/grupo de WhatsApp de vagas, especifico por pais.
+    $whatsappChannels = [
+        'ao' => ['url' => 'https://whatsapp.com/channel/0029VaCfSeo0bIdgKs7bIB3t', 'label' => 'canal'],
+        'br' => ['url' => 'https://whatsapp.com/channel/0029VaRkVRf6GcGIcaA7LS0S', 'label' => 'canal'],
+        'mz' => ['url' => 'https://chat.whatsapp.com/BLXhPWYKjQW4th1arYBvuY?s=cl&p=a&ilr=4', 'label' => 'grupo'],
+        'pt' => ['url' => 'https://whatsapp.com/channel/0029VbDbMVCInlqM8SYu2B0q', 'label' => 'canal'],
+    ];
+    $whatsappChannel = $whatsappChannels[$countryCode] ?? $whatsappChannels['ao'];
+
     $jobUrl  = isset($country)
         ? url("/{$country}/empregos/{$job['slug']}")
         : url("/empregos/{$job['slug']}");
@@ -517,11 +526,11 @@
 
             <div class="whatsapp-cta">
                 <div>
-                    <strong>Entre no nosso canal do WhatsApp</strong>
-                    <p class="mb-0">Receba as vagas de emprego em primeira mão.</p>
+                    <strong>Entre no nosso {{ $whatsappChannel['label'] }} do WhatsApp</strong>
+                    <p class="mb-0">Receba as vagas de emprego em {{ $countryName }} em primeira mão.</p>
                 </div>
-                <a href="https://whatsapp.com/channel/0029VaCfSeo0bIdgKs7bIB3t">
-                    <i class="bi bi-whatsapp"></i> Entrar no Canal
+                <a href="{{ $whatsappChannel['url'] }}" target="_blank" rel="noopener">
+                    <i class="bi bi-whatsapp"></i> Entrar no {{ ucfirst($whatsappChannel['label']) }}
                 </a>
             </div>
 
