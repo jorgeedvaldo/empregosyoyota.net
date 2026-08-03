@@ -231,6 +231,45 @@
     border-color: #000000;
 }
 
+/* Partners Section */
+.partners-section {
+    padding: 80px 0;
+    background: #ffffff;
+}
+
+.partners-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 2rem;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.partner-card {
+    background: #ffffff;
+    border: 1px solid #e9ecef;
+    border-radius: 16px;
+    padding: 2.5rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 160px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
+}
+
+.partner-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+}
+
+.partner-card img {
+    max-width: 100%;
+    height: auto;
+    max-height: 90px;
+    object-fit: contain;
+}
+
 /* Mission Section */
 .mission-section {
     padding: 80px 0;
@@ -381,6 +420,25 @@
                 <div class="team-social">
                     <a href="https://www.linkedin.com/in/gelson-somano-44a130293/"><i class="bi bi-linkedin"></i></a>
                 </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Parceiros -->
+<section class="partners-section">
+    <div class="container">
+        <h2 class="section-title">Nossos Parceiros</h2>
+        <p class="section-subtitle">
+            Empresas que trabalham lado a lado com a Empregos Yoyota para levar mais oportunidades até si.
+        </p>
+
+        <div class="partners-grid">
+            <a href="https://www.procureaqui.net/" target="_blank" rel="noopener" class="partner-card">
+                <img src="{{ asset('assets/images/partners/procure-aqui.png') }}" alt="Procure Aqui" loading="lazy">
+            </a>
+            <div class="partner-card">
+                <img src="{{ asset('assets/images/partners/rita-henriques-consultoria.png') }}" alt="Rita Henriques Consultoria Online (SU), Lda." loading="lazy">
             </div>
         </div>
     </div>
