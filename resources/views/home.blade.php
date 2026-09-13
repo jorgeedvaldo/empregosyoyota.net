@@ -274,8 +274,9 @@
                     <a href="https://play.google.com/store/apps/details?id=net.empregosyoyota.app"
                        target="_blank" rel="noopener"
                        aria-label="Baixar o app Empregos Yoyota na Google Play">
-                        <img src="https://play.google.com/intl/pt-BR_pt/badges/static/images/badges/pt-br_badge_web_generic.png"
+                        <img src="{{ asset('assets/images/GetItOnGooglePlay_Badge_Web_color_Portuguese-Portugal.svg') }}"
                              alt="Disponível no Google Play"
+                             width="216" height="64"
                              loading="lazy"
                              style="height: 64px; width: auto;">
                     </a>
