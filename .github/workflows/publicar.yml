@@ -1,0 +1,135 @@
+name: Publicar na hospedagem
+
+# Sempre que a main muda, a hospedagem vai buscar o código novo. O disparo
+# manual serve para testar a configuração sem ter de fazer um commit, e para
+# repetir uma publicação que tenha falhado.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Duas publicações ao mesmo tempo no mesmo servidor dariam um git a meio de
+# outro. A segunda espera pela primeira em vez de a cancelar.
+concurrency:
+  group: publicar-producao
+  cancel-in-progress: false
+
+# Só é preciso ler o repositório para ir buscar o deploy/publicar.sh.
+permissions:
+  contents: read
+
+jobs:
+  publicar:
+    name: git pull na hospedagem
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Obter o código
+        uses: actions/checkout@v4
+
+      - name: Preparar o acesso SSH
+        env:
+          SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+        run: |
+          if [ -z "$SSH_KEY" ]; then
+            echo "::error::Falta o segredo DEPLOY_SSH_KEY."
+            exit 1
+          fi
+
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/id_deploy
+          chmod 600 ~/.ssh/id_deploy
+
+          # Uma chave com palavra-passe não serve aqui: não há ninguém para a
+          # escrever. Sem esta verificação o sintoma seria o servidor a fechar a
+          # ligação sem explicação, porque o cliente nem chega a oferecer a chave.
+          if ! ssh-keygen -y -P "" -f ~/.ssh/id_deploy >/dev/null 2>&1; then
+            echo "::error::A chave em DEPLOY_SSH_KEY tem palavra-passe, ou está mal colada."
+            echo "::error::Gere uma chave sem palavra-passe: ssh-keygen -t ed25519 -N \"\" -f caminho/da/chave"
+            echo "::error::Confirme também que colou a chave privada inteira, da linha BEGIN à linha END."
+            exit 1
+          fi
+
+          echo "Chave carregada: $(ssh-keygen -l -f ~/.ssh/id_deploy)"
+
+          if [ -n "$KNOWN_HOSTS" ]; then
+            printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+            chmod 644 ~/.ssh/known_hosts
+            echo "VERIFICAR_SERVIDOR=yes" >> "$GITHUB_ENV"
+          else
+            # Sem a impressão digital, aceita-se o servidor que responder. A chave
+            # privada continua a não sair daqui — o SSH assina um desafio ligado à
+            # sessão, que um servidor falso não consegue reutilizar no verdadeiro.
+            # O que se perde é a garantia de que se falou mesmo com o seu servidor.
+            echo "::warning::Sem DEPLOY_KNOWN_HOSTS: a identidade do servidor não é verificada. Veja deploy/README.md."
+            echo "VERIFICAR_SERVIDOR=accept-new" >> "$GITHUB_ENV"
+          fi
+
+      - name: Publicar
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          DEPLOY_PORT: ${{ secrets.DEPLOY_PORT }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+          DEPLOY_COMMIT: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+
+          for nome in DEPLOY_HOST DEPLOY_USER DEPLOY_PATH; do
+            if [ -z "${!nome}" ]; then
+              echo "::error::Falta o segredo $nome."
+              exit 1
+            fi
+          done
+
+          # O script vai daqui pelo canal do SSH: corre sempre a versão que está
+          # neste commit, e não uma cópia esquecida no servidor. Do lado de lá faz
+          # só o git pull — não instala dependências nem corre migrações.
+          # Sem opções para algoritmos antigos: o servidor negoceia bem com os
+          # modernos, confirmado com uma chave ed25519. Se algum dia for preciso
+          # reactivar o ssh-rsa/SHA-1, o passo de diagnóstico abaixo testa-o.
+          ssh -i ~/.ssh/id_deploy \
+              -p "${DEPLOY_PORT:-22}" \
+              -o BatchMode=yes \
+              -o ConnectTimeout=20 \
+              -o "StrictHostKeyChecking=${VERIFICAR_SERVIDOR:-accept-new}" \
+              "$DEPLOY_USER@$DEPLOY_HOST" \
+              "APP_DIR='$DEPLOY_PATH' DEPLOY_COMMIT='$DEPLOY_COMMIT' bash -s" \
+              < deploy/publicar.sh
+
+      # Só corre quando a publicação falha. Sem isto, o registo diz apenas
+      # "Connection closed" e fica-se sem saber em que ponto do aperto de mão é
+      # que o servidor desistiu.
+      - name: Diagnóstico da ligação
+        if: failure()
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          DEPLOY_PORT: ${{ secrets.DEPLOY_PORT }}
+        run: |
+          echo "===== Que chave estamos a usar ====="
+          ssh-keygen -l -f ~/.ssh/id_deploy || echo "(a chave não é legível — pode estar mal colada)"
+
+          echo
+          echo "===== Ligação detalhada ====="
+          ssh -vvv -i ~/.ssh/id_deploy \
+              -p "${DEPLOY_PORT:-22}" \
+              -o BatchMode=yes \
+              -o ConnectTimeout=20 \
+              -o StrictHostKeyChecking=accept-new \
+              -o PubkeyAcceptedKeyTypes=+ssh-rsa \
+              -o HostKeyAlgorithms=+ssh-rsa \
+              "$DEPLOY_USER@$DEPLOY_HOST" 'echo LIGACAO-OK; whoami; pwd' 2>&1 | tail -80 || true
+
+          echo
+          echo "===== O servidor responde na porta? ====="
+          timeout 10 bash -c "cat < /dev/null > /dev/tcp/$DEPLOY_HOST/${DEPLOY_PORT:-22}" \
+            && echo "porta aberta" \
+            || echo "porta fechada ou filtrada — pode ser a firewall do alojamento a bloquear o GitHub"
+
+      - name: Apagar a chave
+        if: always()
+        run: rm -f ~/.ssh/id_deploy
