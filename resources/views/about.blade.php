@@ -270,6 +270,18 @@
     object-fit: contain;
 }
 
+.partner-card-app {
+    flex-direction: column;
+    gap: 0.75rem;
+    text-decoration: none;
+}
+
+.partner-card-app .partner-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #000000;
+}
+
 /* Mission Section */
 .mission-section {
     padding: 80px 0;
@@ -440,6 +452,10 @@
             <div class="partner-card">
                 <img src="{{ asset('assets/images/partners/rita-henriques-consultoria.png') }}" alt="Rita Henriques Consultoria Online (SU), Lda." loading="lazy">
             </div>
+            <a href="https://play.google.com/store/apps/details?id=ao.txubi.app" target="_blank" rel="noopener" class="partner-card partner-card-app">
+                <img src="{{ asset('assets/images/partners/txubi.png') }}" alt="Txubi" width="90" height="90" loading="lazy">
+                <span class="partner-name">Txubi</span>
+            </a>
         </div>
     </div>
 </section>
