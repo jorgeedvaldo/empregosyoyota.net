@@ -36,6 +36,11 @@ class Kernel extends HttpKernel
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
             \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
+
+            // Ultimo do grupo de proposito: ve a resposta antes de a sessao
+            // lhe colar o cookie, por isso a copia guardada nunca leva
+            // cookies de ninguem (ver App\Services\PublicPageCache).
+            \App\Http\Middleware\ServePublicPageFromCache::class,
         ],
 
         'api' => [

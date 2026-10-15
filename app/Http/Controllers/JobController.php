@@ -5,10 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Article;
 use App\Models\Category;
 use App\Models\Job;
+use App\Services\DatabaseFallbackCache;
+use App\Exceptions\DatabaseUnavailableException;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\Cache;
 
 class JobController extends Controller
 {
@@ -33,7 +34,7 @@ class JobController extends Controller
 
             $jobs = new LengthAwarePaginator(
                 $cachedJobs->slice(0, $perPage)->values(),
-                Job::where('country_id', 1)->count(),
+                Job::getCachedCount(),
                 $perPage,
                 1,
                 ['path' => $request->url(), 'query' => $request->query()]
@@ -97,7 +98,7 @@ class JobController extends Controller
     public function getById($id)
     {
         try {
-            $job = Cache::remember('job_id_' . $id, 1440, function () use ($id) {
+            $job = app(DatabaseFallbackCache::class)->remember('job_id_' . $id, 1440, function () use ($id) {
                 return Job::with('categories')->where('country_id', 1)->where('id', $id)->firstOrFail();
             });
 
@@ -109,6 +110,10 @@ class JobController extends Controller
             $categories = Category::getCachedAll();
 
             return view('job', compact('job', 'categories', 'LastArticles', 'LastJobs'));
+        } catch (DatabaseUnavailableException $e) {
+            // MySQL em baixo nao e "pagina inexistente": deixa seguir para
+            // o Handler, que serve a copia guardada ou responde 503.
+            throw $e;
         } catch (Exception $ex) {
             abort(404);
         }
@@ -125,6 +130,10 @@ class JobController extends Controller
 
             $categoryJobs = $category->jobs;
             return view('category', compact('category', 'categoryJobs', 'categories'));
+        } catch (DatabaseUnavailableException $e) {
+            // MySQL em baixo nao e "pagina inexistente": deixa seguir para
+            // o Handler, que serve a copia guardada ou responde 503.
+            throw $e;
         } catch (Exception $ex) {
             abort(404);
         }
@@ -133,7 +142,7 @@ class JobController extends Controller
     public function getBySlug($slug)
     {
         try {
-            $job = Cache::remember('job_' . $slug, 1440, function () use ($slug) {
+            $job = app(DatabaseFallbackCache::class)->remember('job_' . $slug, 1440, function () use ($slug) {
                 return Job::with('categories')->where('slug', $slug)->firstOrFail();
             });
 
@@ -145,6 +154,10 @@ class JobController extends Controller
             $categories = Category::getCachedAll();
 
             return view('job', compact('job', 'categories', 'LastArticles', 'LastJobs'));
+        } catch (DatabaseUnavailableException $e) {
+            // MySQL em baixo nao e "pagina inexistente": deixa seguir para
+            // o Handler, que serve a copia guardada ou responde 503.
+            throw $e;
         } catch (Exception $ex) {
             abort(404);
         }
@@ -156,6 +169,10 @@ class JobController extends Controller
             $job = Job::with('categories')->where('country_id', 1)->where('slug', $slug)->firstOrFail();
 
             return view('amp.job', compact('job'));
+        } catch (DatabaseUnavailableException $e) {
+            // MySQL em baixo nao e "pagina inexistente": deixa seguir para
+            // o Handler, que serve a copia guardada ou responde 503.
+            throw $e;
         } catch (Exception $ex) {
             abort(404);
         }
@@ -244,7 +261,7 @@ class JobController extends Controller
     {
         // Feed com vagas (Angola, Brasil e Mocambique) e artigos, ordenados
         // por data. Em cache 30 min (invalidado ao criar/editar vaga ou artigo).
-        $items = Cache::remember('rss_feed_items', 1800, function () {
+        $items = app(DatabaseFallbackCache::class)->remember('rss_feed_items', 1800, function () {
             $jobs = Job::orderByRaw('id DESC')->limit(500)->get()->map(function ($job) {
                 return [
                     'title' => $job->title,

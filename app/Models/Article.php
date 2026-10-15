@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Services\DatabaseFallbackCache;
+use App\Services\PublicPageCache;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
@@ -106,11 +108,17 @@ class Article extends Model
 
     private static function clearCache($article)
     {
-        Cache::forget('latest_articles_50');
-        Cache::forget('article_' . $article->slug);
-        Cache::forget('article_id_' . $article->id);
-        Cache::forget('rss_feed_items');
+        // So a copia normal: a de emergencia sobrevive (ver DatabaseFallbackCache).
+        $cache = app(DatabaseFallbackCache::class);
+        $cache->forget('latest_articles_50');
+        $cache->forget('article_' . $article->slug);
+        $cache->forget('article_id_' . $article->id);
+        $cache->forget('rss_feed_items');
+        $cache->forget('articles_count_country_1');
+
         Cache::forever('sitemap_version', ((int) Cache::get('sitemap_version', 1)) + 1);
+
+        app(PublicPageCache::class)->bumpVersion();
     }
 
     private function generateSlug($title, $id)
@@ -122,10 +130,19 @@ class Article extends Model
         return $slug;
     }
 
+    /**
+     * Total de artigos, para a paginacao de /articles.
+     */
+    public static function getCachedCount(): int
+    {
+        return (int) app(DatabaseFallbackCache::class)->remember('articles_count_country_1', 1440, function () {
+            return self::where('country_id', 1)->count();
+        });
+    }
+
     public static function getCachedLatest()
     {
-        // 1440 minutes = 24 hours
-        return Cache::remember('latest_articles_50', 1440, function () {
+        return app(DatabaseFallbackCache::class)->remember('latest_articles_50', 1440, function () {
             return self::where('country_id', 1)
                 ->orderByRaw('id DESC')
                 ->limit(50)

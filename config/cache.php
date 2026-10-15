@@ -54,6 +54,17 @@ return [
             'path' => storage_path('framework/cache/data'),
         ],
 
+        /*
+         * Copias de seguranca usadas quando o MySQL nao responde (ver
+         * config/resilience.php). Fica numa pasta propria para que um
+         * "php artisan cache:clear" — que so limpa o store por omissao —
+         * nao apague aquilo que mantem o site de pe durante uma falha.
+         */
+        'resilience' => [
+            'driver' => env('RESILIENCE_CACHE_DRIVER', 'file'),
+            'path' => storage_path('framework/cache/resilience'),
+        ],
+
         'memcached' => [
             'driver' => 'memcached',
             'persistent_id' => env('MEMCACHED_PERSISTENT_ID'),

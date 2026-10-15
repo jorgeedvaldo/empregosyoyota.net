@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Services\DatabaseFallbackCache;
+use App\Services\PublicPageCache;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
@@ -41,12 +43,20 @@ class Job extends Model
 
     private static function clearCache($job)
     {
-        Cache::forget('latest_jobs_50');
-        Cache::forget('categories_with_jobs');
-        Cache::forget('job_' . $job->slug);
-        Cache::forget('job_id_' . $job->id);
-        Cache::forget('rss_feed_items');
+        // Invalida a copia normal. A copia de emergencia mantem-se de
+        // proposito: e ela que serve o site se o MySQL cair a seguir.
+        $cache = app(DatabaseFallbackCache::class);
+        $cache->forget('latest_jobs_50');
+        $cache->forget('categories_with_jobs');
+        $cache->forget('job_' . $job->slug);
+        $cache->forget('job_id_' . $job->id);
+        $cache->forget('rss_feed_items');
+        $cache->forget('jobs_count_country_1');
+
         Cache::forever('sitemap_version', ((int) Cache::get('sitemap_version', 1)) + 1);
+
+        // O HTML guardado das paginas publicas ficou desactualizado.
+        app(PublicPageCache::class)->bumpVersion();
     }
 
     private function generateSlug($title, $id)
@@ -83,10 +93,22 @@ class Job extends Model
         return $this->belongsTo(Country::class);
     }
 
+    /**
+     * Total de vagas de Angola, para a paginacao.
+     *
+     * Corria em cada visita a primeira pagina de /empregos — uma contagem
+     * da tabela inteira so para escrever o numero de paginas no fundo.
+     */
+    public static function getCachedCount(): int
+    {
+        return (int) app(DatabaseFallbackCache::class)->remember('jobs_count_country_1', 1440, function () {
+            return self::where('country_id', 1)->count();
+        });
+    }
+
     public static function getCachedLatest()
     {
-        // 1440 minutes = 24 hours
-        return Cache::remember('latest_jobs_50', 1440, function () {
+        return app(DatabaseFallbackCache::class)->remember('latest_jobs_50', 1440, function () {
             return self::with('categories')
                 ->where('country_id', 1)
                 ->orderByRaw('id DESC')
