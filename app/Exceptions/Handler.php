@@ -2,7 +2,9 @@
 
 namespace App\Exceptions;
 
+use App\Services\DatabaseUnavailableResponder;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\Request;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -45,6 +47,16 @@ class Handler extends ExceptionHandler
     {
         $this->reportable(function (Throwable $e) {
             //
+        });
+
+        // MySQL sem responder (tipicamente o erro 1226: o alojamento limita
+        // a 30 as ligacoes simultaneas). Em vez de um 500, serve-se a copia
+        // guardada da pagina ou, em ultimo caso, a pagina de
+        // indisponibilidade com 503. Devolver null deixa a excepcao seguir o
+        // seu caminho normal, por isso os erros de programacao continuam a
+        // dar 500 e a aparecer no log como tal.
+        $this->renderable(function (Throwable $e, Request $request) {
+            return app(DatabaseUnavailableResponder::class)->render($e, $request);
         });
     }
 }

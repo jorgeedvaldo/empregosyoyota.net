@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Article;
 use App\Models\Category;
 use App\Models\Job;
+use App\Exceptions\DatabaseUnavailableException;
 use Exception;
 use Illuminate\Http\Request;
 
@@ -20,9 +21,11 @@ class OcrController extends Controller
             $categories = Category::getCachedAll();
 
             return view('tools.ocr', compact('categories', 'LastArticles', 'LastJobs'));
-        }
-        catch(Exception $ex)
-        {
+        } catch (DatabaseUnavailableException $e) {
+            // MySQL em baixo nao e "pagina inexistente": deixa seguir para
+            // o Handler, que serve a copia guardada ou responde 503.
+            throw $e;
+        } catch (Exception $ex) {
             abort(404);
         }
     }

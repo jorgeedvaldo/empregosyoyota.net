@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\PublicPageCache;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -24,9 +25,17 @@ class Curriculo extends Model
             $curriculo->save();
         });
 
-        // Invalida a cache dos sitemaps quando um curriculo muda.
-        static::saved(fn () => Cache::forever('sitemap_version', ((int) Cache::get('sitemap_version', 1)) + 1));
-        static::deleted(fn () => Cache::forever('sitemap_version', ((int) Cache::get('sitemap_version', 1)) + 1));
+        // Invalida a cache dos sitemaps e o HTML guardado quando um
+        // curriculo muda.
+        static::saved(fn () => self::clearCache());
+        static::deleted(fn () => self::clearCache());
+    }
+
+    private static function clearCache(): void
+    {
+        Cache::forever('sitemap_version', ((int) Cache::get('sitemap_version', 1)) + 1);
+
+        app(PublicPageCache::class)->bumpVersion();
     }
 
     private function generateSlug($title, $id)

@@ -4,10 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Article;
 use App\Models\Job;
+use App\Services\DatabaseFallbackCache;
+use App\Exceptions\DatabaseUnavailableException;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 
 class ArticleController extends Controller
@@ -21,7 +22,7 @@ class ArticleController extends Controller
 
             $articles = new LengthAwarePaginator(
                 $cachedArticles->slice(0, $perPage)->values(),
-                Article::where('country_id', 1)->count(),
+                Article::getCachedCount(),
                 $perPage,
                 1,
                 ['path' => $request->url(), 'query' => $request->query()]
@@ -37,7 +38,7 @@ class ArticleController extends Controller
     {
         try
         {
-            $article = Cache::remember('article_id_' . $id, 1440, function () use ($id) {
+            $article = app(DatabaseFallbackCache::class)->remember('article_id_' . $id, 1440, function () use ($id) {
                 return Article::where('country_id', 1)->where('id', $id)->firstOrFail();
             });
 
@@ -47,9 +48,11 @@ class ArticleController extends Controller
             $LastJobs = Job::getCachedLatest();
 
             return view('article', compact('article', 'LastArticles', 'LastJobs'));
-        }
-        catch(Exception $ex)
-        {
+        } catch (DatabaseUnavailableException $e) {
+            // MySQL em baixo nao e "pagina inexistente": deixa seguir para
+            // o Handler, que serve a copia guardada ou responde 503.
+            throw $e;
+        } catch (Exception $ex) {
             abort(404);
         }
     }
@@ -58,7 +61,7 @@ class ArticleController extends Controller
     {
         try
         {
-            $article = Cache::remember('article_' . $slug, 1440, function () use ($slug) {
+            $article = app(DatabaseFallbackCache::class)->remember('article_' . $slug, 1440, function () use ($slug) {
                 return Article::where('country_id', 1)->where('slug', $slug)->firstOrFail();
             });
 
@@ -68,10 +71,11 @@ class ArticleController extends Controller
 			$LastJobs = Job::getCachedLatest();
 
             return view('article', compact('article', 'LastArticles', 'LastJobs'));
-        }
-
-        catch(Exception $ex)
-        {
+        } catch (DatabaseUnavailableException $e) {
+            // MySQL em baixo nao e "pagina inexistente": deixa seguir para
+            // o Handler, que serve a copia guardada ou responde 503.
+            throw $e;
+        } catch (Exception $ex) {
             abort(404);
         }
     }
@@ -83,9 +87,11 @@ class ArticleController extends Controller
             $article = Article::where('country_id', 1)->where('slug', $slug)->get()[0];
 
             return view('amp.article', compact('article'));
-        }
-        catch(Exception $ex)
-        {
+        } catch (DatabaseUnavailableException $e) {
+            // MySQL em baixo nao e "pagina inexistente": deixa seguir para
+            // o Handler, que serve a copia guardada ou responde 503.
+            throw $e;
+        } catch (Exception $ex) {
             abort(404);
         }
     }
