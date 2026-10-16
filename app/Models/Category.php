@@ -3,10 +3,11 @@
 namespace App\Models;
 
 use App\Services\DatabaseFallbackCache;
-use App\Services\PublicPageCache;
+use App\Services\EmergencySnapshotService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class Category extends Model
 {
@@ -26,11 +27,28 @@ class Category extends Model
         parent::boot();
 
         static::saved(function ($category) {
-            self::clearCache();
+            self::syncAfterCommit();
         });
 
         static::deleted(function ($category) {
+            self::syncAfterCommit();
+        });
+    }
+
+    /**
+     * As categorias sao poucas e mudam raramente (so pelo painel), por
+     * isso a sincronizacao volta a ler a lista completa do MySQL — ao
+     * contrario de vagas/artigos, aqui nao vale a pena optimizar a
+     * actualizar so uma entrada.
+     */
+    private static function syncAfterCommit(): void
+    {
+        DB::afterCommit(function () {
             self::clearCache();
+
+            app(EmergencySnapshotService::class)->replaceCategories(
+                self::orderBy('name')->get(['id', 'name'])->toArray()
+            );
         });
     }
 
@@ -41,8 +59,6 @@ class Category extends Model
         $cache->forget('categories_with_jobs');
 
         Cache::forever('sitemap_version', ((int) Cache::get('sitemap_version', 1)) + 1);
-
-        app(PublicPageCache::class)->bumpVersion();
     }
 
     public static function getCachedAll()

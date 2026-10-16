@@ -4,7 +4,7 @@ namespace Tests\Feature;
 
 use App\Exceptions\DatabaseUnavailableException;
 use App\Services\DatabaseCircuitBreaker;
-use App\Services\PublicPageCache;
+use App\Services\DatabaseFallbackCache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
@@ -31,31 +31,31 @@ class DatabaseUnavailableResponseTest extends TestCase
     }
 
     /** @test */
-    public function com_copia_guardada_a_pagina_publica_continua_a_abrir(): void
+    public function com_dados_em_cache_a_pagina_publica_continua_a_abrir(): void
     {
-        $falhar = false;
-
-        Route::middleware('web')->get('/_teste/vagas', function () use (&$falhar) {
-            if ($falhar) {
+        // Como Job::getCachedLatest()/Article::getCachedLatest(): uma
+        // chave fixa, com copia normal + copia de emergencia.
+        Route::middleware('web')->get('/_teste/vagas', function () {
+            $vagas = app(DatabaseFallbackCache::class)->remember('vagas_teste', 60, function () {
                 throw $this->maxUserConnectionsException();
-            }
+            });
 
-            return response('<html><body>ultimas vagas</body></html>');
+            return response('<html><body>' . $vagas . '</body></html>');
         });
 
-        // Visita normal: fica guardada.
-        $this->get('/_teste/vagas')->assertOk();
+        // Visita normal (sem falha): preenche as duas copias.
+        app(DatabaseFallbackCache::class)->put('vagas_teste', 'ultimas vagas', 60);
 
-        // O conteudo e publicado de novo (a copia normal deixa de valer) e
-        // logo a seguir o MySQL esgota as ligacoes.
-        app(PublicPageCache::class)->bumpVersion();
-        $falhar = true;
+        $this->get('/_teste/vagas')->assertOk()->assertSee('ultimas vagas');
+
+        // A copia normal expira; a de emergencia fica, e e ela que serve
+        // o pedido quando a consulta real falha com o 1226.
+        app(DatabaseFallbackCache::class)->forget('vagas_teste');
 
         $resposta = $this->get('/_teste/vagas');
 
         $resposta->assertOk();
         $resposta->assertSee('ultimas vagas');
-        $this->assertSame('emergency', $resposta->headers->get(PublicPageCache::HEADER));
         $resposta->assertDontSee('max_user_connections');
         $resposta->assertDontSee('SQLSTATE');
     }

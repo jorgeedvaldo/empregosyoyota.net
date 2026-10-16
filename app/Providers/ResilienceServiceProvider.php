@@ -6,7 +6,7 @@ use App\Exceptions\DatabaseUnavailableException;
 use App\Services\DatabaseCircuitBreaker;
 use App\Services\DatabaseFallbackCache;
 use App\Services\DatabaseUnavailableResponder;
-use App\Services\PublicPageCache;
+use App\Services\EmergencySnapshotService;
 use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -33,13 +33,14 @@ class ResilienceServiceProvider extends ServiceProvider
             return new DatabaseFallbackCache($this->store(), $app->make(DatabaseCircuitBreaker::class));
         });
 
-        $this->app->singleton(PublicPageCache::class, function () {
-            return new PublicPageCache($this->store());
+        // Snapshot unico de emergencia: caminhos fixos, nao o store de
+        // ficheiros da cache (ver config/resilience.php "snapshot").
+        $this->app->singleton(EmergencySnapshotService::class, function () {
+            return new EmergencySnapshotService();
         });
 
         $this->app->singleton(DatabaseUnavailableResponder::class, function ($app) {
             return new DatabaseUnavailableResponder(
-                $app->make(PublicPageCache::class),
                 $app->make(DatabaseCircuitBreaker::class),
                 $this->store()
             );

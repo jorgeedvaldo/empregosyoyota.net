@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Article;
 use App\Models\Job;
-use App\Services\DatabaseFallbackCache;
 use App\Exceptions\DatabaseUnavailableException;
 use Exception;
 use Illuminate\Http\Request;
@@ -38,9 +37,11 @@ class ArticleController extends Controller
     {
         try
         {
-            $article = app(DatabaseFallbackCache::class)->remember('article_id_' . $id, 1440, function () use ($id) {
-                return Article::where('country_id', 1)->where('id', $id)->firstOrFail();
-            });
+            $article = Article::findPublicById($id);
+
+            if (! $article) {
+                abort(404);
+            }
 
             $LastArticles = Article::getCachedLatest()->reject(function ($value) use ($id) {
                 return $value->id == $id;
@@ -50,7 +51,7 @@ class ArticleController extends Controller
             return view('article', compact('article', 'LastArticles', 'LastJobs'));
         } catch (DatabaseUnavailableException $e) {
             // MySQL em baixo nao e "pagina inexistente": deixa seguir para
-            // o Handler, que serve a copia guardada ou responde 503.
+            // o Handler, que responde 503.
             throw $e;
         } catch (Exception $ex) {
             abort(404);
@@ -61,9 +62,11 @@ class ArticleController extends Controller
     {
         try
         {
-            $article = app(DatabaseFallbackCache::class)->remember('article_' . $slug, 1440, function () use ($slug) {
-                return Article::where('country_id', 1)->where('slug', $slug)->firstOrFail();
-            });
+            $article = Article::findPublicBySlug($slug);
+
+            if (! $article) {
+                abort(404);
+            }
 
             $LastArticles = Article::getCachedLatest()->reject(function ($value) use ($slug) {
                 return $value->slug === $slug;
@@ -73,7 +76,7 @@ class ArticleController extends Controller
             return view('article', compact('article', 'LastArticles', 'LastJobs'));
         } catch (DatabaseUnavailableException $e) {
             // MySQL em baixo nao e "pagina inexistente": deixa seguir para
-            // o Handler, que serve a copia guardada ou responde 503.
+            // o Handler, que responde 503.
             throw $e;
         } catch (Exception $ex) {
             abort(404);
@@ -89,7 +92,7 @@ class ArticleController extends Controller
             return view('amp.article', compact('article'));
         } catch (DatabaseUnavailableException $e) {
             // MySQL em baixo nao e "pagina inexistente": deixa seguir para
-            // o Handler, que serve a copia guardada ou responde 503.
+            // o Handler, que responde 503.
             throw $e;
         } catch (Exception $ex) {
             abort(404);

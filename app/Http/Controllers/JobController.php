@@ -11,6 +11,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 
+
 class JobController extends Controller
 {
     private function getCountryIdFromCode($country)
@@ -98,9 +99,11 @@ class JobController extends Controller
     public function getById($id)
     {
         try {
-            $job = app(DatabaseFallbackCache::class)->remember('job_id_' . $id, 1440, function () use ($id) {
-                return Job::with('categories')->where('country_id', 1)->where('id', $id)->firstOrFail();
-            });
+            $job = Job::findPublicById($id);
+
+            if (! $job) {
+                abort(404);
+            }
 
             $LastArticles = Article::getCachedLatest();
             $LastJobs = Job::getCachedLatest()->reject(function ($value) use ($id) {
@@ -112,7 +115,7 @@ class JobController extends Controller
             return view('job', compact('job', 'categories', 'LastArticles', 'LastJobs'));
         } catch (DatabaseUnavailableException $e) {
             // MySQL em baixo nao e "pagina inexistente": deixa seguir para
-            // o Handler, que serve a copia guardada ou responde 503.
+            // o Handler, que responde 503.
             throw $e;
         } catch (Exception $ex) {
             abort(404);
@@ -132,7 +135,8 @@ class JobController extends Controller
             return view('category', compact('category', 'categoryJobs', 'categories'));
         } catch (DatabaseUnavailableException $e) {
             // MySQL em baixo nao e "pagina inexistente": deixa seguir para
-            // o Handler, que serve a copia guardada ou responde 503.
+            // o Handler, que responde 503. (Esta pagina nao tem copia de
+            // emergencia — nao e uma das listadas em Fase B/E.)
             throw $e;
         } catch (Exception $ex) {
             abort(404);
@@ -142,9 +146,11 @@ class JobController extends Controller
     public function getBySlug($slug)
     {
         try {
-            $job = app(DatabaseFallbackCache::class)->remember('job_' . $slug, 1440, function () use ($slug) {
-                return Job::with('categories')->where('slug', $slug)->firstOrFail();
-            });
+            $job = Job::findPublicBySlug($slug);
+
+            if (! $job) {
+                abort(404);
+            }
 
             $LastArticles = Article::getCachedLatest();
             $LastJobs = Job::getCachedLatest()->reject(function ($value) use ($slug) {
@@ -156,7 +162,7 @@ class JobController extends Controller
             return view('job', compact('job', 'categories', 'LastArticles', 'LastJobs'));
         } catch (DatabaseUnavailableException $e) {
             // MySQL em baixo nao e "pagina inexistente": deixa seguir para
-            // o Handler, que serve a copia guardada ou responde 503.
+            // o Handler, que responde 503.
             throw $e;
         } catch (Exception $ex) {
             abort(404);
@@ -171,7 +177,7 @@ class JobController extends Controller
             return view('amp.job', compact('job'));
         } catch (DatabaseUnavailableException $e) {
             // MySQL em baixo nao e "pagina inexistente": deixa seguir para
-            // o Handler, que serve a copia guardada ou responde 503.
+            // o Handler, que responde 503.
             throw $e;
         } catch (Exception $ex) {
             abort(404);

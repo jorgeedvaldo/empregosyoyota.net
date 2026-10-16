@@ -4,15 +4,17 @@ namespace Tests\Feature;
 
 use App\Models\Article;
 use App\Models\Job;
-use App\Services\PublicPageCache;
+use App\Services\DatabaseFallbackCache;
+use App\Services\EmergencySnapshotService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Symfony\Component\Finder\Finder;
 use Tests\TestCase;
 
 /**
  * O ensaio que da nome ao problema: a pagina inicial verdadeira, com os
- * seus controladores e as suas vistas, contra uma base de dados a serio —
- * e depois sem ela.
+ * seus controladores, os seus modelos e o snapshot de emergencia, contra
+ * uma base de dados a serio — e depois sem ela.
  *
  * Usa sqlite num ficheiro temporario para nao depender de MySQL nenhum (e
  * muito menos para esgotar as 30 ligacoes do alojamento a ver o que
@@ -22,6 +24,8 @@ use Tests\TestCase;
 class PublicPagesSurviveOutageTest extends TestCase
 {
     protected $db;
+    protected $snapshotPath;
+    protected $snapshotLockPath;
 
     protected function setUp(): void
     {
@@ -31,6 +35,16 @@ class PublicPagesSurviveOutageTest extends TestCase
 
         $this->db = sys_get_temp_dir() . '/yoyota-smoke-' . getmypid() . '.sqlite';
         touch($this->db);
+
+        // Snapshot isolado por teste — nunca o caminho real da aplicacao.
+        $this->snapshotPath = sys_get_temp_dir() . '/yoyota-snapshot-' . getmypid() . '.json.gz';
+        $this->snapshotLockPath = $this->snapshotPath . '.lock';
+        @unlink($this->snapshotPath);
+        @unlink($this->snapshotLockPath);
+        config([
+            'resilience.snapshot.path' => $this->snapshotPath,
+            'resilience.snapshot.lock_path' => $this->snapshotLockPath,
+        ]);
 
         config([
             'database.default' => 'sqlite',
@@ -87,6 +101,10 @@ class PublicPagesSurviveOutageTest extends TestCase
             $t->timestamps();
         });
 
+        // Vaga e artigo "semeados" directamente na base (sem passar pelos
+        // eventos Eloquent) — simula conteudo que ja existia antes desta
+        // alteracao, cuja primeira copia no snapshot vem so do
+        // "resilience:snapshot:rebuild" ou de uma visita real.
         DB::table('jobs')->insert([
             'title' => 'Tecnico de Contabilidade',
             'slug' => 'tecnico-de-contabilidade',
@@ -114,75 +132,184 @@ class PublicPagesSurviveOutageTest extends TestCase
     protected function tearDown(): void
     {
         @unlink($this->db);
+        @unlink($this->snapshotPath);
+        @unlink($this->snapshotLockPath);
 
         parent::tearDown();
     }
 
     /** @test */
-    public function as_paginas_publicas_sobrevivem_a_queda_do_mysql(): void
+    public function ciclo_completo_mysql_bom_escrita_real_time_queda_e_recuperacao(): void
     {
-        $cache = app(\App\Services\DatabaseFallbackCache::class);
+        $cache = app(DatabaseFallbackCache::class);
+        $snapshot = app(EmergencySnapshotService::class);
 
-        // 1. MySQL disponivel: pagina gerada normalmente.
-        $normal = $this->get('/');
-        $normal->assertOk();
-        $normal->assertSee('Tecnico de Contabilidade');
-        $this->assertNull($normal->headers->get(PublicPageCache::HEADER), 'A primeira visita e gerada, nao servida da cache.');
+        // --------------------------------------------------------------
+        // 1. MySQL disponivel: pagina inicial gerada normalmente.
+        // --------------------------------------------------------------
+        $this->get('/')->assertOk()->assertSee('Tecnico de Contabilidade');
 
         $this->assertNotEmpty(Job::getCachedLatest());
         $this->assertNotEmpty(Article::getCachedLatest());
 
-        // 2. Cache preenchida: servida sem tocar na base de dados.
-        $cacheada = $this->get('/');
-        $cacheada->assertOk();
-        $this->assertSame('hit', $cacheada->headers->get(PublicPageCache::HEADER));
+        // --------------------------------------------------------------
+        // 2. Cache de dados preenchida: nao precisa de voltar ao MySQL
+        //    (a prova esta no passo seguinte, que desliga a base de dados
+        //    e as mesmas chaves continuam a responder).
+        // --------------------------------------------------------------
+        $this->assertTrue($cache->hasFresh('latest_jobs_50'));
+        $this->assertTrue($cache->hasEmergency('latest_jobs_50'));
 
-        // A listagem de vagas tambem passa a ter copia — e o que o
-        // "resilience:warm --pages" faz de meia em meia hora.
-        $this->get('/empregos')->assertOk();
+        // --------------------------------------------------------------
+        // 3. Escrita em tempo real: uma vaga nova, criada como o painel
+        //    Filament ou a API fariam (Eloquent, dispara os eventos).
+        //    Sem atraso nenhum: tem de aparecer na pagina publica e no
+        //    snapshot imediatamente a seguir, sem warm, sem cron.
+        // --------------------------------------------------------------
+        // withoutSyncingToSearch(): os testes nao precisam do indice
+        // TNTSearch real, so dos eventos Eloquent (saved/deleted) que
+        // alimentam o snapshot e invalidam a cache.
+        $novaVaga = Job::withoutSyncingToSearch(function () {
+            return Job::create([
+                'title' => 'Engenheiro de Software',
+                'company' => 'Empresa Beta',
+                'province' => 'Benguela',
+                'description' => 'Vaga nova, publicada agora mesmo.',
+                'email_or_link' => 'rh@beta.ao',
+            ]);
+        });
+        $novaVaga->refresh();
 
-        // 3. Publicou-se conteudo (as copias normais deixam de valer) e o
-        //    MySQL esgotou as ligacoes. As paginas voltam a ser geradas,
-        //    agora a partir das copias de emergencia dos dados.
-        app(PublicPageCache::class)->bumpVersion();
-        foreach (['latest_jobs_50', 'latest_articles_50', 'categories_all', 'jobs_count_country_1'] as $chave) {
-            $cache->forget($chave);
-        }
+        // Apareceu de imediato na listagem publica (MySQL ainda ligado):
+        // a cache da listagem foi invalidada no mesmo pedido que gravou.
+        $this->get('/empregos')->assertOk()->assertSee('Engenheiro de Software');
 
+        // E tambem na sua propria pagina.
+        $this->get('/empregos/' . $novaVaga->slug)->assertOk()->assertSee('Engenheiro de Software');
+
+        // E ja esta no snapshot — sem chamar nenhum comando a mao.
+        $this->assertNotNull($snapshot->findJob($novaVaga->slug), 'A vaga devia estar no snapshot logo apos o commit, sem warm nem cron.');
+        $this->assertSame('Engenheiro de Software', $snapshot->findJob($novaVaga->slug)['title']);
+
+        // --------------------------------------------------------------
+        // 4. O MySQL esgota as 30 ligacoes.
+        // --------------------------------------------------------------
         $this->derrubaBaseDeDados();
 
-        $comDadosDeEmergencia = $this->get('/');
-        $comDadosDeEmergencia->assertOk();
-        $comDadosDeEmergencia->assertSee('Tecnico de Contabilidade');
-        $comDadosDeEmergencia->assertDontSee('SQLSTATE');
+        // A pagina inicial continua a abrir — dados vindos da copia de
+        // emergencia do DatabaseFallbackCache.
+        $comFalha = $this->get('/');
+        $comFalha->assertOk();
+        $comFalha->assertSee('Tecnico de Contabilidade');
+        $comFalha->assertDontSee('SQLSTATE');
 
-        // A paginacao de /empregos precisa de uma contagem: se ela nao
-        // viesse tambem da cache, esta pagina respondia 503.
-        $listagem = $this->get('/empregos');
-        $listagem->assertOk();
-        $listagem->assertSee('Tecnico de Contabilidade');
-        $listagem->assertDontSee('SQLSTATE');
+        // A vaga semeada directamente na base (sem Eloquent) so chega ao
+        // snapshot atraves de uma leitura bem sucedida — ja aconteceu no
+        // passo 1 (Job::getCachedLatest() nao alimenta o snapshot, so a
+        // DatabaseFallbackCache). A pagina individual dela, por isso, so
+        // sobrevive a queda se tiver sido visitada por findPublicBySlug()
+        // enquanto o MySQL respondia. Confirma-se a seguir que NAO esta
+        // no snapshot (nunca foi lida por esse caminho) e por isso da 503
+        // — o comportamento honesto, nao um 404 inventado.
+        $vagaSemeadaNuncaVisitada = $this->get('/empregos/tecnico-de-contabilidade');
+        $vagaSemeadaNuncaVisitada->assertStatus(503);
 
-        // 4. Pior cenario: nem as copias de emergencia dos dados existem.
-        //    Entra a copia guardada da propria pagina.
-        app(PublicPageCache::class)->bumpVersion();
-        foreach (['latest_jobs_50', 'latest_articles_50', 'categories_all', 'jobs_count_country_1'] as $chave) {
-            $cache->purge($chave);
-        }
+        // Mas a vaga criada no passo 3 FOI lida (findPublicBySlug, ao
+        // visitar a sua pagina), por isso esta no snapshot e sobrevive:
+        $vagaNovaComFalha = $this->get('/empregos/' . $novaVaga->slug);
+        $vagaNovaComFalha->assertOk();
+        $vagaNovaComFalha->assertSee('Engenheiro de Software');
+        $vagaNovaComFalha->assertDontSee('SQLSTATE');
 
-        $comPaginaDeEmergencia = $this->get('/');
-        $comPaginaDeEmergencia->assertOk();
-        $comPaginaDeEmergencia->assertSee('Tecnico de Contabilidade');
-        $comPaginaDeEmergencia->assertDontSee('SQLSTATE');
-        $this->assertSame('emergency', $comPaginaDeEmergencia->headers->get(PublicPageCache::HEADER));
+        // A listagem tambem sobrevive (contagem + lista, ambas em cache).
+        $listagemComFalha = $this->get('/empregos');
+        $listagemComFalha->assertOk();
+        $listagemComFalha->assertDontSee('SQLSTATE');
 
-        // 5. Uma pagina que nunca foi visitada e para a qual nao ha copia
-        //    nenhuma: 503 honesto, sem nada tecnico a vista.
+        // Uma pagina sem cache nenhuma e sem snapshot: 503 honesto.
         $semCopia = $this->get('/modelos-de-curriculos');
         $semCopia->assertStatus(503);
         $semCopia->assertSee('Serviço temporariamente indisponível', false);
         $semCopia->assertDontSee('SQLSTATE');
         $this->assertNotEmpty($semCopia->headers->get('Retry-After'));
+
+        // --------------------------------------------------------------
+        // 5. O MySQL recupera: sem reiniciar nada, o proximo pedido volta
+        //    ao normal.
+        // --------------------------------------------------------------
+        $this->restauraBaseDeDados();
+
+        $outraVaga = Job::withoutSyncingToSearch(function () {
+            return Job::create([
+                'title' => 'Analista Financeiro',
+                'company' => 'Empresa Gama',
+                'province' => 'Huambo',
+                'description' => 'Confirma que as escritas voltam ao normal.',
+                'email_or_link' => 'rh@gama.ao',
+            ]);
+        });
+
+        $this->get('/empregos/' . $outraVaga->slug)->assertOk()->assertSee('Analista Financeiro');
+    }
+
+    /**
+     * Fase F / Fase G (passo 9): o essencial de tudo isto. Visitar dezenas
+     * de paginas publicas distintas nao pode continuar a criar um
+     * ficheiro por pagina — era exactamente isso que enchia os inodes.
+     */
+    /** @test */
+    public function visitar_muitas_paginas_distintas_nao_faz_crescer_a_pasta_de_cache(): void
+    {
+        Job::withoutSyncingToSearch(function () {
+            for ($i = 2; $i <= 40; $i++) {
+                Job::create([
+                    'title' => "Vaga numero {$i}",
+                    'company' => 'Empresa Teste',
+                    'province' => 'Luanda',
+                    'description' => 'Vaga de carga para o teste de inodes.',
+                    'email_or_link' => 'rh@teste.ao',
+                ]);
+            }
+        });
+
+        $antes = $this->contarFicheirosNoStoreDeResiliencia();
+
+        // 40 paginas de vaga distintas + a listagem + a pagina inicial,
+        // cada uma visitada varias vezes.
+        foreach (Job::pluck('slug') as $slug) {
+            $this->get('/empregos/' . $slug)->assertOk();
+            $this->get('/empregos/' . $slug)->assertOk(); // outra vez, mesma vaga
+        }
+        $this->get('/empregos')->assertOk();
+        $this->get('/')->assertOk();
+        $this->get('/')->assertOk();
+
+        $depois = $this->contarFicheirosNoStoreDeResiliencia();
+
+        // O store de ficheiros do DatabaseFallbackCache so tem chaves
+        // FIXAS (latest_jobs_50, categories_all, ...) — visitar 40 vagas
+        // distintas nao lhe acrescenta ficheiro nenhum. Tolerancia
+        // pequena (+2) para as chaves do disjuntor, que podem ou nao
+        // existir consoante o que mais correu neste processo de teste.
+        $this->assertLessThanOrEqual(
+            $antes + 2,
+            $depois,
+            'Visitar varias paginas publicas distintas nao pode criar um ficheiro por pagina.'
+        );
+
+        // E o snapshot continua a ser UM ficheiro, nao um por vaga.
+        $this->assertFileExists(config('resilience.snapshot.path'));
+    }
+
+    protected function contarFicheirosNoStoreDeResiliencia(): int
+    {
+        $path = config('cache.stores.' . config('resilience.store', 'resilience') . '.path');
+
+        if (! is_dir($path)) {
+            return 0;
+        }
+
+        return iterator_count(Finder::create()->files()->in($path));
     }
 
     /**
@@ -197,6 +324,12 @@ class PublicPagesSurviveOutageTest extends TestCase
             'database.connections.mysql.port' => 1,
             'database.connections.mysql.database' => 'inexistente',
         ]);
+        DB::purge('mysql');
+    }
+
+    protected function restauraBaseDeDados(): void
+    {
+        config(['database.default' => 'sqlite']);
         DB::purge('mysql');
     }
 }

@@ -8,12 +8,25 @@ SQLSTATE[42000] [1226] User 'yqqnyhrgnt_edv' has exceeded the 'max_user_connecti
 ```
 
 Antes, isso era um 500 para quem estivesse a visitar o site. Agora não é: as
-páginas públicas continuam a abrir com o conteúdo que já estava guardado, e só
-quando não há mesmo nada guardado é que aparece uma página de indisponibilidade
-— com 503, nunca com um erro técnico à vista.
+páginas públicas continuam a abrir com o conteúdo que já existia, actualizado
+**em tempo real** a cada vaga ou artigo publicado — sem Cron Job nenhum. Só
+quando não há mesmo nada guardado é que aparece uma página de
+indisponibilidade, com 503, nunca com um erro técnico à vista.
 
-O resto deste documento é o que foi feito, como se confirma que está a
-funcionar, e como se desfaz.
+## Histórico: duas versões deste mecanismo
+
+A primeira versão (ainda visível no histórico do git) guardava o HTML já
+renderizado de cada página pública visitada, num ficheiro por página. Em
+produção isso cresceu para **~67 mil ficheiros, ~42 mil directórios e 3,6 GB**
+em `storage/framework/cache/resilience` — um problema de **inodes**, não só de
+espaço: um alojamento partilhado tem um tecto de inodes separado do tecto de
+espaço em disco, e esse mecanismo não tinha limite nenhum sem um Cron Job a
+limpar o que sobrava.
+
+Esta versão substitui-o por **um único ficheiro**, que guarda só os *dados*
+(não o HTML) das vagas e artigos mais recentes, e que se corrige sozinho a
+cada escrita — sem crescer com o tempo, sem depender de Cron Job nenhum para
+não encher a conta de inodes.
 
 ## As três camadas
 
@@ -21,30 +34,69 @@ Vistas de fora para dentro, cada uma apanha o que a anterior deixou passar:
 
 | Camada | Onde vive | O que faz |
 | --- | --- | --- |
-| HTML das páginas | `App\Services\PublicPageCache` + middleware | Com uma cópia válida, o pedido nem chega ao controlador — logo, não abre ligação nenhuma |
-| Dados | `App\Services\DatabaseFallbackCache` | Guarda duas cópias de cada consulta: a normal e a de emergência |
+| Dados: listas e contagens | `App\Services\DatabaseFallbackCache` | Um punhado de chaves fixas (`latest_jobs_50`, `categories_all`, …), cada uma com cópia normal + cópia de emergência |
+| Dados: uma vaga/artigo | `App\Services\EmergencySnapshotService` | **Um único ficheiro**, actualizado a cada escrita, com as N vagas/artigos mais recentes |
 | Disjuntor | `App\Services\DatabaseCircuitBreaker` | Depois de 3 falhas, ninguém mais tenta ligar-se durante 30 s |
 
 E, por baixo de tudo, `public/database-unavailable.html`: ficheiro estático,
-servido com 503, para quando não há cópia nenhuma da página pedida.
+servido com 503, para quando não há cópia nenhuma do que foi pedido.
 
-### A cópia de emergência
+### O snapshot único (`EmergencySnapshotService`)
 
-É a ideia central e a única coisa aqui que não é cache normal.
+Dois caminhos fixos, que nunca mudam de nome:
 
-Cada valor é guardado **duas vezes**. A cópia normal é curta e serve o
-dia-a-dia. A cópia de emergência dura sete dias, só é lida quando o MySQL não
-responde, e **não é apagada quando se publica uma vaga** — se fosse, o site
-ficava sem rede de segurança exactamente no momento com mais visitas, logo a
-seguir a publicar.
+```text
+storage/app/emergency/public_backup.json.gz   (o próprio snapshot)
+storage/app/emergency/public_backup.lock      (o bloqueio exclusivo)
+```
 
-Vive em `storage/framework/cache/resilience/`, numa pasta separada da cache
-normal, para que um `php artisan cache:clear` não a leve à frente.
+Guarda as **N vagas e M artigos mais recentes** (por omissão 300 e 200 — ver
+`config/resilience.php`), mais a lista de categorias. É limitado de propósito:
+um site com 8 anos de conteúdo não faz o ficheiro crescer sem parar, porque ao
+ultrapassar o limite a entrada *mais antiga* cai (por id, não por data de
+acesso). Ao fim de muitos anos de conteúdo, o ficheiro continua do mesmo
+tamanho.
+
+Cálculo do tamanho esperado: uma descrição típica ocupa 2-5 KB; com 300 vagas
++ 200 artigos o JSON bruto anda pelos poucos MB, e o gzip (texto HTML
+repetitivo) costuma reduzir isso para algumas centenas de KB — perfeitamente
+seguro de carregar inteiro para memória num pedido PHP num alojamento
+partilhado.
+
+**Cada vaga ou artigo gravado corrige só a sua própria entrada** — nunca
+reconstrói a lista toda, e nunca volta a consultar o MySQL para o fazer (usa
+os dados do próprio modelo que acabou de gravar). A escrita é atómica:
+ficheiro temporário + `rename()`, que no mesmo sistema de ficheiros é
+indivisível — quem estiver a ler nunca vê uma escrita a meio, e se a escrita
+falhar a meio (disco cheio, por exemplo), a cópia anterior fica intacta.
+
+Duas escritas em simultâneo (dois pedidos a gravar vagas ao mesmo tempo) são
+evitadas com `flock()` **não bloqueante**: quem não consegue o bloqueio não
+espera — põe a sua alteração numa fila curta de "pendentes" (um valor na cache
+por omissão, não um ficheiro por alteração) e sai; a próxima escrita bem
+sucedida aplica as alterações pendentes primeiro, antes da sua própria. Nada
+se perde, só se adia.
+
+### A cache de dados (listas e contagens)
+
+`DatabaseFallbackCache` continua a funcionar como antes, para um punhado fixo
+de chaves: as últimas 50 vagas/artigos, as categorias, as contagens da
+paginação, o feed RSS, as definições (`settings`). Cada uma tem cópia normal
+(curta, invalidada a cada escrita) e cópia de emergência (longa, só lida
+quando o MySQL falha). Isto nunca foi o que causava o problema de inodes — são
+sempre as mesmas ~10 chaves, não importa quantas vagas o site tenha.
+
+O que **mudou**: já não há cache nenhuma à frente da leitura de uma vaga ou
+artigo *individual* (`job_id_X`, `job_slug_X`, …). Essas consultas vão sempre
+directas ao MySQL — ele continua a ser a fonte principal — e só recorrem ao
+snapshot se a consulta falhar. Isto elimina outra fonte de crescimento sem
+limite (um ficheiro por vaga/artigo alguma vez visitado) e torna as leituras
+individuais verdadeiramente em tempo real.
 
 ### O disjuntor
 
-Um MySQL em baixo é pior do que parece: cada pedido que chega tenta abrir a sua
-ligação, espera pelo erro e só depois desiste. Com o tecto nas 30, as
+Um MySQL em baixo é pior do que parece: cada pedido que chega tenta abrir a
+sua ligação, espera pelo erro e só depois desiste. Com o tecto nas 30, as
 tentativas falhadas passam a ser parte do problema.
 
 À terceira falha o circuito abre e, durante 30 segundos, nenhum pedido tenta
@@ -53,96 +105,105 @@ recuperação. Quando a sonda passa, fecha-se tudo e a vida continua, sem
 ninguém ter de reiniciar nada.
 
 Enquanto o circuito está aberto, qualquer consulta falha de imediato
-(`DB::beforeExecuting`), incluindo as que não passam pela cache — paginação,
-pesquisa, painel. Na consola isto nunca se aplica, para o `artisan` continuar
-utilizável durante uma falha.
+(`DB::beforeExecuting`), incluindo as que não passam por nenhuma cache —
+paginação, pesquisa, painel. Na consola isto nunca se aplica, para o
+`artisan` continuar utilizável durante uma falha.
+
+## Sincronização em tempo real, sem Cron Job
+
+A cada vaga, artigo ou categoria **gravado ou apagado**:
+
+1. Confirma-se primeiro o commit no MySQL (`DB::afterCommit` — executa de
+   imediato se não houver transacção aberta, ou só depois do commit se
+   houver; **um rollback nunca chega a sincronizar nada**).
+2. Invalida-se a cópia normal da cache de listas/contagens.
+3. Pede-se a sincronização do snapshot com **essa única entrada** (sem
+   reconstruir a lista toda, sem nova consulta ao MySQL).
+4. Adquire-se um bloqueio não bloqueante.
+5. Actualiza-se só os dados necessários.
+6. Substitui-se a cópia por inteiro, de forma atómica.
+7. Liberta-se o bloqueio.
+
+Se o bloqueio estiver ocupado, a alteração fica pendente (passo 3) e aplica-se
+sozinha na próxima escrita bem sucedida — nunca se perde, só se adia.
+
+Isto cobre as duas vias reais de escrita no projecto: o painel Filament
+(`JobResource`, `ArticleResource`, `CategoryResource` — `save()`/`delete()`
+normais do Eloquent) e a API (`api/ArticleController::store()`, que também
+usa `save()`). Não há, hoje, nenhuma escrita por `DB::table(...)->update()`
+ou `Model::insert()` que contorne os eventos do Eloquent — se um dia
+aparecer uma, essa escrita específica não vai invalidar a cache nem
+sincronizar o snapshot sozinha (ver secção "Limitações").
 
 ## O que está protegido
 
-Páginas públicas, com cópia de emergência dos dados **e** do HTML:
+Páginas públicas com fonte de dados resiliente (cache de listas + snapshot):
 
 - `/` — página inicial
-- `/empregos` e `/empregos/{slug}`
-- `/articles` e `/articles/{slug}`
-- `/{país}/empregos`, `/vagas-de-emprego-em-angola` e as landings de
-  `config/landings.php`
-- `/categories/{id}`
-- `/modelos-de-curriculos` e `/modelos-de-curriculos/{slug}`
-- `/about`, `/terms`, `/biblioteca-de-documentos-legais`
-- `/feed` e os sitemaps
+- `/empregos` e `/empregos/{slug}` (vagas individuais)
+- `/articles` e `/articles/{slug}` (artigos individuais)
+- `/{país}/empregos` (listagem; usa a cache de categorias)
 
 Fora, de propósito:
 
-- `/pesquisar` — os resultados mudam com cada termo escrito; guardá-los enchia
-  o disco de cópias que ninguém voltava a ler. Continua a aproveitar a cache de
-  dados das categorias, mas numa falha responde 503.
-- `/admin` e o painel Filament — tem dados de quem lá está dentro.
-- `/api/*`.
-- Qualquer pedido de uma sessão com login, qualquer coisa que não seja `GET`, e
-  qualquer resposta que traga cookies ou um token CSRF.
+- `/pesquisar` — os resultados mudam com cada termo escrito; guardá-los não
+  seria comportável. Continua a aproveitar a cache de categorias, mas numa
+  falha responde 503.
+- `/categories/{id}` — não tem cópia de emergência própria (listagem de
+  vagas por categoria); numa falha responde 503.
+- `/modelos-de-curriculos`, `/biblioteca-de-documentos-legais`, `/about`,
+  `/terms` — sem dados dinâmicos relevantes ao MySQL além do que já está
+  nas cache de listas; numa falha de MySQL respondem 503.
+- `/admin` e o painel Filament, `/api/*` — nunca passam por aqui.
 
 ## Operações que escrevem
 
 Login, registo, recuperação de palavra-passe, publicação de conteúdos,
-candidaturas, pagamentos, perfis, painel: **nada disto é fingido**. Com o MySQL
-em baixo a resposta é 503 com `Retry-After`, para a pessoa voltar a tentar.
-Nunca um sucesso inventado, nunca um formulário que parece ter sido gravado e
-não foi.
+candidaturas, pagamentos, perfis, painel: **nada disto é fingido**. Com o
+MySQL em baixo a resposta é 503 com `Retry-After`, para a pessoa voltar a
+tentar. Nunca um sucesso inventado, nunca um formulário que parece ter sido
+gravado e não foi.
 
 ## Tempos de cache
 
 | O quê | Cópia normal | Cópia de emergência |
 | --- | --- | --- |
-| Últimas vagas, últimos artigos, categorias | 1440 s (24 min) | 7 dias |
-| Vaga ou artigo individual | 1440 s (24 min) | 7 dias |
-| Totais para a paginação | 1440 s (24 min) | 7 dias |
+| Últimas vagas, últimos artigos, categorias, contagens | 1440 s (24 min) | 7 dias |
 | Feed RSS | 1800 s (30 min) | 7 dias |
-| Definições (`settings`) | 1440 s | 7 dias |
-| HTML das páginas públicas | 600 s (10 min) | 7 dias |
-| Sitemaps | 6 h (como antes) | — |
+| Definições (`settings`) | 30 dias | 7 dias |
+| Vaga/artigo individual | (sem cache — MySQL directo) | no snapshot, actualizado em tempo real |
 
-Os tempos das cópias normais são os que o site já usava: isto não mexeu na
-frescura do conteúdo, só lhe acrescentou uma rede por baixo. Todos se mudam em
-`config/resilience.php` ou pelo `.env`.
-
-A invalidação continua a ser imediata: ao gravar uma vaga, artigo, categoria ou
-currículo, as cópias normais caem e o HTML guardado passa a estar numa versão
-antiga (a chave leva a versão dentro). As de emergência ficam.
+O snapshot não tem "TTL" no sentido normal: não expira por tempo, é
+actualizado **a cada escrita** e só se torna desactualizado se uma vaga for
+editada enquanto o MySQL está em baixo (impossível — se o MySQL está em
+baixo, não há escrita nenhuma a acontecer).
 
 ## Alterações no `.env`
 
 **Nenhuma é obrigatória.** O projecto já usava `CACHE_DRIVER=file` e
 `SESSION_DRIVER=file`, que é o que esta solução precisa — nada depende do
-MySQL para guardar cache ou sessões, e a configuração das filas não foi
-tocada.
-
-Confirme, no `.env` do servidor, que estas duas linhas estão assim:
+MySQL para guardar cache ou sessões.
 
 ```dotenv
 CACHE_DRIVER=file
 SESSION_DRIVER=file
 ```
 
-> Em Laravel 9 a variável é `CACHE_DRIVER`. O `CACHE_STORE` só aparece no
-> Laravel 11 — aqui não faz nada.
-
-O resto é afinação opcional, com estes valores por omissão:
+Afinação opcional, com estes valores por omissão:
 
 ```dotenv
 RESILIENCE_BREAKER=true              # disjuntor ligado
 RESILIENCE_BREAKER_FAILURES=3        # falhas até abrir o circuito
 RESILIENCE_BREAKER_COOLDOWN=30       # segundos de arrefecimento
-RESILIENCE_PAGE_CACHE=true           # cache de HTML das páginas públicas
-RESILIENCE_PAGE_TTL=600              # 10 minutos
-RESILIENCE_EMERGENCY_TTL=604800      # 7 dias
-RESILIENCE_LITESPEED_HEADER=false    # ver a secção do LiteSpeed
+RESILIENCE_SNAPSHOT_MAX_JOBS=300     # quantas vagas o snapshot guarda
+RESILIENCE_SNAPSHOT_MAX_ARTICLES=200 # quantos artigos o snapshot guarda
 ```
 
 ## Depois de publicar
 
 O `git pull` traz ficheiros e mais nada. Esta alteração traz um **provider**
-(`config/app.php`) e um **ficheiro de configuração novo**, por isso, no
-Terminal do cPanel, uma vez:
+(`config/app.php`) e **configuração nova**, por isso, no Terminal do cPanel,
+uma vez:
 
 ```bash
 php artisan config:clear
@@ -151,48 +212,46 @@ php artisan view:clear
 ```
 
 Se a configuração estiver em cache (`php artisan config:cache`), **sem o
-`config:clear` nada disto entra em funcionamento** — o `config/resilience.php`
-novo nem sequer é lido.
+`config:clear` nada disto entra em funcionamento**.
+
+### Gerar a primeira cópia do snapshot (importante)
+
+O snapshot começa **vazio**. Só passa a ter uma vaga ou artigo depois de essa
+vaga/artigo ser gravado ou apagado pela aplicação (Filament, API) — conteúdo
+que já existia antes desta alteração, que ninguém voltar a editar, não entra
+sozinho. Para que a rede de segurança cubra também o conteúdo existente desde
+o primeiro dia:
+
+```bash
+php artisan resilience:snapshot:rebuild
+```
+
+Corre uma vez, a seguir a publicar. Lê o MySQL (as N vagas/artigos mais
+recentes) e escreve a primeira cópia válida. Não é chamado automaticamente
+por nada — nem Cron Job, nem Scheduler — e pode voltar a ser corrido à mão,
+sem perigo nenhum, sempre que quiser confirmar que o snapshot está coerente
+com o MySQL.
 
 ### Índices (opcional, mas recomendado)
 
-Há uma migração que acrescenta índices a `jobs.country_id`, `jobs.slug`,
-`articles.country_id`, `articles.slug` e `curriculos.slug` — as colunas por que
-as páginas públicas filtram a toda a hora. Uma consulta mais rápida segura a
-ligação menos tempo, e são menos ligações a acumular-se.
+Há uma migração (de uma alteração anterior) que acrescenta índices a
+`jobs.country_id`, `jobs.slug`, `articles.country_id`, `articles.slug` e
+`curriculos.slug`. Não é obrigatória para nada do que está descrito aqui, mas
+ajuda o MySQL a responder mais depressa, o que por si só reduz a frequência
+com que se chega ao limite das 30 ligações.
 
 ```bash
 php artisan migrate
 ```
 
-A migração é defensiva: salta a tabela que não existir, a coluna que não
-existir e o índice que já lá estiver. Se preferir não correr migrações no
-servidor, nada do resto deixa de funcionar — fica só mais lento do que podia.
+A migração é defensiva: salta a tabela, a coluna ou o índice que já existir.
 
-### Cron (opcional, mas recomendado)
+### Nenhum Cron Job é necessário
 
-A rede de segurança só apanha o que já lá estava: uma página que nunca foi
-visitada não tem cópia para servir. Com o agendador do Laravel a correr, o
-essencial está sempre guardado antes de ser preciso.
-
-Em cPanel → **Cron Jobs**, de minuto a minuto:
-
-```
-* * * * * cd /home/UTILIZADOR/empregosyoyota.net && php artisan schedule:run >> /dev/null 2>&1
-```
-
-Ficam agendados:
-
-- `resilience:warm --pages`, de 30 em 30 minutos — actualiza as cópias;
-- `resilience:prune`, às 04:10 — apaga o que expirou e mantém a pasta abaixo
-  de 64 MB.
-
-Os dois com `withoutOverlapping()`, que aqui conta mais do que o costume: uma
-execução que demore mais do que o intervalo não pode acumular cópias a correr
-ao mesmo tempo, porque cada uma ocupa ligações das 30. O bloqueio vive na cache
-de ficheiros, não no MySQL, portanto funciona durante uma falha.
-
-Sem cron nada se parte: as cópias passam a encher-se com as visitas reais.
+Ao contrário da versão anterior deste mecanismo, **nada aqui depende de um
+Cron Job**. A sincronização do snapshot acontece a cada escrita, em tempo
+real; não há ficheiros por limpar porque não há crescimento sem limite para
+limpar.
 
 ## Confirmar que está a funcionar
 
@@ -202,27 +261,33 @@ Sem cron nada se parte: as cópias passam a encher-se com as visitas reais.
 php artisan resilience:status
 ```
 
-Mostra se o MySQL responde e em quanto tempo, o estado do disjuntor, que chaves
-têm cópia normal e cópia de emergência, e o tamanho da pasta. A coluna **cópia
-de emergência** é a que interessa: com `NAO` em todas, uma falha agora não tem
-nada para servir — corra `php artisan resilience:warm --pages`.
+Mostra se o MySQL responde e em quanto tempo, o estado do disjuntor, que
+chaves de lista têm cópia normal e cópia de emergência, e o estado do
+snapshot: se existe, se está íntegro, a idade, o tamanho e quantas
+vagas/artigos/categorias guarda.
 
-### Pelo browser
-
-As respostas trazem um cabeçalho:
-
-```bash
-curl -sI https://empregosyoyota.net/ | grep -i x-resilience
+```text
+Snapshot unico de emergencia (vagas, artigos, categorias)
+  integro:    sim
+  gerado em:  2026-10-16T14:32:05+00:00
+  idade:      184 s
+  tamanho:    612.4 KB
+  vagas:      300
+  artigos:    200
+  categorias: 18
 ```
 
-| Valor | O que diz |
-| --- | --- |
-| (ausente) | Página gerada agora, com o MySQL a responder |
-| `X-Resilience-Cache: hit` | Servida da cópia guardada, sem tocar na base de dados |
-| `X-Resilience-Cache: emergency` | MySQL em baixo; é a última cópia válida |
-| `X-Resilience-Cache: offline` | Não havia cópia; é a página de indisponibilidade (503) |
+Se aparecer "nao existe ainda", corra `php artisan resilience:snapshot:rebuild`.
 
-Visite a mesma página duas vezes seguidas: a segunda deve trazer `hit`.
+### Teste prático: publique uma vaga e confirme
+
+1. Publique (ou edite) uma vaga no painel.
+2. Corra `php artisan resilience:status` — o número de vagas no snapshot não
+   muda necessariamente (o limite mantém-se fixo), mas a vaga está lá: para
+   confirmar isso especificamente, use `php artisan tinker` e chame
+   `app(\App\Services\EmergencySnapshotService::class)->findJob($slug)`.
+3. A vaga já apareceu na página pública no mesmo instante em que gravou — sem
+   esperar, sem warm, sem cron.
 
 ### No log
 
@@ -233,65 +298,46 @@ máximo uma por minuto para não encher o disco:
 grep resiliencia storage/logs/laravel.log | tail
 ```
 
-## LiteSpeed
-
-O alojamento corre LiteSpeed, que sabe servir páginas de uma cache própria sem
-sequer acordar o PHP. Isso depende do módulo **LSCache** estar ligado na conta
-— coisa que não se consegue confirmar a partir do código, e que pode não estar.
-
-Por isso, a cache de HTML descrita aqui é **toda do lado do Laravel** e não
-depende de nada disso. O suporte ao LSCache está preparado mas desligado:
-
-```dotenv
-RESILIENCE_LITESPEED_HEADER=true
-```
-
-Com isto, as páginas públicas passam a sair com
-`X-LiteSpeed-Cache-Control: public,max-age=600`. Se o módulo estiver ligado,
-o LiteSpeed guarda-as; se não estiver, o cabeçalho é ignorado e nada muda.
-
-Antes de ligar, confirme com o suporte da Spaceship que o LSCache está activo
-na conta. E note que a partir daí há **duas** caches à frente do site: uma
-página errada guardada pelo LiteSpeed sai de lá com `/usr/local/lsws/admin` ou
-com um restart, não com `php artisan cache:clear`.
-
-## Limitações do alojamento
+## Limitações do alojamento e do desenho
 
 - **As 30 ligações não aumentam.** Isto não contorna o limite: reduz a
   frequência com que se lá chega e evita que o site caia quando se lá chega.
-- **Sem Redis nem memcached** garantidos num alojamento partilhado. A cache é
-  de ficheiros, que no cPanel é o que há — mais lenta do que memória, e
-  partilhada entre processos PHP, que é o que aqui interessa.
-- **Sem acesso root**: nada disto mexe em configurações globais, nem reinicia
-  processos, nem toca em ficheiros de outros sites.
-- **O `add()` da cache de ficheiros não é perfeitamente atómico.** Na pior das
-  hipóteses passam duas sondas de recuperação em vez de uma — o que é
-  inofensivo, e muito longe das 30.
-- **A pesquisa não tem rede de segurança.** Durante uma falha responde 503.
-  Depende do índice TNTSearch e da base de dados, e guardar resultados por
-  termo não era comportável.
-- **Cópias de emergência ocupam disco.** O `resilience:prune` mantém a pasta
-  abaixo de 64 MB (`--max-mb` muda o limite).
+- **Sem Redis nem memcached** garantidos num alojamento partilhado. A cache de
+  listas é de ficheiros; o snapshot é um único ficheiro próprio.
+- **Sem acesso root**: nada disto mexe em configurações globais, nem
+  reinicia processos, nem toca em ficheiros de outros sites.
+- **O snapshot só cobre as N vagas/artigos mais recentes.** Uma vaga muito
+  antiga, fora do limite configurado, não tem cópia de emergência — numa
+  falha do MySQL, a sua página individual responde 503 em vez de 200. Para a
+  grande maioria do tráfego (conteúdo recente) isto não é problema; para
+  aumentar a cobertura, suba `RESILIENCE_SNAPSHOT_MAX_JOBS`/`_ARTICLES` (à
+  custa de mais memória por pedido a decodificar o JSON).
+- **Conteúdo gravado por fora do Eloquent não sincroniza.** Uma eventual
+  escrita futura via `DB::table('jobs')->update(...)` ou `Model::insert()`
+  em massa não dispara os eventos `saved`/`deleted`, logo não invalida a
+  cache nem actualiza o snapshot para essas linhas. Hoje (nesta auditoria) não
+  existe nenhuma escrita assim no projecto — só `save()`/`delete()` normais,
+  pelo painel Filament e pela API.
+- **A fila de alterações pendentes tem uma janela de corrida muito estreita**
+  entre duas chamadas concorrentes a `enqueuePending()` quando o bloqueio
+  principal já está ocupado por uma terceira escrita — na pior das
+  hipóteses, uma das duas pode perder a alteração da outra. Preferiu-se isto
+  a bloquear um pedido web indefinidamente à espera de outro processo.
+- **A pesquisa, `/categories/{id}` e as páginas de conteúdo estático não têm
+  rede de segurança própria.** Durante uma falha, respondem 503.
 
 ## Desfazer
 
-Por ordem, do menos ao mais drástico.
-
-**Desligar só a cache de HTML** (o fallback de dados continua):
-
-```dotenv
-RESILIENCE_PAGE_CACHE=false
-```
-
-**Desligar o disjuntor** (volta a tentar-se a ligação em todos os pedidos):
+**Desligar só o disjuntor** (volta a tentar-se a ligação em todos os
+pedidos; a cache de dados e o snapshot continuam a funcionar):
 
 ```dotenv
 RESILIENCE_BREAKER=false
 ```
 
-Depois de qualquer um dos dois: `php artisan config:clear`.
+Depois: `php artisan config:clear`.
 
-**Repor o disjuntor à mão**, se ficar aberto e se quiser forçar uma tentativa:
+**Repor o disjuntor à mão**, se ficar aberto e quiser forçar uma tentativa:
 
 ```bash
 php artisan resilience:status --reset
@@ -304,8 +350,10 @@ git revert <commit>
 php artisan config:clear
 ```
 
-Os índices da migração ficam — não fazem mal nenhum e não dependem de nada
-disto. Para os tirar também: `php artisan migrate:rollback --step=1`.
+O snapshot (`storage/app/emergency/`) e a cache de listas
+(`storage/framework/cache/resilience/`) não estão versionados (ver
+`.gitignore`); podem ser apagados à mão sem afectar o repositório, se alguma
+vez for preciso.
 
 ## Os ficheiros
 
@@ -316,12 +364,11 @@ disto. Para os tirar também: `php artisan migrate:rollback --step=1`.
 | `app/Support/DatabaseAvailability.php` | Distingue "MySQL em baixo" de "erro nosso" |
 | `app/Exceptions/DatabaseUnavailableException.php` | A excepção que o Handler reconhece |
 | `app/Services/DatabaseCircuitBreaker.php` | O disjuntor |
-| `app/Services/DatabaseFallbackCache.php` | Cache de dados com cópia de emergência |
-| `app/Services/PublicPageCache.php` | Cache de HTML das páginas públicas |
-| `app/Services/DatabaseUnavailableResponder.php` | O que responder numa falha |
-| `app/Http/Middleware/ServePublicPageFromCache.php` | Serve e guarda o HTML |
+| `app/Services/DatabaseFallbackCache.php` | Cache de listas/contagens com cópia de emergência |
+| `app/Services/EmergencySnapshotService.php` | O snapshot único de vagas/artigos/categorias |
+| `app/Services/DatabaseUnavailableResponder.php` | O que responder numa falha (503, ou JSON) |
 | `app/Providers/ResilienceServiceProvider.php` | Liga as peças; trava consultas com o circuito aberto |
-| `app/Console/Commands/WarmResilienceCache.php` | `resilience:warm` |
-| `app/Console/Commands/PruneResilienceCache.php` | `resilience:prune` |
+| `app/Console/Commands/RebuildEmergencySnapshot.php` | `resilience:snapshot:rebuild` (manual) |
 | `app/Console/Commands/ResilienceStatus.php` | `resilience:status` |
+| `app/Console/Commands/CleanupLegacyResilienceCache.php` | Relata/remove os ficheiros do mecanismo antigo |
 | `public/database-unavailable.html` | A página de 503 |

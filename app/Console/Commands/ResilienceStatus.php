@@ -4,13 +4,14 @@ namespace App\Console\Commands;
 
 use App\Services\DatabaseCircuitBreaker;
 use App\Services\DatabaseFallbackCache;
-use App\Services\PublicPageCache;
+use App\Services\EmergencySnapshotService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
 /**
- * Diagnostico: a cache esta a funcionar? O disjuntor esta aberto?
+ * Diagnostico: a cache esta a funcionar? O disjuntor esta aberto? O
+ * snapshot de emergencia esta vivo e actualizado?
  *
  * E o comando a correr no Terminal do cPanel quando o site parece estranho,
  * antes de se mexer em seja no que for.
@@ -25,7 +26,7 @@ class ResilienceStatus extends Command
     public function handle(
         DatabaseCircuitBreaker $breaker,
         DatabaseFallbackCache $cache,
-        PublicPageCache $pages
+        EmergencySnapshotService $snapshot
     ): int {
         if ($this->option('reset')) {
             $breaker->reset();
@@ -56,7 +57,7 @@ class ResilienceStatus extends Command
         }
 
         $this->line('');
-        $this->line('<comment>Cache de dados</comment>');
+        $this->line('<comment>Cache de dados (listas, contagens, definicoes — chaves fixas)</comment>');
 
         $linhas = [];
         $chaves = [
@@ -79,34 +80,35 @@ class ResilienceStatus extends Command
 
         $this->table(['chave', 'copia normal', 'copia de emergencia'], $linhas);
 
-        $this->line('<comment>Cache de paginas</comment>');
-        $this->line('  activa:  ' . ($pages->enabled() ? 'sim' : 'nao'));
-        $this->line('  versao:  ' . $pages->version());
-        $this->line('  pasta:   ' . $this->storeSize());
+        $this->line('<comment>Snapshot unico de emergencia (vagas, artigos, categorias)</comment>');
+
+        $meta = $snapshot->meta();
+
+        if (! $meta['existe']) {
+            $this->warn('  nao existe ainda. Corra: php artisan resilience:snapshot:rebuild');
+        } else {
+            $this->line('  integro:    ' . ($meta['integro'] ? 'sim' : 'NAO — corrompido, a usar a ultima copia valida'));
+            $this->line('  gerado em:  ' . ($meta['gerado_em'] ?? 'desconhecido'));
+            $this->line('  idade:      ' . ($meta['idade_segundos'] !== null ? $meta['idade_segundos'] . ' s' : 'n/d'));
+            $this->line('  tamanho:    ' . $this->humanize($meta['bytes']));
+            $this->line('  vagas:      ' . $meta['vagas']);
+            $this->line('  artigos:    ' . $meta['artigos']);
+            $this->line('  categorias: ' . $meta['categorias']);
+
+            if ($meta['pendentes'] > 0) {
+                $this->warn('  ' . $meta['pendentes'] . ' alteracao(oes) pendente(s) — aplicam-se na proxima escrita bem sucedida.');
+            }
+        }
+
         $this->line('');
 
         return self::SUCCESS;
     }
 
-    protected function storeSize(): string
+    protected function humanize(int $bytes): string
     {
-        $config = (array) config('cache.stores.' . config('resilience.store', 'resilience'), []);
-        $path = $config['path'] ?? null;
-
-        if (($config['driver'] ?? null) !== 'file' || ! $path || ! is_dir($path)) {
-            return 'n/d';
-        }
-
-        $bytes = 0;
-        $ficheiros = 0;
-
-        foreach (\Symfony\Component\Finder\Finder::create()->files()->in($path) as $ficheiro) {
-            $bytes += $ficheiro->getSize();
-            $ficheiros++;
-        }
-
-        return sprintf('%s, %d ficheiro(s) (%s)', $path, $ficheiros, $bytes >= 1048576
+        return $bytes >= 1048576
             ? round($bytes / 1048576, 1) . ' MB'
-            : round($bytes / 1024) . ' KB');
+            : round($bytes / 1024, 1) . ' KB';
     }
 }

@@ -2,14 +2,19 @@
 
 namespace App\Models;
 
+use App\Exceptions\DatabaseUnavailableException;
 use App\Services\DatabaseFallbackCache;
-use App\Services\PublicPageCache;
+use App\Services\EmergencySnapshotService;
+use App\Services\DatabaseCircuitBreaker;
+use App\Support\DatabaseAvailability;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\ImageManager;
+use Throwable;
 
 class Article extends Model
 {
@@ -34,12 +39,12 @@ class Article extends Model
         });
 
         static::saved(function ($article) {
-            self::clearCache($article);
             $article->generateThumbnail();
+            self::syncAfterCommit($article, deleted: false);
         });
 
         static::deleted(function ($article) {
-            self::clearCache($article);
+            self::syncAfterCommit($article, deleted: true);
         });
     }
 
@@ -106,19 +111,33 @@ class Article extends Model
             : asset('storage/' . $this->photo);
     }
 
+    /**
+     * Confirma primeiro a gravacao no MySQL (DB::afterCommit), so depois
+     * invalida a cache de leitura e sincroniza este UNICO artigo no
+     * snapshot de emergencia.
+     */
+    private static function syncAfterCommit(self $article, bool $deleted): void
+    {
+        DB::afterCommit(function () use ($article, $deleted) {
+            self::clearCache($article);
+
+            $snapshot = app(EmergencySnapshotService::class);
+
+            $deleted
+                ? $snapshot->removeArticle($article->id)
+                : $snapshot->upsertArticle($article->toSnapshotArray());
+        });
+    }
+
     private static function clearCache($article)
     {
         // So a copia normal: a de emergencia sobrevive (ver DatabaseFallbackCache).
         $cache = app(DatabaseFallbackCache::class);
         $cache->forget('latest_articles_50');
-        $cache->forget('article_' . $article->slug);
-        $cache->forget('article_id_' . $article->id);
         $cache->forget('rss_feed_items');
         $cache->forget('articles_count_country_1');
 
         Cache::forever('sitemap_version', ((int) Cache::get('sitemap_version', 1)) + 1);
-
-        app(PublicPageCache::class)->bumpVersion();
     }
 
     private function generateSlug($title, $id)
@@ -128,6 +147,27 @@ class Article extends Model
             $slug = $slug . '-' . $id;
         }
         return $slug;
+    }
+
+    /**
+     * O que o snapshot de emergencia guarda deste artigo — so os campos
+     * que as vistas publicas usam. "photo_thumb_url" e pre-calculado aqui
+     * (em vez de depender do accessor durante a emergencia) para nao
+     * depender do disco estar como se espera nesse momento.
+     */
+    public function toSnapshotArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'slug' => $this->slug,
+            'title' => $this->title,
+            'description' => $this->description,
+            'photo' => $this->photo,
+            'photo_thumb_url' => $this->photo_thumb_url,
+            'country_id' => $this->country_id,
+            'created_at' => optional($this->created_at)->toDateTimeString(),
+            'updated_at' => optional($this->updated_at)->toDateTimeString(),
+        ];
     }
 
     /**
@@ -148,5 +188,55 @@ class Article extends Model
                 ->limit(50)
                 ->get();
         });
+    }
+
+    /**
+     * Um artigo de Angola (country_id=1) por id ou slug — o MySQL continua
+     * a ser a fonte principal. So quando o MySQL falhar e que se consulta
+     * o snapshot de emergencia; se nem o snapshot o tiver, atira-se a
+     * excepcao em vez de inventar um 404 que pode nao ser verdade.
+     *
+     * @return self|null  null = confirmadamente nao existe (404 real).
+     *
+     * @throws \App\Exceptions\DatabaseUnavailableException
+     */
+    public static function findPublicById($id): ?self
+    {
+        return self::resolvePublic($id, fn () => self::where('country_id', 1)->where('id', $id)->first());
+    }
+
+    public static function findPublicBySlug($slug): ?self
+    {
+        return self::resolvePublic($slug, fn () => self::where('country_id', 1)->where('slug', $slug)->first());
+    }
+
+    protected static function resolvePublic($slugOrId, \Closure $liveQuery): ?self
+    {
+        try {
+            $resultado = $liveQuery();
+            app(DatabaseCircuitBreaker::class)->recordSuccess();
+
+            return $resultado;
+        } catch (Throwable $e) {
+            if (! DatabaseAvailability::isUnavailable($e)) {
+                throw $e;
+            }
+
+            // A mesma contabilidade de falhas que o DatabaseFallbackCache
+            // faz: sem isto, visitar paginas individuais de vagas/artigos
+            // durante uma falha nunca abriria o disjuntor por si so (cada
+            // pedido tentava sempre a sua propria ligacao).
+            app(DatabaseCircuitBreaker::class)->recordFailure();
+
+            $data = app(EmergencySnapshotService::class)->findArticle($slugOrId);
+
+            if ($data !== null && ((int) ($data['country_id'] ?? 0)) === 1) {
+                // forceFill(), nao make() — ver o comentario equivalente em
+                // Job::resolvePublic().
+                return (new self)->forceFill($data);
+            }
+
+            throw DatabaseUnavailableException::from($e, (int) config('resilience.retry_after', 120));
+        }
     }
 }
