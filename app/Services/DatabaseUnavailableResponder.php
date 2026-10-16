@@ -13,31 +13,27 @@ use Throwable;
 /**
  * O que responder quando uma excepcao diz que o MySQL nao esta disponivel.
  *
- * Por ordem de preferencia:
+ * Chega aqui DEPOIS de os modelos (Job::findPublic(), Article::findPublic(),
+ * Job::getCachedLatest(), etc.) ja terem tentado o snapshot de emergencia e
+ * nao terem tido nada para dar — ou porque a pagina pedida nunca esteve no
+ * snapshot, ou porque o pedido nao e sequer um GET de leitura. Dai para a
+ * frente so resta uma coisa honesta a dizer: 503, com Retry-After.
  *
- *   1. a copia guardada da propria pagina, servida com 200 — o visitante ve
- *      conteudo verdadeiro, ainda que possa nao ser o mais recente;
- *   2. a pagina estatica de indisponibilidade, com 503 e Retry-After.
- *
- * O ponto 2 vale tambem para formularios e para tudo o que escreve: um 503
- * honesto, nunca um sucesso simulado (ver seccao "Operacoes sensiveis" da
- * documentacao). So trata excepcoes de indisponibilidade — um erro de
+ * Escritas (candidaturas, login, painel) chegam aqui tambem e recebem o
+ * mesmo 503 — nunca um sucesso simulado (ver seccao "Operacoes sensiveis"
+ * da documentacao). So trata excepcoes de indisponibilidade — um erro de
  * programacao continua a dar 500, como deve ser.
  */
 class DatabaseUnavailableResponder
 {
-    /** @var \App\Services\PublicPageCache */
-    protected $pages;
-
     /** @var \App\Services\DatabaseCircuitBreaker */
     protected $breaker;
 
     /** @var \Illuminate\Contracts\Cache\Repository */
     protected $store;
 
-    public function __construct(PublicPageCache $pages, DatabaseCircuitBreaker $breaker, Repository $store)
+    public function __construct(DatabaseCircuitBreaker $breaker, Repository $store)
     {
-        $this->pages = $pages;
         $this->breaker = $breaker;
         $this->store = $store;
     }
@@ -56,12 +52,6 @@ class DatabaseUnavailableResponder
 
         $this->breaker->recordFailure();
         $this->report($e, $request);
-
-        if ($request->isMethod('GET') || $request->isMethod('HEAD')) {
-            if ($this->pages->shouldCache($request) && ($copy = $this->pages->any($request))) {
-                return $this->pages->toResponse($copy, 'emergency')->prepare($request);
-            }
-        }
 
         $retryAfter = $this->retryAfter($e);
 
@@ -89,7 +79,6 @@ class DatabaseUnavailableResponder
             'Content-Type' => 'text/html; charset=UTF-8',
             'Retry-After' => (string) $retryAfter,
             'Cache-Control' => 'no-store, private',
-            PublicPageCache::HEADER => 'offline',
         ]);
     }
 

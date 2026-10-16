@@ -15,24 +15,15 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // Mantem as copias de seguranca frescas enquanto o MySQL esta bom:
-        // o que nao estiver guardado antes da falha nao ha como servir
-        // durante a falha.
+        // De proposito, sem nada aqui: a tolerancia a falhas do MySQL
+        // (config/resilience.php) nao depende de Cron Job nenhum. O
+        // snapshot de emergencia (App\Services\EmergencySnapshotService)
+        // actualiza-se sozinho, a cada vaga/artigo/categoria gravado ou
+        // apagado — ver docs/resiliencia-mysql.md.
         //
-        // O withoutOverlapping() importa mais aqui do que o habitual: uma
-        // execucao que demore mais do que o intervalo nao pode acumular
-        // copias a correr ao mesmo tempo — cada uma ocupa ligacoes das 30
-        // que o alojamento permite. O bloqueio vive na cache de ficheiros,
-        // nao no MySQL, por isso funciona mesmo durante uma falha.
-        $schedule->command('resilience:warm --pages')
-            ->everyThirtyMinutes()
-            ->withoutOverlapping(10);
-
-        // Apaga copias expiradas e mantem a pasta dentro do limite, para
-        // nao ir comendo a quota de disco da conta.
-        $schedule->command('resilience:prune')
-            ->dailyAt('04:10')
-            ->withoutOverlapping(30);
+        // "php artisan resilience:snapshot:rebuild" existe para gerar a
+        // primeira copia valida depois de publicar isto, ou para uma
+        // reconciliacao manual; nunca e chamado automaticamente.
     }
 
     /**

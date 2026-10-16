@@ -4,13 +4,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Onde vivem as copias de seguranca
+    | Onde vivem as copias de seguranca de dados (DatabaseFallbackCache)
     |--------------------------------------------------------------------------
     |
     | Um store de cache proprio, separado do store por omissao, por duas
     | razoes: nunca depende do MySQL (e sempre ficheiros) e um
     | "php artisan cache:clear" nao apaga as copias de emergencia, que sao
     | precisamente aquilo que mantem o site de pe durante uma falha.
+    |
+    | So guarda um numero FIXO e pequeno de chaves — as listas "ultimas 50",
+    | as categorias, as contagens, o feed, as definicoes — nunca uma por
+    | vaga, artigo ou URL visitado. Essas vivem no snapshot unico (ver
+    | abaixo), nao aqui.
     |
     */
 
@@ -63,51 +68,30 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Cache de HTML das paginas publicas
+    | Snapshot unico de emergencia (EmergencySnapshotService)
     |--------------------------------------------------------------------------
     |
-    | Guarda a resposta ja renderizada das paginas publicas de leitura. Com
-    | uma copia valida, o pedido nem chega ao controlador — e portanto nao
-    | abre ligacao ao MySQL.
+    | UM ficheiro, sempre com o mesmo nome — nao um por vaga, artigo ou URL.
+    | "max_jobs"/"max_articles" limitam o conteudo as entradas mais
+    | recentes: um site com 8 anos de conteudo nao faz o ficheiro crescer
+    | sem parar, so mantem sempre as ultimas N vagas/artigos disponiveis
+    | para servir durante uma falha.
     |
-    | A chave e construida a partir do caminho e apenas dos parametros
-    | indicados em "query" (os restantes, como utm_source, sao ignorados de
-    | proposito para nao multiplicar copias do mesmo conteudo). Paginas cujo
-    | conteudo dependa de outros parametros — a pesquisa, por exemplo —
-    | pertencem a lista "except".
+    | Calculo do tamanho esperado (para af inar estes numeros): uma
+    | descricao tipica ocupa 2-5 KB; com 300 vagas + 200 artigos o JSON
+    | bruto anda pelos poucos MB, e o gzip (texto HTML repetitivo) costuma
+    | reduzir isso para algumas centenas de KB — perfeitamente seguro de
+    | carregar inteiro para memoria num pedido PHP num alojamento partilhado.
+    | Se o conteudo do site for tipicamente maior do que isto, reduza os
+    | limites antes de aumentar — nunca o inverso sem medir primeiro.
     |
     */
 
-    'page_cache' => [
-        'enabled' => (bool) env('RESILIENCE_PAGE_CACHE', true),
-        'ttl' => (int) env('RESILIENCE_PAGE_TTL', 600),                   // 10 minutos
-        'emergency_ttl' => (int) env('RESILIENCE_PAGE_EMERGENCY_TTL', 604800), // 7 dias
-        'max_bytes' => (int) env('RESILIENCE_PAGE_MAX_BYTES', 1048576),   // 1 MB por pagina
-
-        // Parametros que fazem parte da identidade da pagina.
-        'query' => ['page'],
-
-        // Nunca sao guardadas: painel, API, ferramentas interactivas e a
-        // pesquisa (resultados variam com cada termo escrito).
-        'except' => [
-            'admin',
-            'admin/*',
-            'api/*',
-            'livewire/*',
-            'filament/*',
-            'linkstorage',
-            'pesquisar',
-            'dashboard',
-            'en/dashboard',
-        ],
-
-        'content_types' => ['text/html', 'application/xml', 'text/xml'],
-
-        // Cabecalho X-LiteSpeed-Cache-Control nas paginas publicas. So faz
-        // algum efeito se o modulo LSCache estiver ligado na conta; desligado
-        // por omissao para nao se prometer aquilo que o alojamento pode nao ter.
-        'litespeed_header' => (bool) env('RESILIENCE_LITESPEED_HEADER', false),
-        'litespeed_ttl' => (int) env('RESILIENCE_LITESPEED_TTL', 600),
+    'snapshot' => [
+        'path' => env('RESILIENCE_SNAPSHOT_PATH', storage_path('app/emergency/public_backup.json.gz')),
+        'lock_path' => env('RESILIENCE_SNAPSHOT_LOCK_PATH', storage_path('app/emergency/public_backup.lock')),
+        'max_jobs' => (int) env('RESILIENCE_SNAPSHOT_MAX_JOBS', 300),
+        'max_articles' => (int) env('RESILIENCE_SNAPSHOT_MAX_ARTICLES', 200),
     ],
 
     /*
@@ -115,8 +99,9 @@ return [
     | Pagina de indisponibilidade
     |--------------------------------------------------------------------------
     |
-    | Ultimo recurso: nao ha copia nenhuma da pagina pedida e o MySQL nao
-    | responde. Ficheiro estatico em public/, servido com 503 e Retry-After.
+    | Ultimo recurso: nem o MySQL responde, nem o snapshot tem a vaga,
+    | artigo ou lista pedida. Ficheiro estatico em public/, servido com 503
+    | e Retry-After.
     |
     */
 

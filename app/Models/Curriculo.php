@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Services\PublicPageCache;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -34,8 +33,6 @@ class Curriculo extends Model
     private static function clearCache(): void
     {
         Cache::forever('sitemap_version', ((int) Cache::get('sitemap_version', 1)) + 1);
-
-        app(PublicPageCache::class)->bumpVersion();
     }
 
     private function generateSlug($title, $id)
