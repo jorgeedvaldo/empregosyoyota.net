@@ -27,6 +27,7 @@ Route::post('/job/create', [JobController::class, 'store']);
 Route::post('/jobs/upload-image', [JobController::class, 'uploadImage']);
 
 Route::post('/article/create', [ArticleController::class, 'store']);
+Route::match(['put', 'post'], '/article/update/{id}', [ArticleController::class, 'update']);
 Route::post('/articles/upload-image', [ArticleController::class, 'uploadImage']);
 
 Route::get('/jobs', [JobController::class, 'get']);

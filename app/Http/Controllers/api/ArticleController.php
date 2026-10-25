@@ -40,6 +40,56 @@ class ArticleController extends Controller
     }
 
     /**
+     * Actualiza um artigo existente. So os campos enviados sao alterados
+     * (actualizacao parcial) — enviar so "title", por exemplo, nao apaga a
+     * "description" nem a "photo" actuais.
+     *
+     * O "slug" nunca muda por aqui, de proposito: e o que mantem o URL do
+     * artigo estavel, mesmo que o titulo seja corrigido.
+     */
+    public function update(Request $request, $id)
+    {
+        $article = Article::find($id);
+
+        if (!$article) {
+            return response()->json(
+                [
+                    'message' => 'Article not found.',
+                    'license' => $this->license,
+                ], 404);
+        }
+
+        $request->validate([
+            'title' => 'sometimes|required|string|max:255',
+            'description' => 'sometimes|required|string',
+            'photo' => 'nullable|string|max:255',
+            'country_id' => 'nullable|integer',
+        ]);
+
+        if ($request->has('title')) {
+            $article->title = $request->input('title');
+        }
+        if ($request->has('description')) {
+            $article->description = $request->input('description');
+        }
+        if ($request->has('photo')) {
+            $article->photo = $request->input('photo');
+        }
+        if ($request->has('country_id')) {
+            $article->country_id = (int) $request->input('country_id');
+        }
+
+        $article->save();
+
+        return response()->json(
+            [
+                'message' => 'Article updated successfully.',
+                'data' => $article->fresh(),
+                'license' => $this->license,
+            ], 200);
+    }
+
+    /**
      * Upload de imagem para images/articles/ com nome unico (sem colisoes).
      */
     public function uploadImage(Request $request)
