@@ -44,12 +44,18 @@ class ArticleController extends Controller
      * (actualizacao parcial) — enviar so "title", por exemplo, nao apaga a
      * "description" nem a "photo" actuais.
      *
-     * O "slug" nunca muda por aqui, de proposito: e o que mantem o URL do
-     * artigo estavel, mesmo que o titulo seja corrigido.
+     * O "id" na rota aceita tanto o ID numerico como o slug do artigo
+     * (ex.: /api/article/update/42 ou /api/article/update/como-fazer-um-cv).
+     *
+     * O "slug" do proprio artigo nunca muda por aqui, de proposito: e o
+     * que mantem o URL do artigo estavel, mesmo que o titulo seja
+     * corrigido.
      */
     public function update(Request $request, $id)
     {
-        $article = Article::find($id);
+        $article = is_numeric($id)
+            ? Article::find($id)
+            : Article::where('slug', $id)->first();
 
         if (!$article) {
             return response()->json(

@@ -76,6 +76,37 @@ class ApiArticleUpdateTest extends TestCase
     }
 
     /** @test */
+    public function edita_um_artigo_pelo_slug(): void
+    {
+        $artigo = Article::create([
+            'title' => 'Como Fazer Um CV',
+            'description' => 'Descricao original',
+            'photo' => 'original.jpg',
+        ]);
+
+        $resposta = $this->postJson("/api/article/update/{$artigo->slug}", [
+            'description' => 'Descricao editada pelo slug',
+        ]);
+
+        $resposta->assertOk();
+        $resposta->assertJsonPath('data.description', 'Descricao editada pelo slug');
+
+        $artigo->refresh();
+        $this->assertSame('Descricao editada pelo slug', $artigo->description);
+        $this->assertSame('Como Fazer Um CV', $artigo->title, 'Campos nao enviados nao podem ser apagados.');
+
+        $snapshot = app(EmergencySnapshotService::class);
+        $this->assertSame('Descricao editada pelo slug', $snapshot->findArticle($artigo->slug)['description']);
+    }
+
+    /** @test */
+    public function um_slug_inexistente_da_404(): void
+    {
+        $resposta = $this->postJson('/api/article/update/slug-que-nao-existe', ['title' => 'X']);
+        $resposta->assertStatus(404);
+    }
+
+    /** @test */
     public function editar_um_artigo_inexistente_da_404(): void
     {
         $resposta = $this->postJson('/api/article/update/999', ['title' => 'X']);
