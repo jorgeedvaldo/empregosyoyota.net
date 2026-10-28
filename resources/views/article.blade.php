@@ -274,6 +274,9 @@
       <!-- Post Content Column -->
       <div class="col-lg-8">
 
+        <!-- Siga-nos no Google Notícias -->
+        @include('partials.google-news')
+
         <div class="article-image-card">
             <img class="img-fluid" src="{{ asset('storage/' . $article['photo']) }}" alt="{{ $article['title'] }}" fetchpriority="high" decoding="async" style="width:100%;height:auto;display:block;">
         </div>

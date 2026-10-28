@@ -495,6 +495,9 @@
         <!-- Conteúdo Principal -->
         <div class="col-lg-8">
 
+            <!-- Siga-nos no Google Notícias -->
+            @include('partials.google-news')
+
             <div class="job-image-card">
                 <img class="img-fluid" src="{{ asset('storage/' . $job['photo']) }}" alt="{{ $job['title'] }}" fetchpriority="high" decoding="async" style="width:100%;height:auto;display:block;">
             </div>
